@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SUMMIT GPA Tracker Mockup</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --brand: #1d4ed8;
+      --brand-soft: #dbeafe;
+      --success: #166534;
+      --success-soft: #dcfce7;
+      --warning: #92400e;
+      --warning-soft: #fef3c7;
+      --danger: #991b1b;
+      --danger-soft: #fee2e2;
+      --radius: 14px;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .container {
+      width: min(1160px, 94%);
+      margin: 0 auto;
+      padding: 22px 0 40px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb, #0ea5e9);
+      color: #fff;
+      border-radius: calc(var(--radius) + 4px);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.5rem, 3vw, 2.3rem);
+    }
+
+    .hero p {
+      margin: 0 0 12px;
+      color: #e2e8f0;
+      max-width: 860px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.12s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary { background: var(--brand); color: #fff; }
+    .btn-light { background: #fff; color: #1d4ed8; }
+    .btn-muted { background: #e2e8f0; color: #1e293b; }
+    .btn-danger { background: #fee2e2; color: #991b1b; }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #1e293b;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--brand-soft);
+      color: var(--brand);
+      border-color: #93c5fd;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .section-header {
+      margin-bottom: 10px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+    }
+
+    .section-header p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .stat-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0b3aa8;
+    }
+
+    .badge {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .badge-success { background: var(--success-soft); color: var(--success); }
+    .badge-warning { background: var(--warning-soft); color: var(--warning); }
+    .badge-danger { background: var(--danger-soft); color: var(--danger); }
+    .badge-brand { background: var(--brand-soft); color: var(--brand); }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 11px;
+      font: inherit;
+      background: #fff;
+      color: #0f172a;
+    }
+
+    textarea {
+      min-height: 68px;
+      resize: vertical;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 940px;
+      background: #fff;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+      padding: 10px;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: #f8fafc;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #334155;
+    }
+
+    .saved-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .saved-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .saved-card h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .saved-card p {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 980px) {
+      .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .saved-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .container { width: min(1160px, 96%); }
+      .hero { padding: 18px; }
+      .tabs { gap: 6px; }
+      .tab-btn { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>SUMMIT GPA Tracker (Mock)</h1>
+      <p>Standalone GPA planning tool using local state and mock data only. No authentication, no backend, and no database connections.</p>
+      <div class="button-row">
+        <a class="btn btn-light" href="./stem-hub-mockup.html">Back to Main Hub</a>
+      </div>
+    </section>
+
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="semester-calculator">Semester Calculator</button>
+      <button class="tab-btn" data-tab="cumulative-gpa">Cumulative GPA</button>
+      <button class="tab-btn" data-tab="goal-planner">Goal Planner</button>
+      <button class="tab-btn" data-tab="saved-semesters">Saved Semester Mock Data</button>
+    </div>
+
+    <section class="tab-panel active" id="tab-semester-calculator">
+      <div class="card">
+        <div class="section-header">
+          <h2>Course Entry</h2>
+          <p>Add, edit, and remove semester courses. GPA updates live whenever values change.</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Course Name</th>
+                <th>Credit Hours</th>
+                <th>Grade</th>
+                <th>Semester</th>
+                <th>Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="courses-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <h2>Add Course</h2>
+          <p>Use this form to add another class to the current semester calculation.</p>
+        </div>
+        <div class="grid grid-3">
+          <div>
+            <label for="new-course-name">Course Name</label>
+            <input id="new-course-name" placeholder="Intro to Programming" />
+          </div>
+          <div>
+            <label for="new-course-credits">Credit Hours</label>
+            <input id="new-course-credits" type="number" min="0" step="0.5" placeholder="3" />
+          </div>
+          <div>
+            <label for="new-course-grade">Grade</label>
+            <select id="new-course-grade"></select>
+          </div>
+          <div>
+            <label for="new-course-semester">Semester</label>
+            <select id="new-course-semester">
+              <option value="Fall 2026">Fall 2026</option>
+              <option value="Spring 2027">Spring 2027</option>
+            </select>
+          </div>
+          <div class="grid-col-span-2">
+            <label for="new-course-notes">Notes</label>
+            <textarea id="new-course-notes" placeholder="Optional notes about this class"></textarea>
+          </div>
+        </div>
+        <div class="button-row" style="margin-top: 10px;">
+          <button class="btn btn-primary" id="add-course-btn" type="button">Add Course</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <h2>Semester Summary</h2>
+        </div>
+        <div class="grid grid-4" id="semester-summary-cards"></div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="tab-cumulative-gpa">
+      <div class="card">
+        <div class="section-header">
+          <h2>Cumulative GPA Inputs</h2>
+          <p>Use your previous stats and this semester to preview updated cumulative GPA.</p>
+        </div>
+        <div class="grid grid-3">
+          <div>
+            <label for="previous-gpa">Previous Cumulative GPA</label>
+            <input id="previous-gpa" type="number" min="0" max="4" step="0.01" value="3.2" />
+          </div>
+          <div>
+            <label for="completed-credits">Completed Credits</label>
+            <input id="completed-credits" type="number" min="0" step="0.5" value="30" />
+          </div>
+          <div>
+            <label for="target-gpa">Target GPA</label>
+            <input id="target-gpa" type="number" min="0" max="4" step="0.01" value="3.4" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <h2>Updated Cumulative Snapshot</h2>
+        </div>
+        <div class="grid grid-4" id="cumulative-summary-cards"></div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="tab-goal-planner">
+      <div class="card">
+        <div class="section-header">
+          <h2>Goal Planner</h2>
+          <p>Estimate what semester GPA is needed to reach your target based on current inputs.</p>
+        </div>
+        <div class="grid grid-3">
+          <div class="stat-card">
+            <div class="stat-label">Target GPA</div>
+            <div class="stat-value" id="planner-target-gpa">0.00</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Credits This Semester</div>
+            <div class="stat-value" id="planner-semester-credits">0.0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">GPA Needed This Semester</div>
+            <div class="stat-value" id="planner-needed-gpa">0.00</div>
+            <div id="planner-needed-badge" style="margin-top: 6px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="tab-saved-semesters">
+      <div class="card">
+        <div class="section-header">
+          <h2>Saved Semester Mock Data</h2>
+          <p>Load example terms to quickly preview different GPA outcomes.</p>
+        </div>
+        <div class="saved-grid" id="saved-semesters-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const gradeScale = {
+      "A": 4.0,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3.0,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2.0,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1.0,
+      "F": 0.0
+    };
+    const semesterOptions = ["Fall 2026", "Spring 2027"];
+
+    let courses = [
+      { id: crypto.randomUUID(), name: "Calculus I", credits: 4, grade: "B+", semester: "Fall 2026", notes: "Need stronger quiz prep" },
+      { id: crypto.randomUUID(), name: "Intro to Programming", credits: 3, grade: "A-", semester: "Fall 2026", notes: "Strong project score" },
+      { id: crypto.randomUUID(), name: "General Biology", credits: 3, grade: "B", semester: "Fall 2026", notes: "Improve lab report detail" }
+    ];
+
+    const savedSemesters = [
+      {
+        label: "Fall 2026 Snapshot",
+        notes: "Balanced schedule with STEM core classes.",
+        courses: [
+          { name: "Calculus I", credits: 4, grade: "B+", semester: "Fall 2026", notes: "Weekly tutoring helped" },
+          { name: "Intro to Programming", credits: 3, grade: "A-", semester: "Fall 2026", notes: "Strong final project" },
+          { name: "General Biology", credits: 3, grade: "B", semester: "Fall 2026", notes: "Lab practical was tough" }
+        ]
+      },
+      {
+        label: "Spring 2027 Stretch",
+        notes: "Heavier technical load and leadership involvement.",
+        courses: [
+          { name: "Data Structures", credits: 3, grade: "B", semester: "Spring 2027", notes: "Focus on practice sets" },
+          { name: "Physics I", credits: 4, grade: "B-", semester: "Spring 2027", notes: "Need exam timing practice" },
+          { name: "Public Speaking", credits: 3, grade: "A", semester: "Spring 2027", notes: "Presentation confidence improved" },
+          { name: "Psychology Basics", credits: 3, grade: "A-", semester: "Spring 2027", notes: "Strong weekly reflections" }
+        ]
+      }
+    ];
+
+    const tabs = document.querySelectorAll(".tab-btn");
+    const panels = document.querySelectorAll(".tab-panel");
+    const coursesBody = document.getElementById("courses-body");
+    const addCourseBtn = document.getElementById("add-course-btn");
+    const summaryCards = document.getElementById("semester-summary-cards");
+    const cumulativeCards = document.getElementById("cumulative-summary-cards");
+    const savedSemestersGrid = document.getElementById("saved-semesters-grid");
+
+    const previousGpaInput = document.getElementById("previous-gpa");
+    const completedCreditsInput = document.getElementById("completed-credits");
+    const targetGpaInput = document.getElementById("target-gpa");
+
+    const plannerTargetGpa = document.getElementById("planner-target-gpa");
+    const plannerSemesterCredits = document.getElementById("planner-semester-credits");
+    const plannerNeededGpa = document.getElementById("planner-needed-gpa");
+    const plannerNeededBadge = document.getElementById("planner-needed-badge");
+
+    const newName = document.getElementById("new-course-name");
+    const newCredits = document.getElementById("new-course-credits");
+    const newGrade = document.getElementById("new-course-grade");
+    const newSemester = document.getElementById("new-course-semester");
+    const newNotes = document.getElementById("new-course-notes");
+
+    function toNumber(value, fallback = 0) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : fallback;
+    }
+
+    function format2(value) {
+      return toNumber(value).toFixed(2);
+    }
+
+    function format1(value) {
+      return toNumber(value).toFixed(1);
+    }
+
+    function getSemesterTotals() {
+      let credits = 0;
+      let qualityPoints = 0;
+
+      courses.forEach((course) => {
+        const c = Math.max(0, toNumber(course.credits));
+        const gradePoints = gradeScale[course.grade] ?? 0;
+        credits += c;
+        qualityPoints += c * gradePoints;
+      });
+
+      const semesterGpa = credits > 0 ? qualityPoints / credits : 0;
+      return { credits, qualityPoints, semesterGpa };
+    }
+
+    function getCumulativeTotals() {
+      const prevGpa = Math.min(4, Math.max(0, toNumber(previousGpaInput.value)));
+      const prevCredits = Math.max(0, toNumber(completedCreditsInput.value));
+      const targetGpa = Math.min(4, Math.max(0, toNumber(targetGpaInput.value)));
+
+      const { credits: semesterCredits, qualityPoints: semesterQp } = getSemesterTotals();
+      const previousQp = prevGpa * prevCredits;
+      const combinedCredits = prevCredits + semesterCredits;
+      const updatedCumulativeGpa = combinedCredits > 0 ? (previousQp + semesterQp) / combinedCredits : 0;
+
+      let neededGpa = 0;
+      if (semesterCredits > 0) {
+        neededGpa = ((targetGpa * (prevCredits + semesterCredits)) - previousQp) / semesterCredits;
+      }
+
+      return {
+        prevGpa,
+        prevCredits,
+        targetGpa,
+        semesterCredits,
+        semesterQp,
+        previousQp,
+        combinedCredits,
+        updatedCumulativeGpa,
+        neededGpa
+      };
+    }
+
+    function gradeOptionsHtml(selectedGrade) {
+      return Object.keys(gradeScale).map((grade) =>
+        `<option value="${grade}" ${grade === selectedGrade ? "selected" : ""}>${grade}</option>`
+      ).join("");
+    }
+
+    function semesterOptionsHtml(selectedSemester) {
+      return semesterOptions.map((semester) =>
+        `<option value="${semester}" ${semester === selectedSemester ? "selected" : ""}>${semester}</option>`
+      ).join("");
+    }
+
+    function renderCourses() {
+      coursesBody.innerHTML = "";
+
+      courses.forEach((course) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><input value="${course.name}" data-id="${course.id}" data-field="name" /></td>
+          <td><input type="number" min="0" step="0.5" value="${course.credits}" data-id="${course.id}" data-field="credits" /></td>
+          <td>
+            <select data-id="${course.id}" data-field="grade">
+              ${gradeOptionsHtml(course.grade)}
+            </select>
+          </td>
+          <td>
+            <select data-id="${course.id}" data-field="semester">
+              ${semesterOptionsHtml(course.semester)}
+            </select>
+          </td>
+          <td><textarea data-id="${course.id}" data-field="notes">${course.notes}</textarea></td>
+          <td><button class="btn btn-danger" type="button" data-id="${course.id}" data-action="remove">Remove</button></td>
+        `;
+        coursesBody.appendChild(row);
+      });
+    }
+
+    function renderSemesterSummary() {
+      const totals = getSemesterTotals();
+      summaryCards.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Semester GPA</div>
+          <div class="stat-value">${format2(totals.semesterGpa)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Semester Credits</div>
+          <div class="stat-value">${format1(totals.credits)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Quality Points</div>
+          <div class="stat-value">${format2(totals.qualityPoints)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Courses Count</div>
+          <div class="stat-value">${courses.length}</div>
+        </div>
+      `;
+    }
+
+    function renderCumulativeSummary() {
+      const totals = getCumulativeTotals();
+
+      cumulativeCards.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Previous Cumulative GPA</div>
+          <div class="stat-value">${format2(totals.prevGpa)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Updated Cumulative GPA</div>
+          <div class="stat-value">${format2(totals.updatedCumulativeGpa)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Completed Credits (Before)</div>
+          <div class="stat-value">${format1(totals.prevCredits)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Credits (After Semester)</div>
+          <div class="stat-value">${format1(totals.combinedCredits)}</div>
+        </div>
+      `;
+    }
+
+    function renderGoalPlanner() {
+      const totals = getCumulativeTotals();
+      plannerTargetGpa.textContent = format2(totals.targetGpa);
+      plannerSemesterCredits.textContent = format1(totals.semesterCredits);
+      plannerNeededGpa.textContent = format2(totals.neededGpa);
+
+      if (totals.semesterCredits <= 0) {
+        plannerNeededBadge.innerHTML = `<span class="badge badge-warning">Add semester credits to compute needed GPA</span>`;
+        return;
+      }
+
+      if (totals.neededGpa <= 4 && totals.neededGpa >= 0) {
+        plannerNeededBadge.innerHTML = `<span class="badge badge-success">Target is achievable this semester</span>`;
+      } else if (totals.neededGpa > 4) {
+        plannerNeededBadge.innerHTML = `<span class="badge badge-danger">Above 4.0 needed - adjust target or timeline</span>`;
+      } else {
+        plannerNeededBadge.innerHTML = `<span class="badge badge-brand">Target already met based on current inputs</span>`;
+      }
+    }
+
+    function renderSavedSemesters() {
+      savedSemestersGrid.innerHTML = "";
+      savedSemesters.forEach((snapshot, index) => {
+        const card = document.createElement("article");
+        card.className = "saved-card";
+        card.innerHTML = `
+          <h3>${snapshot.label}</h3>
+          <p>${snapshot.notes}</p>
+          <p><strong>Courses:</strong> ${snapshot.courses.length}</p>
+          <button class="btn btn-muted" type="button" data-action="load-snapshot" data-index="${index}">Load This Semester</button>
+        `;
+        savedSemestersGrid.appendChild(card);
+      });
+    }
+
+    function renderAll() {
+      renderCourses();
+      renderSemesterSummary();
+      renderCumulativeSummary();
+      renderGoalPlanner();
+      renderSavedSemesters();
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((btn) => btn.classList.remove("active"));
+        panels.forEach((panel) => panel.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(`tab-${tab.dataset.tab}`).classList.add("active");
+      });
+    });
+
+    Object.keys(gradeScale).forEach((grade) => {
+      const option = document.createElement("option");
+      option.value = grade;
+      option.textContent = grade;
+      newGrade.appendChild(option);
+    });
+    newGrade.value = "A";
+
+    addCourseBtn.addEventListener("click", () => {
+      const name = newName.value.trim();
+      const credits = Math.max(0, toNumber(newCredits.value));
+      const grade = newGrade.value;
+      const semester = newSemester.value.trim();
+      const notes = newNotes.value.trim();
+
+      if (!name || credits <= 0 || !semester) {
+        alert("Please enter course name, credit hours, and semester.");
+        return;
+      }
+
+      courses.push({
+        id: crypto.randomUUID(),
+        name,
+        credits,
+        grade,
+        semester,
+        notes
+      });
+
+      newName.value = "";
+      newCredits.value = "";
+      newSemester.value = "Fall 2026";
+      newNotes.value = "";
+      newGrade.value = "A";
+      renderAll();
+    });
+
+    coursesBody.addEventListener("input", (event) => {
+      const target = event.target;
+      const id = target.getAttribute("data-id");
+      const field = target.getAttribute("data-field");
+      if (!id || !field) return;
+
+      const course = courses.find((c) => c.id === id);
+      if (!course) return;
+
+      if (field === "credits") {
+        course[field] = Math.max(0, toNumber(target.value));
+      } else {
+        course[field] = target.value;
+      }
+
+      renderSemesterSummary();
+      renderCumulativeSummary();
+      renderGoalPlanner();
+    });
+
+    coursesBody.addEventListener("click", (event) => {
+      const target = event.target;
+      const action = target.getAttribute("data-action");
+      if (action !== "remove") return;
+      const id = target.getAttribute("data-id");
+      courses = courses.filter((course) => course.id !== id);
+      renderAll();
+    });
+
+    [previousGpaInput, completedCreditsInput, targetGpaInput].forEach((input) => {
+      input.addEventListener("input", () => {
+        renderCumulativeSummary();
+        renderGoalPlanner();
+      });
+    });
+
+    savedSemestersGrid.addEventListener("click", (event) => {
+      const target = event.target;
+      const action = target.getAttribute("data-action");
+      if (action !== "load-snapshot") return;
+      const index = toNumber(target.getAttribute("data-index"));
+      const snapshot = savedSemesters[index];
+      if (!snapshot) return;
+
+      courses = snapshot.courses.map((course) => ({
+        id: crypto.randomUUID(),
+        ...course
+      }));
+      renderAll();
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Opportunities Mockup</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --brand: #1d4ed8;
+      --radius: 14px;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb, #0ea5e9);
+      color: #fff;
+      border-radius: calc(var(--radius) + 4px);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+    }
+
+    .hero p {
+      margin: 0 0 14px;
+      color: #dbeafe;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      background: #ffffff;
+      color: #1d4ed8;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-header {
+      margin-bottom: 12px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+    }
+
+    .section-header p {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .mini-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .mini-card p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 4px 8px;
+      font-size: 0.88rem;
+      margin-bottom: 10px;
+    }
+
+    .kv strong { color: #334155; }
+
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: 1fr; }
+      .container { width: min(1120px, 94%); }
+      .hero { padding: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>SUMMIT Opportunities Board</h1>
+      <p>Standalone mock page for internships, mini-internships, research, outreach, scholarships, and workshops.</p>
+      <a class="btn" href="./stem-hub-mockup.html">Back to Opportunity Hub</a>
+    </section>
+
+    <section class="card">
+      <div class="section-header">
+        <h2>Opportunities Board (Mock)</h2>
+        <p>Mock data only. Buttons are placeholders and do not connect to a backend.</p>
+      </div>
+      <div id="opportunities-grid" class="grid"></div>
+    </section>
+  </main>
+
+  <script>
+    const opportunities = [
+      {
+        title: "Summer Tech Fellows",
+        organization: "Metro Innovation Lab",
+        type: "Internship",
+        deadline: "Jun 15",
+        eligibility: "Freshman and Sophomore",
+        description: "Paid summer role supporting product experiments and testing."
+      },
+      {
+        title: "Community STEM Sprint",
+        organization: "City Youth Network",
+        type: "Mini-Internship",
+        deadline: "Rolling",
+        eligibility: "All years",
+        description: "4-week project assisting with STEM workshop planning and delivery."
+      },
+      {
+        title: "Campus Research Match",
+        organization: "University Science Center",
+        type: "Research",
+        deadline: "Jul 1",
+        eligibility: "Interested in lab work",
+        description: "Intro research placement with mentor pairing and onboarding support."
+      },
+      {
+        title: "Future Engineers Outreach Day",
+        organization: "BridgeEd",
+        type: "Outreach",
+        deadline: "May 30",
+        eligibility: "Volunteers needed",
+        description: "Lead small groups through engineering design activities."
+      },
+      {
+        title: "STEM Equity Scholarship",
+        organization: "Northstar Foundation",
+        type: "Scholarship",
+        deadline: "Aug 10",
+        eligibility: "First-generation applicants encouraged",
+        description: "Scholarship award supporting students pursuing STEM pathways."
+      },
+      {
+        title: "LinkedIn Branding Workshop",
+        organization: "Career Launch Collective",
+        type: "Workshop",
+        deadline: "Weekly sessions",
+        eligibility: "Open to all members",
+        description: "Hands-on workshop to optimize profiles and networking strategy."
+      }
+    ];
+
+    const opportunitiesGrid = document.getElementById("opportunities-grid");
+    opportunities.forEach((opportunity) => {
+      const card = document.createElement("article");
+      card.className = "mini-card";
+      card.innerHTML = `
+        <h3>${opportunity.title}</h3>
+        <div class="kv">
+          <strong>Organization</strong><span>${opportunity.organization}</span>
+          <strong>Type</strong><span>${opportunity.type}</span>
+          <strong>Deadline</strong><span>${opportunity.deadline}</span>
+          <strong>Eligibility</strong><span>${opportunity.eligibility}</span>
+        </div>
+        <p>${opportunity.description}</p>
+        <button class="btn" type="button">Learn More</button>
+      `;
+      opportunitiesGrid.appendChild(card);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SUMMIT Opportunity Hub Mockup</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --brand: #1d4ed8;
+      --brand-soft: #dbeafe;
+      --success: #166534;
+      --success-soft: #dcfce7;
+      --warning: #92400e;
+      --warning-soft: #fef3c7;
+      --purple: #6d28d9;
+      --purple-soft: #ede9fe;
+      --danger: #991b1b;
+      --danger-soft: #fee2e2;
+      --radius: 14px;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb, #0ea5e9);
+      color: #fff;
+      border-radius: calc(var(--radius) + 4px);
+      padding: 32px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+    }
+
+    .hero p {
+      margin: 0 0 18px;
+      max-width: 800px;
+      color: #e2e8f0;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .btn-primary {
+      background: #ffffff;
+      color: #1d4ed8;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+    }
+
+    .section {
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+    }
+
+    .section p {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .badge {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .status-new { background: var(--brand-soft); color: var(--brand); }
+    .status-follow { background: var(--warning-soft); color: var(--warning); }
+    .status-progress { background: var(--purple-soft); color: var(--purple); }
+    .status-connected { background: #cffafe; color: #155e75; }
+    .status-completed { background: var(--success-soft); color: var(--success); }
+
+    form label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .success {
+      margin-top: 10px;
+      background: var(--success-soft);
+      color: var(--success);
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 10px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .info-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .mini-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .mini-card h3, .mini-card h4 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .mini-card p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 4px 8px;
+      font-size: 0.88rem;
+      margin-bottom: 10px;
+    }
+
+    .kv strong {
+      color: #334155;
+      font-weight: 700;
+    }
+
+    .kv span {
+      color: #334155;
+    }
+
+    .action-pill {
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      margin: 4px;
+      display: inline-block;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 980px) {
+      .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .hero { padding: 22px; }
+      .container { width: min(1120px, 94%); }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>SUMMIT Opportunity Hub</h1>
+      <p>Helping members build early STEM experience through projects, internships, outreach, and career support.</p>
+      <div class="button-row">
+        <button class="btn btn-primary" type="button">Fill Out Interest Form</button>
+        <a class="btn btn-secondary" href="./gpa-tracker-mockup.html" style="text-decoration: none; display: inline-flex; align-items: center;">GPA Tracker</a>
+        <a class="btn btn-secondary" href="./opportunities-mockup.html" style="text-decoration: none; display: inline-flex; align-items: center;">View Opportunities</a>
+        <a class="btn btn-secondary" href="./leadership-access-mockup.html" style="text-decoration: none; display: inline-flex; align-items: center;">Leadership Access</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <h2>STEM Interest Form (Mock)</h2>
+            <p>Collect early-interest details so STEM Co-Directors can route support quickly.</p>
+          </div>
+          <span class="badge status-new">Mock Form</span>
+        </div>
+
+        <form id="interest-form">
+          <div class="grid grid-2">
+            <div>
+              <label for="name">Name</label>
+              <input id="name" name="name" required />
+            </div>
+            <div>
+              <label for="email">ODU Email</label>
+              <input id="email" name="email" type="email" placeholder="name@odu.edu" pattern="^[^\\s@]+@odu\\.edu$" title="Please enter a valid ODU email (name@odu.edu)." required />
+            </div>
+            <div>
+              <label for="year">Year</label>
+              <select id="year" name="year" required>
+                <option value="">Select year</option>
+                <option>Freshman</option>
+                <option>Sophomore</option>
+                <option>Junior</option>
+                <option>Senior</option>
+              </select>
+            </div>
+            <div>
+              <label for="major">Major</label>
+              <input id="major" name="major" required />
+            </div>
+            <div>
+              <label for="career-interest">Career Interest</label>
+              <input id="career-interest" name="career-interest" placeholder="Software, Robotics, Research..." required />
+            </div>
+            <div>
+              <label for="looking-for">What are you looking for</label>
+              <input id="looking-for" name="looking-for" placeholder="Project, internship, mentorship..." required />
+            </div>
+            <div>
+              <label for="resume">Do you have a resume</label>
+              <select id="resume" name="resume" required>
+                <option value="">Select</option>
+                <option>Yes</option>
+                <option>No</option>
+                <option>Needs Update</option>
+              </select>
+            </div>
+            <div>
+              <label for="linkedin">Do you have LinkedIn</label>
+              <select id="linkedin" name="linkedin" required>
+                <option value="">Select</option>
+                <option>Yes</option>
+                <option>No</option>
+                <option>Needs Improvement</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top: 10px;">
+            <label for="help-needed">What is one thing you need help with</label>
+            <textarea id="help-needed" name="help-needed" required></textarea>
+          </div>
+          <div class="button-row" style="margin-top: 12px;">
+            <button class="btn btn-primary" style="background: var(--brand); color: #fff;" type="submit">Submit Mock Form</button>
+            <button class="btn" type="button">Save Draft (Placeholder)</button>
+          </div>
+          <div id="form-success" class="success">Your STEM interest form has been submitted.</div>
+        </form>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <h2>Projects Board (Mock)</h2>
+            <p>Cross-discipline projects in STEM, Nursing, Psychology, and Finance.</p>
+          </div>
+        </div>
+        <div id="projects-grid" class="grid grid-3"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <h2>Resume and LinkedIn Help (Mock)</h2>
+            <p>Career support requests with placeholder actions only.</p>
+          </div>
+        </div>
+        <div class="grid grid-3">
+          <div class="mini-card"><h3>Resume Review</h3><p>Get feedback on structure, bullet wording, and impact statements.</p><button class="btn" type="button">Request Support</button></div>
+          <div class="mini-card"><h3>LinkedIn Review</h3><p>Improve headline, about section, featured projects, and profile strength.</p><button class="btn" type="button">Request Support</button></div>
+          <div class="mini-card"><h3>Internship Application Help</h3><p>Tailor application materials for role type and required keywords.</p><button class="btn" type="button">Request Support</button></div>
+          <div class="mini-card"><h3>Project Experience Wording</h3><p>Translate class/team projects into clear accomplishment bullets.</p><button class="btn" type="button">Request Support</button></div>
+          <div class="mini-card"><h3>Interview Prep</h3><p>Practice behavioral questions and technical explanation clarity.</p><button class="btn" type="button">Request Support</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <h2>One Action Step System (Mock)</h2>
+            <p>Every meeting ends with one visible next step for momentum.</p>
+          </div>
+          <span class="badge status-connected">Action Focus</span>
+        </div>
+        <div>
+          <span class="action-pill">Apply to one internship</span>
+          <span class="action-pill">Email one professor</span>
+          <span class="action-pill">Join one project</span>
+          <span class="action-pill">Fix resume</span>
+          <span class="action-pill">Make LinkedIn</span>
+          <span class="action-pill">Attend office hours</span>
+          <span class="action-pill">Sign up for an outreach event</span>
+        </div>
+        <div class="button-row" style="margin-top: 12px;">
+          <button class="btn" type="button">Assign Action Step</button>
+          <button class="btn" type="button">Mark Step Complete</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const projects = [
+      {
+        name: "Beginner App Development Team",
+        category: "STEM, Software",
+        difficulty: "Beginner",
+        skills: "JavaScript, UI basics, teamwork",
+        description: "Build a simple app and present how user needs were translated into features.",
+        goodFor: "Computer science majors, beginners in coding, app development interests",
+        spots: "6"
+      },
+      {
+        name: "Robotics Design Group",
+        category: "STEM, Engineering",
+        difficulty: "Intermediate",
+        skills: "CAD, prototyping, problem solving",
+        description: "Design and test robot components for a lightweight challenge build.",
+        goodFor: "Engineering majors, robotics interests, hardware beginners",
+        spots: "4"
+      },
+      {
+        name: "Research Starter Team",
+        category: "STEM, Research",
+        difficulty: "Beginner",
+        skills: "Reading papers, summaries, collaboration",
+        description: "Learn research basics through topic scans and mini literature reviews.",
+        goodFor: "Biology majors, pre-med students, research beginners",
+        spots: "8"
+      },
+      {
+        name: "Engineering Outreach Crew",
+        category: "STEM, Outreach",
+        difficulty: "Beginner",
+        skills: "Event planning, communication",
+        description: "Create hands-on STEM demos for local youth outreach events.",
+        goodFor: "Engineering majors, outreach interests, public speaking practice",
+        spots: "10"
+      },
+      {
+        name: "Data Science Mini Project",
+        category: "STEM, Data",
+        difficulty: "Intermediate",
+        skills: "Python, charts, storytelling",
+        description: "Analyze a public dataset and present actionable findings to peers.",
+        goodFor: "Data science majors, coding + analytics interests, portfolio building",
+        spots: "5"
+      },
+      {
+        name: "Health Awareness Outreach Team",
+        category: "Nursing, Outreach, Public Health",
+        difficulty: "Beginner",
+        skills: "Communication, research, public speaking, health awareness",
+        description: "Members create health awareness materials for students on sleep, stress, hydration, nutrition, blood pressure, and basic wellness.",
+        goodFor: "Nursing majors, biology majors, public health interests, pre-med students",
+        spots: "6 to 10"
+      },
+      {
+        name: "First-Year Wellness Check-In Project",
+        category: "Nursing, Mental Health, Outreach",
+        difficulty: "Beginner",
+        skills: "Empathy, listening, communication, organization",
+        description: "Members help design a wellness check-in system for underclassmen focused on stress, burnout, sleep, and campus resources.",
+        goodFor: "Nursing, psychology, human services, public health",
+        spots: "4 to 8"
+      },
+      {
+        name: "CPR and Basic Safety Workshop Team",
+        category: "Nursing, Emergency Preparedness, Outreach",
+        difficulty: "Beginner to Intermediate",
+        skills: "Event planning, communication, basic safety knowledge",
+        description: "Members help organize a basic health and safety workshop covering CPR awareness, emergency response, and common campus health situations.",
+        goodFor: "Nursing, pre-med, health sciences, public health",
+        spots: "5 to 8"
+      },
+      {
+        name: "Campus Health Resource Guide",
+        category: "Nursing, Research, Student Support",
+        difficulty: "Beginner",
+        skills: "Research, writing, organization",
+        description: "Members build a guide explaining where students can go for health services, counseling, wellness support, food assistance, emergency help, and academic support.",
+        goodFor: "Nursing, psychology, public health, social work interests",
+        spots: "4 to 6"
+      },
+      {
+        name: "Student Stress and Study Habits Survey",
+        category: "Psychology, Research, Student Success",
+        difficulty: "Beginner to Intermediate",
+        skills: "Survey design, communication, data organization, basic analysis",
+        description: "Members create a short survey about student stress, study habits, motivation, sleep, and time management.",
+        goodFor: "Psychology majors, sociology majors, education interests, data interests",
+        spots: "5 to 8"
+      },
+      {
+        name: "Mental Health Awareness Campaign",
+        category: "Psychology, Outreach, Wellness",
+        difficulty: "Beginner",
+        skills: "Creativity, communication, research, presentation",
+        description: "Members create a student-friendly campaign around anxiety, burnout, self-care, emotional regulation, and asking for help.",
+        goodFor: "Psychology, nursing, public health, human services",
+        spots: "6 to 10"
+      },
+      {
+        name: "Peer Mentorship Conversation Guide",
+        category: "Psychology, Mentorship, Leadership",
+        difficulty: "Beginner",
+        skills: "Listening, empathy, leadership, communication",
+        description: "Members create a guide mentors can use when checking in with underclassmen about goals, stress, classes, confidence, support systems, and next steps.",
+        goodFor: "Psychology, education, leadership, mentorship roles",
+        spots: "4 to 6"
+      },
+      {
+        name: "Motivation and Goal-Setting Workshop",
+        category: "Psychology, Professional Development, Student Success",
+        difficulty: "Beginner",
+        skills: "Public speaking, planning, research, facilitation",
+        description: "Members plan a workshop that helps students set realistic goals, stay motivated, build discipline, and avoid procrastination.",
+        goodFor: "Psychology, education, business, leadership",
+        spots: "4 to 8"
+      },
+      {
+        name: "Student Budgeting Challenge",
+        category: "Finance, Professional Development, Life Skills",
+        difficulty: "Beginner",
+        skills: "Budgeting, Excel or Google Sheets, communication",
+        description: "Members create a student budgeting challenge where participants track spending, build a monthly budget, and manage college expenses.",
+        goodFor: "Finance, business, accounting, economics, entrepreneurship",
+        spots: "5 to 10"
+      },
+      {
+        name: "Credit and Financial Literacy Workshop",
+        category: "Finance, Outreach, Education",
+        difficulty: "Beginner",
+        skills: "Research, presentation, communication",
+        description: "Members create a workshop teaching credit scores, credit cards, interest, debt, saving, and common college money mistakes.",
+        goodFor: "Finance, business, accounting, economics",
+        spots: "4 to 8"
+      },
+      {
+        name: "Scholarship and Internship Tracker",
+        category: "Finance, Career Prep, Student Support",
+        difficulty: "Beginner to Intermediate",
+        skills: "Research, organization, spreadsheet tracking",
+        description: "Members build a shared tracker of scholarships, internships, fellowships, and professional programs with deadlines, eligibility, links, majors, and next steps.",
+        goodFor: "Finance, business, STEM, psychology, nursing, all majors",
+        spots: "4 to 6"
+      },
+      {
+        name: "Beginner Investment Research Team",
+        category: "Finance, Research, Business",
+        difficulty: "Intermediate",
+        skills: "Research, basic finance knowledge, presentation, data analysis",
+        description: "Members learn how to research companies, compare industries, understand basic financial terms, and present beginner-friendly investment research. Educational only, not financial advice.",
+        goodFor: "Finance, business, economics, data analytics",
+        spots: "4 to 8"
+      }
+    ];
+    const projectGrid = document.getElementById("projects-grid");
+    projects.forEach((project) => {
+      const card = document.createElement("article");
+      card.className = "mini-card";
+      card.innerHTML = `
+        <h4>${project.name}</h4>
+        <div class="kv">
+          <strong>Category</strong><span>${project.category}</span>
+          <strong>Difficulty</strong><span>${project.difficulty}</span>
+          <strong>Skills Needed</strong><span>${project.skills}</span>
+          <strong>Good For</strong><span>${project.goodFor}</span>
+          <strong>Spots Available</strong><span>${project.spots}</span>
+        </div>
+        <p>${project.description}</p>
+        <button class="btn" type="button">Request to Join</button>
+      `;
+      projectGrid.appendChild(card);
+    });
+
+    const form = document.getElementById("interest-form");
+    const success = document.getElementById("form-success");
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      success.style.display = "block";
+      form.reset();
+    });
+
+  </script>
+</body>
+</html>

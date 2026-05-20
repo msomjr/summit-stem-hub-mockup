@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leadership Access Mockup</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --brand: #1d4ed8;
+      --brand-soft: #dbeafe;
+      --success: #166534;
+      --success-soft: #dcfce7;
+      --warning: #92400e;
+      --warning-soft: #fef3c7;
+      --purple: #6d28d9;
+      --purple-soft: #ede9fe;
+      --radius: 14px;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .container {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb, #0ea5e9);
+      color: #fff;
+      border-radius: calc(var(--radius) + 4px);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    .hero h1 { margin: 0 0 6px; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+    .hero p { margin: 0; color: #dbeafe; }
+    .section { margin-bottom: 14px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .section-header h2 { margin: 0; font-size: 1.2rem; }
+    .section-header p { margin: 4px 0 0; color: var(--muted); }
+    .badge {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .status-new { background: var(--brand-soft); color: var(--brand); }
+    .status-follow { background: var(--warning-soft); color: var(--warning); }
+    .status-progress { background: var(--purple-soft); color: var(--purple); }
+    .status-connected { background: #cffafe; color: #155e75; }
+    .status-completed { background: var(--success-soft); color: var(--success); }
+    .access-gate {
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+      background: #fff;
+    }
+    .private-message {
+      border: 1px dashed #93c5fd;
+      background: #f8fbff;
+      border-radius: 12px;
+      padding: 12px;
+      color: #1e3a8a;
+      font-weight: 600;
+    }
+    .hidden { display: none; }
+    .grid { display: grid; gap: 12px; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mini-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+    .mini-card h3 { margin: 0 0 6px; font-size: 1rem; }
+    .mini-card p { margin: 0 0 8px; color: var(--muted); font-size: 0.92rem; }
+    .assignment-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+    .assignment-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #f8fafc;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+      background: #fff;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px;
+      text-align: left;
+      font-size: 0.88rem;
+      vertical-align: top;
+    }
+    th {
+      background: #f8fafc;
+      color: #334155;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+    }
+    .info-list { margin: 0; padding-left: 18px; color: var(--muted); }
+    .button-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--brand); color: #fff; }
+    .muted { color: var(--muted); font-size: 0.9rem; }
+    @media (max-width: 720px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .container { width: min(1120px, 94%); }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>Leadership Access - SUMMIT Opportunity Hub</h1>
+      <p>Standalone private mock page for Tracker, Buddy assignments, and Check-Ins.</p>
+      <div class="button-row">
+        <a class="btn btn-primary" href="./stem-hub-mockup.html">Back to Main Hub</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <h2>Private Viewer Gate (Mock)</h2>
+            <p>Mock-only local access control. No backend authentication connected.</p>
+          </div>
+          <span class="badge status-follow">Private Mock</span>
+        </div>
+        <div class="access-gate">
+          <label for="private-viewer"><strong>Current Viewer</strong></label>
+          <select id="private-viewer" aria-label="Select viewer for mock private access">
+            <option>Public Member</option>
+            <option>You</option>
+            <option>Ferra</option>
+          </select>
+          <p class="muted">Only You and Ferra can view the sections below in this demo.</p>
+        </div>
+        <div id="private-denied" class="private-message">
+          Access limited in mock mode. Select <strong>You</strong> or <strong>Ferra</strong> to preview this page.
+        </div>
+      </div>
+    </section>
+
+    <div id="private-area" class="hidden">
+      <section class="section">
+        <div class="card">
+          <div class="section-header">
+            <div>
+              <h2>Member STEM Tracker (Mock)</h2>
+              <p>Track goals, support gaps, follow-up ownership, and progress.</p>
+            </div>
+            <span class="badge status-progress">Local Mock Data</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Year</th>
+                  <th>Major</th>
+                  <th>Goal</th>
+                  <th>Needs Help With</th>
+                  <th>Resume</th>
+                  <th>LinkedIn</th>
+                  <th>Project Interest</th>
+                  <th>Internship Interest</th>
+                  <th>Assigned Follow-Up</th>
+                  <th>Next Step</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="tracker-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card">
+          <div class="section-header">
+            <div>
+              <h2>Buddy System Split (Mock)</h2>
+              <p>Assignments grouped by coordinator so ownership is clear.</p>
+            </div>
+          </div>
+          <div id="buddy-split-grid" class="grid grid-2"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card">
+          <div class="section-header">
+            <div>
+              <h2>Mentorship and Check-Ins (Mock)</h2>
+              <p>Weekly or biweekly prompts for leadership follow-up.</p>
+            </div>
+          </div>
+          <ul class="info-list">
+            <li>Who did we help this week?</li>
+            <li>Who needs follow-up?</li>
+            <li>What opportunities did we find?</li>
+            <li>What projects can we connect members to?</li>
+            <li>What event or outreach idea are we working on?</li>
+            <li>What is the next visible result we need?</li>
+          </ul>
+          <div class="button-row">
+            <button class="btn btn-primary" type="button">Log Weekly Check-In</button>
+            <button class="btn" type="button">Schedule Biweekly Review</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const members = [
+      {
+        name: "Ariana M.",
+        year: "Freshman",
+        major: "Computer Science",
+        goal: "Join first coding project",
+        needsHelp: "Resume bullet writing",
+        resume: "Needs Update",
+        linkedin: "No",
+        projectInterest: "Beginner App Dev Team",
+        internshipInterest: "Mini-Internship",
+        followUp: "Co-Director Ferranmi",
+        nextStep: "Draft resume in template",
+        status: "Needs Follow-Up"
+      },
+      {
+        name: "Derek L.",
+        year: "Sophomore",
+        major: "Mechanical Engineering",
+        goal: "Build robotics portfolio",
+        needsHelp: "Finding beginner projects",
+        resume: "Yes",
+        linkedin: "Needs Improvement",
+        projectInterest: "Robotics Design Group",
+        internshipInterest: "Internship",
+        followUp: "Co-Director Manny",
+        nextStep: "Request to join robotics team",
+        status: "In Progress"
+      },
+      {
+        name: "Imani R.",
+        year: "Freshman",
+        major: "Biology",
+        goal: "Get first research experience",
+        needsHelp: "Professor outreach email",
+        resume: "No",
+        linkedin: "No",
+        projectInterest: "Research Starter Team",
+        internshipInterest: "Research",
+        followUp: "Co-Director Ferranmi",
+        nextStep: "Send one professor email",
+        status: "New"
+      },
+      {
+        name: "Jordan T.",
+        year: "Junior",
+        major: "Data Science",
+        goal: "Apply to summer data internship",
+        needsHelp: "Interview prep",
+        resume: "Yes",
+        linkedin: "Yes",
+        projectInterest: "Data Science Mini Project",
+        internshipInterest: "Internship",
+        followUp: "Co-Director Manny",
+        nextStep: "Complete two mock interview rounds",
+        status: "Connected"
+      },
+      {
+        name: "Priya S.",
+        year: "Sophomore",
+        major: "Civil Engineering",
+        goal: "Lead outreach project",
+        needsHelp: "Project story wording",
+        resume: "Yes",
+        linkedin: "Needs Improvement",
+        projectInterest: "Engineering Outreach Crew",
+        internshipInterest: "Outreach",
+        followUp: "Co-Director Ferranmi",
+        nextStep: "Finalize outreach event proposal",
+        status: "Completed"
+      }
+    ];
+
+    function statusClass(status) {
+      if (status === "New") return "status-new";
+      if (status === "Needs Follow-Up") return "status-follow";
+      if (status === "In Progress") return "status-progress";
+      if (status === "Connected") return "status-connected";
+      if (status === "Completed") return "status-completed";
+      return "";
+    }
+
+    const trackerBody = document.getElementById("tracker-body");
+    members.forEach((member) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${member.name}</td>
+        <td>${member.year}</td>
+        <td>${member.major}</td>
+        <td>${member.goal}</td>
+        <td>${member.needsHelp}</td>
+        <td>${member.resume}</td>
+        <td>${member.linkedin}</td>
+        <td>${member.projectInterest}</td>
+        <td>${member.internshipInterest}</td>
+        <td>${member.followUp}</td>
+        <td>${member.nextStep}</td>
+        <td><span class="badge ${statusClass(member.status)}">${member.status}</span></td>
+      `;
+      trackerBody.appendChild(row);
+    });
+
+    const buddySplitGrid = document.getElementById("buddy-split-grid");
+    ["Co-Director Ferranmi", "Co-Director Manny"].forEach((coDirector) => {
+      const assignedMembers = members.filter((member) => member.followUp === coDirector);
+      const assignmentList = assignedMembers.map((member) => `
+        <li class="assignment-item">
+          <strong>${member.name}</strong> - ${member.year}, ${member.major}<br />
+          <span class="muted">Needs help with: ${member.needsHelp}</span><br />
+          <span class="badge ${statusClass(member.status)}">${member.status}</span>
+        </li>
+      `).join("");
+
+      const card = document.createElement("div");
+      card.className = "mini-card";
+      card.innerHTML = `
+        <h3>${coDirector}</h3>
+        <p><strong>${assignedMembers.length}</strong> member(s) assigned</p>
+        <ul class="assignment-list">${assignmentList}</ul>
+      `;
+      buddySplitGrid.appendChild(card);
+    });
+
+    const privateViewer = document.getElementById("private-viewer");
+    const privateArea = document.getElementById("private-area");
+    const privateDenied = document.getElementById("private-denied");
+
+    function updatePrivateAccess() {
+      const viewer = privateViewer.value;
+      const hasAccess = viewer === "You" || viewer === "Ferra";
+      privateArea.classList.toggle("hidden", !hasAccess);
+      privateDenied.classList.toggle("hidden", hasAccess);
+    }
+
+    privateViewer.addEventListener("change", updatePrivateAccess);
+    updatePrivateAccess();
+  </script>
+</body>
+</html>
