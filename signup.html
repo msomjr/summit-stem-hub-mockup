@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - SUMMIT STEM Hub</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --brand: #1d4ed8;
+      --brand-soft: #dbeafe;
+      --purple: #6d28d9;
+      --purple-soft: #ede9fe;
+      --radius: 14px;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Center the auth card on the screen */
+    .auth-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .auth-card {
+      width: min(440px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 2px);
+      box-shadow: var(--shadow);
+      padding: 32px;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .auth-header h1 {
+      margin: 0 0 6px;
+      font-size: 1.6rem;
+    }
+
+    .auth-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px var(--brand-soft);
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--brand);
+      color: #fff;
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .switch-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .switch-link a {
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .switch-link a:hover {
+      text-decoration: underline;
+    }
+
+    .back-home {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 0.85rem;
+    }
+
+    .back-home a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .back-home a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Create your account</h1>
+        <p>Join the SUMMIT STEM Hub community.</p>
+      </div>
+
+      <!-- Front-end only: no real authentication yet -->
+      <form onsubmit="event.preventDefault(); window.location.href='./home.html';">
+        <div class="field">
+          <label for="full-name">Full name</label>
+          <input id="full-name" name="full-name" type="text" placeholder="Jane Doe" required />
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="name@example.com" required />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Create a password" required />
+        </div>
+
+        <div class="field">
+          <label for="confirm-password">Confirm password</label>
+          <input id="confirm-password" name="confirm-password" type="password" placeholder="Re-enter your password" required />
+        </div>
+
+        <button class="btn" type="submit">Create account</button>
+      </form>
+
+      <p class="switch-link">
+        Already have an account? <a href="./index.html">Login</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
