@@ -6,21 +6,25 @@
   <title>SUMMIT GPA Tracker Mockup</title>
   <style>
     :root {
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #475569;
-      --border: #e2e8f0;
-      --brand: #1d4ed8;
-      --brand-soft: #dbeafe;
-      --success: #166534;
-      --success-soft: #dcfce7;
-      --warning: #92400e;
-      --warning-soft: #fef3c7;
-      --danger: #991b1b;
-      --danger-soft: #fee2e2;
-      --radius: 14px;
-      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --bg: #061225;
+      --surface: #102038;
+      --surface-2: #172843;
+      --surface-3: #1f3453;
+      --text: #f8fafc;
+      --muted: #9db0c8;
+      --line: rgba(157, 176, 200, 0.24);
+      --brand: #78d6e2;
+      --brand-2: #4f7ec8;
+      --brand-soft: rgba(120, 214, 226, 0.2);
+      --success: #72dca8;
+      --success-soft: rgba(114, 220, 168, 0.18);
+      --warning: #f2c27a;
+      --warning-soft: rgba(242, 194, 122, 0.16);
+      --danger: #f09595;
+      --danger-soft: rgba(240, 149, 149, 0.16);
+      --radius: 18px;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+      --glow: 0 0 0 1px rgba(120, 214, 226, 0.28), 0 0 34px rgba(79, 126, 200, 0.28);
     }
 
     * { box-sizing: border-box; }
@@ -28,9 +32,13 @@
     body {
       margin: 0;
       font-family: Inter, Segoe UI, Arial, sans-serif;
-      background: var(--bg);
+      background:
+        radial-gradient(circle at 8% -8%, rgba(120, 214, 226, 0.2), transparent 46%),
+        radial-gradient(circle at 88% -20%, rgba(79, 126, 200, 0.25), transparent 48%),
+        linear-gradient(180deg, #040b18 0%, #061225 30%, #0a1a33 100%);
       color: var(--text);
       line-height: 1.45;
+      letter-spacing: 0.01em;
     }
 
     .container {
@@ -40,23 +48,58 @@
     }
 
     .hero {
-      background: linear-gradient(135deg, #b91c1c, #dc2626, #ef4444);
-      color: #fff;
-      border-radius: calc(var(--radius) + 4px);
+      background: linear-gradient(150deg, rgba(16, 32, 56, 0.95), rgba(13, 28, 52, 0.94));
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
       padding: 24px;
       box-shadow: var(--shadow);
       margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -90px -90px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(120, 214, 226, 0.2), transparent 70%);
+      pointer-events: none;
     }
 
     .hero h1 {
       margin: 0 0 8px;
       font-size: clamp(1.5rem, 3vw, 2.3rem);
+      letter-spacing: -0.01em;
     }
 
     .hero p {
       margin: 0 0 12px;
-      color: #e2e8f0;
+      color: #c3d5ea;
       max-width: 860px;
+    }
+
+    .hero-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: #d7ecfb;
+      text-transform: uppercase;
+    }
+
+    .hero-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 1px solid rgba(157, 176, 200, 0.45);
+      box-shadow: 0 8px 18px rgba(79, 126, 200, 0.35);
     }
 
     .button-row {
@@ -66,24 +109,46 @@
     }
 
     .btn {
-      border: none;
+      border: 1px solid transparent;
       border-radius: 999px;
       padding: 10px 14px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.12s ease;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+      font-size: 0.85rem;
     }
 
-    .btn:hover { transform: translateY(-1px); }
+    .btn:hover {
+      transform: translateY(-1px);
+    }
 
-    .btn-primary { background: var(--brand); color: #fff; }
-    .btn-light { background: #fff; color: #1d4ed8; }
-    .btn-muted { background: #e2e8f0; color: #1e293b; }
-    .btn-danger { background: #fee2e2; color: #991b1b; }
+    .btn-primary {
+      color: #06223d;
+      background: linear-gradient(135deg, #8ce3ee, #5ea6df);
+      box-shadow: 0 10px 28px rgba(94, 166, 223, 0.34);
+    }
+
+    .btn-light {
+      color: var(--text);
+      border-color: var(--line);
+      background: rgba(23, 40, 67, 0.72);
+    }
+
+    .btn-muted {
+      color: #cde3f4;
+      border-color: var(--line);
+      background: rgba(31, 52, 83, 0.65);
+    }
+
+    .btn-danger {
+      color: var(--danger);
+      border-color: rgba(240, 149, 149, 0.35);
+      background: var(--danger-soft);
+    }
 
     .tabs {
       display: flex;
@@ -93,31 +158,39 @@
     }
 
     .tab-btn {
-      border: 1px solid var(--border);
-      background: #fff;
-      color: #1e293b;
+      border: 1px solid var(--line);
+      background: rgba(16, 32, 56, 0.68);
+      color: #c7d9ec;
       border-radius: 999px;
       padding: 9px 14px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
+      transition: all 0.16s ease;
     }
 
     .tab-btn.active {
       background: var(--brand-soft);
-      color: var(--brand);
-      border-color: #93c5fd;
+      color: #dbf4f8;
+      border-color: rgba(120, 214, 226, 0.54);
     }
 
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: linear-gradient(150deg, rgba(16, 32, 56, 0.88), rgba(12, 24, 43, 0.86));
+      border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 16px;
       margin-bottom: 12px;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(120, 214, 226, 0.58);
+      box-shadow: var(--glow);
     }
 
     .section-header {
@@ -144,11 +217,13 @@
     .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
+    .grid-col-span-2 { grid-column: span 2; }
+
     .stat-card {
-      border: 1px solid var(--border);
+      border: 1px solid var(--line);
       border-radius: 12px;
       padding: 12px;
-      background: #fff;
+      background: rgba(31, 52, 83, 0.55);
     }
 
     .stat-label {
@@ -160,7 +235,7 @@
     .stat-value {
       font-size: 1.25rem;
       font-weight: 700;
-      color: #0b3aa8;
+      color: #9fe5ee;
     }
 
     .badge {
@@ -169,29 +244,30 @@
       padding: 4px 10px;
       font-size: 0.8rem;
       font-weight: 700;
+      border: 1px solid transparent;
     }
 
-    .badge-success { background: var(--success-soft); color: var(--success); }
-    .badge-warning { background: var(--warning-soft); color: var(--warning); }
-    .badge-danger { background: var(--danger-soft); color: var(--danger); }
-    .badge-brand { background: var(--brand-soft); color: var(--brand); }
+    .badge-success { background: var(--success-soft); color: var(--success); border-color: rgba(114, 220, 168, 0.3); }
+    .badge-warning { background: var(--warning-soft); color: var(--warning); border-color: rgba(242, 194, 122, 0.3); }
+    .badge-danger { background: var(--danger-soft); color: var(--danger); border-color: rgba(240, 149, 149, 0.3); }
+    .badge-brand { background: var(--brand-soft); color: #d9f3f7; border-color: rgba(120, 214, 226, 0.38); }
 
     label {
       display: block;
       margin-bottom: 5px;
       font-size: 0.86rem;
       font-weight: 600;
-      color: #1f2937;
+      color: #d5e7f8;
     }
 
     input, select, textarea {
       width: 100%;
-      border: 1px solid var(--border);
+      border: 1px solid var(--line);
       border-radius: 10px;
       padding: 9px 11px;
       font: inherit;
-      background: #fff;
-      color: #0f172a;
+      background: rgba(11, 24, 43, 0.78);
+      color: var(--text);
     }
 
     textarea {
@@ -201,31 +277,33 @@
 
     .table-wrap {
       overflow-x: auto;
-      border: 1px solid var(--border);
+      border: 1px solid var(--line);
       border-radius: 10px;
+      background: rgba(11, 24, 43, 0.5);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       min-width: 940px;
-      background: #fff;
+      background: transparent;
     }
 
     th, td {
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--line);
       text-align: left;
       vertical-align: top;
       padding: 10px;
       font-size: 0.88rem;
+      color: #d2e3f4;
     }
 
     th {
-      background: #f8fafc;
+      background: rgba(31, 52, 83, 0.62);
       font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.03em;
-      color: #334155;
+      color: #bcd2ea;
     }
 
     .saved-grid {
@@ -235,10 +313,10 @@
     }
 
     .saved-card {
-      border: 1px solid var(--border);
+      border: 1px solid var(--line);
       border-radius: 12px;
       padding: 12px;
-      background: #fff;
+      background: rgba(31, 52, 83, 0.56);
     }
 
     .saved-card h3 {
@@ -260,6 +338,7 @@
 
     @media (max-width: 720px) {
       .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .grid-col-span-2 { grid-column: auto; }
       .container { width: min(1160px, 96%); }
       .hero { padding: 18px; }
       .tabs { gap: 6px; }
@@ -270,6 +349,10 @@
 <body>
   <main class="container">
     <section class="hero">
+      <div class="hero-brand">
+        <img class="hero-mark" src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
+        <span>The Summit Platform</span>
+      </div>
       <h1>SUMMIT GPA Tracker (Mock)</h1>
       <p>Standalone GPA planning tool using local state and mock data only. No authentication, no backend, and no database connections.</p>
       <div class="button-row">
@@ -288,7 +371,7 @@
       <div class="card">
         <div class="section-header">
           <h2>Course Entry</h2>
-          <p>Add, edit, and remove semester courses, then press Calculate GPA to update results.</p>
+          <p>Add, edit, and remove semester courses. GPA updates live whenever values change.</p>
         </div>
 
         <div class="table-wrap">
@@ -313,44 +396,39 @@
           <h2>Add Course</h2>
           <p>Use this form to add another class to the current semester calculation.</p>
         </div>
-        <form id="add-course-form">
-          <div class="grid grid-3">
-            <div>
-              <label for="new-course-name">Course Name</label>
-              <input id="new-course-name" placeholder="Intro to Programming" />
-            </div>
-            <div>
-              <label for="new-course-credits">Credit Hours</label>
-              <input id="new-course-credits" type="number" min="0" step="0.5" placeholder="3" />
-            </div>
-            <div>
-              <label for="new-course-grade">Grade</label>
-              <select id="new-course-grade"></select>
-            </div>
-            <div>
-              <label for="new-course-semester">Semester</label>
-              <select id="new-course-semester">
-                <option value="Fall 2026">Fall 2026</option>
-                <option value="Spring 2027">Spring 2027</option>
-              </select>
-            </div>
-            <div class="grid-col-span-2">
-              <label for="new-course-notes">Notes</label>
-              <textarea id="new-course-notes" placeholder="Optional notes about this class"></textarea>
-            </div>
+        <div class="grid grid-3">
+          <div>
+            <label for="new-course-name">Course Name</label>
+            <input id="new-course-name" placeholder="Intro to Programming" />
           </div>
-          <div class="button-row" style="margin-top: 10px;">
-            <button class="btn btn-primary" id="add-course-btn" type="submit">Add Course</button>
+          <div>
+            <label for="new-course-credits">Credit Hours</label>
+            <input id="new-course-credits" type="number" min="0" step="0.5" placeholder="3" />
           </div>
-        </form>
+          <div>
+            <label for="new-course-grade">Grade</label>
+            <select id="new-course-grade"></select>
+          </div>
+          <div>
+            <label for="new-course-semester">Semester</label>
+            <select id="new-course-semester">
+              <option value="Fall 2026">Fall 2026</option>
+              <option value="Spring 2027">Spring 2027</option>
+            </select>
+          </div>
+          <div class="grid-col-span-2">
+            <label for="new-course-notes">Notes</label>
+            <textarea id="new-course-notes" placeholder="Optional notes about this class"></textarea>
+          </div>
+        </div>
+        <div class="button-row" style="margin-top: 10px;">
+          <button class="btn btn-primary" id="add-course-btn" type="button">Add Course</button>
+        </div>
       </div>
 
       <div class="card">
         <div class="section-header">
           <h2>Semester Summary</h2>
-        </div>
-        <div class="button-row" style="margin-bottom: 10px;">
-          <button class="btn btn-primary" id="calculate-gpa-btn" type="button">Calculate GPA</button>
         </div>
         <div class="grid grid-4" id="semester-summary-cards"></div>
       </div>
@@ -468,8 +546,7 @@
     const tabs = document.querySelectorAll(".tab-btn");
     const panels = document.querySelectorAll(".tab-panel");
     const coursesBody = document.getElementById("courses-body");
-    const addCourseForm = document.getElementById("add-course-form");
-    const calculateGpaBtn = document.getElementById("calculate-gpa-btn");
+    const addCourseBtn = document.getElementById("add-course-btn");
     const summaryCards = document.getElementById("semester-summary-cards");
     const cumulativeCards = document.getElementById("cumulative-summary-cards");
     const savedSemestersGrid = document.getElementById("saved-semesters-grid");
@@ -662,58 +739,20 @@
       });
     }
 
-    function renderPendingCalculationState() {
-      summaryCards.innerHTML = `
-        <div class="stat-card">
-          <div class="stat-label">Semester GPA</div>
-          <div class="stat-value">--</div>
-          <div class="stat-label">Press Calculate GPA to update.</div>
-        </div>
-      `;
-
-      cumulativeCards.innerHTML = `
-        <div class="stat-card">
-          <div class="stat-label">Updated Cumulative GPA</div>
-          <div class="stat-value">--</div>
-          <div class="stat-label">Waiting for calculation.</div>
-        </div>
-      `;
-
-      plannerTargetGpa.textContent = "--";
-      plannerSemesterCredits.textContent = "--";
-      plannerNeededGpa.textContent = "--";
-      plannerNeededBadge.innerHTML = `<span class="badge badge-warning">Press Calculate GPA to refresh planner</span>`;
-    }
-
-    function calculateAndRenderGpa() {
+    function renderAll() {
+      renderCourses();
       renderSemesterSummary();
       renderCumulativeSummary();
       renderGoalPlanner();
-      activateTab("semester-calculator");
-      summaryCards.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    function renderAll() {
-      renderCourses();
       renderSavedSemesters();
-      renderPendingCalculationState();
-    }
-
-    function activateTab(tabName) {
-      tabs.forEach((btn) => btn.classList.remove("active"));
-      panels.forEach((panel) => panel.classList.remove("active"));
-
-      const targetTabButton = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
-      const targetPanel = document.getElementById(`tab-${tabName}`);
-      if (!targetTabButton || !targetPanel) return;
-
-      targetTabButton.classList.add("active");
-      targetPanel.classList.add("active");
     }
 
     tabs.forEach((tab) => {
       tab.addEventListener("click", () => {
-        activateTab(tab.dataset.tab);
+        tabs.forEach((btn) => btn.classList.remove("active"));
+        panels.forEach((panel) => panel.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(`tab-${tab.dataset.tab}`).classList.add("active");
       });
     });
 
@@ -725,7 +764,7 @@
     });
     newGrade.value = "A";
 
-    function addCourseFromForm() {
+    addCourseBtn.addEventListener("click", () => {
       const name = newName.value.trim();
       const credits = Math.max(0, toNumber(newCredits.value));
       const grade = newGrade.value;
@@ -752,11 +791,6 @@
       newNotes.value = "";
       newGrade.value = "A";
       renderAll();
-    }
-
-    addCourseForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      addCourseFromForm();
     });
 
     coursesBody.addEventListener("input", (event) => {
@@ -774,7 +808,9 @@
         course[field] = target.value;
       }
 
-      renderPendingCalculationState();
+      renderSemesterSummary();
+      renderCumulativeSummary();
+      renderGoalPlanner();
     });
 
     coursesBody.addEventListener("click", (event) => {
@@ -788,11 +824,10 @@
 
     [previousGpaInput, completedCreditsInput, targetGpaInput].forEach((input) => {
       input.addEventListener("input", () => {
-        renderPendingCalculationState();
+        renderCumulativeSummary();
+        renderGoalPlanner();
       });
     });
-
-    calculateGpaBtn.addEventListener("click", calculateAndRenderGpa);
 
     savedSemestersGrid.addEventListener("click", (event) => {
       const target = event.target;

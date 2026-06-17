@@ -3,407 +3,1342 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Leadership Access Mockup</title>
+  <title>Leadership Dashboard - SUMMIT STEM Platform</title>
   <style>
     :root {
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #475569;
-      --border: #e2e8f0;
-      --brand: #1d4ed8;
-      --brand-soft: #dbeafe;
-      --success: #166534;
-      --success-soft: #dcfce7;
-      --warning: #92400e;
-      --warning-soft: #fef3c7;
-      --purple: #6d28d9;
-      --purple-soft: #ede9fe;
-      --radius: 14px;
-      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --bg: #061225;
+      --surface: #102038;
+      --surface-2: #172843;
+      --surface-3: #1f3453;
+      --text: #f8fafc;
+      --muted: #9db0c8;
+      --line: rgba(157, 176, 200, 0.24);
+      --brand: #78d6e2;
+      --brand-soft: rgba(120, 214, 226, 0.2);
+      --success: #72dca8;
+      --success-soft: rgba(114, 220, 168, 0.18);
+      --warning: #f2c27a;
+      --warning-soft: rgba(242, 194, 122, 0.16);
+      --danger: #f09595;
+      --danger-soft: rgba(240, 149, 149, 0.16);
+      --radius-xl: 22px;
+      --radius: 16px;
+      --radius-sm: 12px;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+      --glow: 0 0 0 1px rgba(120, 214, 226, 0.28), 0 0 34px rgba(79, 126, 200, 0.28);
     }
 
     * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       font-family: Inter, Segoe UI, Arial, sans-serif;
-      background: var(--bg);
+      background:
+        radial-gradient(circle at 8% -8%, rgba(120, 214, 226, 0.2), transparent 46%),
+        radial-gradient(circle at 88% -20%, rgba(79, 126, 200, 0.25), transparent 48%),
+        linear-gradient(180deg, #040b18 0%, #061225 30%, #0a1a33 100%);
       color: var(--text);
       line-height: 1.5;
+      letter-spacing: 0.01em;
     }
-    .container {
-      width: min(1120px, 92%);
+
+    .layout {
+      width: min(1320px, 96%);
       margin: 0 auto;
-      padding: 24px 0 48px;
+      padding: 18px 0 34px;
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 16px;
     }
-    .hero {
-      background: linear-gradient(135deg, #b91c1c, #dc2626, #ef4444);
-      color: #fff;
-      border-radius: calc(var(--radius) + 4px);
-      padding: 28px;
+
+    .sidebar {
+      position: sticky;
+      top: 14px;
+      height: calc(100vh - 28px);
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(150deg, rgba(16, 32, 56, 0.9), rgba(12, 24, 43, 0.88));
       box-shadow: var(--shadow);
-      margin-bottom: 18px;
+      padding: 14px;
     }
-    .hero h1 { margin: 0 0 6px; font-size: clamp(1.5rem, 3vw, 2.2rem); }
-    .hero p { margin: 0; color: #dbeafe; }
-    .section { margin-bottom: 14px; }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      box-shadow: var(--shadow);
-    }
-    .section-header {
+
+    .brand {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 16px;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: rgba(31, 52, 83, 0.52);
     }
-    .section-header h2 { margin: 0; font-size: 1.2rem; }
-    .section-header p { margin: 4px 0 0; color: var(--muted); }
-    .badge {
-      display: inline-block;
+
+    .brand img {
+      width: 40px;
+      height: 40px;
       border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 0.8rem;
+      object-fit: cover;
+      border: 1px solid rgba(157, 176, 200, 0.45);
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 0.84rem;
+      letter-spacing: 0.04em;
+    }
+
+    .brand span {
+      font-size: 0.74rem;
+      color: var(--muted);
       font-weight: 700;
+      text-transform: uppercase;
     }
-    .status-new { background: var(--brand-soft); color: var(--brand); }
-    .status-follow { background: var(--warning-soft); color: var(--warning); }
-    .status-progress { background: var(--purple-soft); color: var(--purple); }
-    .status-connected { background: #cffafe; color: #155e75; }
-    .status-completed { background: var(--success-soft); color: var(--success); }
-    .access-gate {
-      border: 1px solid #bfdbfe;
-      background: #eff6ff;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 12px;
+
+    .side-nav {
+      display: grid;
+      gap: 7px;
     }
-    select {
-      width: 100%;
-      border: 1px solid var(--border);
+
+    .side-nav a {
+      display: block;
       border-radius: 10px;
-      padding: 10px 12px;
-      font: inherit;
-      background: #fff;
+      border: 1px solid var(--line);
+      background: rgba(23, 40, 67, 0.55);
+      color: #d3e6f8;
+      padding: 8px 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.16s ease;
     }
-    .private-message {
-      border: 1px dashed #93c5fd;
-      background: #f8fbff;
+
+    .side-nav a:hover {
+      border-color: rgba(120, 214, 226, 0.54);
+      background: var(--brand-soft);
+      color: #e4f7fb;
+    }
+
+    .edit-controls {
+      margin-top: 12px;
+      border: 1px solid var(--line);
       border-radius: 12px;
-      padding: 12px;
-      color: #1e3a8a;
-      font-weight: 600;
-    }
-    .hidden { display: none; }
-    .grid { display: grid; gap: 12px; }
-    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .mini-card {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      background: #fff;
-    }
-    .mini-card h3 { margin: 0 0 6px; font-size: 1rem; }
-    .mini-card p { margin: 0 0 8px; color: var(--muted); font-size: 0.92rem; }
-    .assignment-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
+      padding: 10px;
+      background: rgba(31, 52, 83, 0.52);
       display: grid;
       gap: 8px;
     }
-    .assignment-item {
-      border: 1px solid var(--border);
+
+    .edit-controls p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .main {
+      min-width: 0;
+    }
+
+    .topbar {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(150deg, rgba(16, 32, 56, 0.95), rgba(13, 28, 52, 0.94));
+      box-shadow: var(--shadow);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .topbar::after {
+      content: "";
+      position: absolute;
+      inset: auto -110px -110px auto;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(120, 214, 226, 0.2), transparent 70%);
+      pointer-events: none;
+    }
+
+    .topbar h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+      letter-spacing: -0.01em;
+    }
+
+    .topbar p {
+      margin: 0;
+      max-width: 72ch;
+      color: #c3d5ea;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+      font-size: 0.84rem;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      color: #06223d;
+      background: linear-gradient(135deg, #8ce3ee, #5ea6df);
+      box-shadow: 0 10px 28px rgba(94, 166, 223, 0.34);
+    }
+
+    .btn-secondary {
+      color: #d7ebfa;
+      border-color: var(--line);
+      background: rgba(31, 52, 83, 0.65);
+    }
+
+    .btn-danger {
+      color: var(--danger);
+      border-color: rgba(240, 149, 149, 0.35);
+      background: var(--danger-soft);
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(150deg, rgba(16, 32, 56, 0.88), rgba(12, 24, 43, 0.86));
+      padding: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 12px;
+      scroll-margin-top: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(1.05rem, 2vw, 1.45rem);
+      letter-spacing: -0.01em;
+    }
+
+    .section-head p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid rgba(120, 214, 226, 0.45);
+      background: var(--brand-soft);
+      color: #d8f4f8;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+
+    .card {
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(31, 52, 83, 0.55);
+      padding: 12px;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(120, 214, 226, 0.58);
+      box-shadow: var(--glow);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: clamp(1.1rem, 2vw, 1.6rem);
+      color: #a9e8f0;
+      margin-bottom: 2px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .announce-list,
+    .task-list,
+    .bullet-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .announce-list li,
+    .task-list li {
+      border: 1px solid var(--line);
       border-radius: 10px;
       padding: 8px 10px;
-      background: #f8fafc;
+      background: rgba(11, 24, 43, 0.56);
+      color: #d2e3f4;
+      font-size: 0.88rem;
     }
+
+    .bullet-list li {
+      color: #c6d6ea;
+      font-size: 0.9rem;
+    }
+
+    .bullet-list li::before {
+      content: "•";
+      color: var(--brand);
+      margin-right: 8px;
+      font-weight: 800;
+    }
+
     .table-wrap {
       overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(11, 24, 43, 0.5);
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 980px;
-      background: #fff;
+      min-width: 860px;
+      background: transparent;
     }
+
     th, td {
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--line);
       padding: 10px;
       text-align: left;
-      font-size: 0.88rem;
       vertical-align: top;
+      font-size: 0.86rem;
+      color: #d2e3f4;
     }
+
     th {
-      background: #f8fafc;
-      color: #334155;
-      font-size: 0.82rem;
+      background: rgba(31, 52, 83, 0.62);
+      font-size: 0.78rem;
       text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #bcd2ea;
     }
-    .info-list { margin: 0; padding-left: 18px; color: var(--muted); }
-    .button-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-    .btn {
-      border: none;
+
+    .badge {
+      display: inline-block;
       border-radius: 999px;
-      padding: 10px 14px;
-      font-weight: 600;
-      cursor: pointer;
+      padding: 4px 9px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+      white-space: nowrap;
     }
-    .btn-primary { background: var(--brand); color: #fff; }
-    .muted { color: var(--muted); font-size: 0.9rem; }
-    @media (max-width: 720px) {
-      .grid-2 { grid-template-columns: 1fr; }
-      .container { width: min(1120px, 94%); }
+
+    .status-green { background: var(--success-soft); color: var(--success); border-color: rgba(114, 220, 168, 0.3); }
+    .status-yellow { background: var(--warning-soft); color: var(--warning); border-color: rgba(242, 194, 122, 0.3); }
+    .status-red { background: var(--danger-soft); color: var(--danger); border-color: rgba(240, 149, 149, 0.3); }
+    .status-blue { background: var(--brand-soft); color: #d9f3f7; border-color: rgba(120, 214, 226, 0.38); }
+    .status-purple { background: rgba(127, 136, 255, 0.15); color: #c4cbff; border-color: rgba(127, 136, 255, 0.35); }
+
+    .progress-track {
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(157, 176, 200, 0.2);
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #84dfee, #5ea6df);
+    }
+
+    .bar-chart {
+      display: grid;
+      gap: 9px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 170px 1fr auto;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.84rem;
+      color: #d2e3f4;
+    }
+
+    .bar-shell {
+      height: 9px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(157, 176, 200, 0.2);
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #9fe6ef, #66aee1);
+    }
+
+    .legacy-hidden {
+      display: none;
+    }
+
+    .edit-mode [data-editable="text"] {
+      outline: 1px dashed rgba(120, 214, 226, 0.6);
+      outline-offset: 2px;
+      border-radius: 4px;
+      cursor: text;
+    }
+
+    .edit-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(120, 214, 226, 0.35);
+      background: rgba(120, 214, 226, 0.12);
+      color: #dbf4f8;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      margin-left: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .row-action-cell {
+      width: 94px;
+    }
+
+    .inline-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: #d7ebfa;
+      background: rgba(31, 52, 83, 0.7);
+    }
+
+    .mini-btn:hover {
+      border-color: rgba(120, 214, 226, 0.54);
+      background: var(--brand-soft);
+      color: #e4f7fb;
+    }
+
+    .mini-btn.danger {
+      color: var(--danger);
+      border-color: rgba(240, 149, 149, 0.35);
+      background: var(--danger-soft);
+    }
+
+    .pin-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 7, 16, 0.75);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 16px;
+    }
+
+    .pin-overlay.active {
+      display: flex;
+    }
+
+    .pin-modal {
+      width: min(420px, 100%);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(150deg, rgba(16, 32, 56, 0.95), rgba(13, 28, 52, 0.94));
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .pin-modal h3 {
+      margin: 0 0 6px;
+      font-size: 1.15rem;
+    }
+
+    .pin-modal p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .pin-input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+      background: rgba(11, 24, 43, 0.78);
+      color: var(--text);
+      letter-spacing: 0.15em;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .pin-error {
+      margin: 0 0 10px;
+      color: var(--danger);
+      font-size: 0.84rem;
+      font-weight: 700;
+      display: none;
+    }
+
+    @media (max-width: 1100px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+      }
+
+      .side-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .layout {
+        width: min(1320px, 94%);
+      }
+
+      .side-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-2, .grid-3, .grid-4, .grid-6 {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-row {
+        grid-template-columns: 1fr;
+        gap: 5px;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="container">
-    <section class="hero">
-      <h1>Leadership Access - SUMMIT Opportunity Hub</h1>
-      <p>Standalone private mock page for Tracker, Buddy assignments, and Check-Ins.</p>
-      <div class="button-row">
-        <a class="btn btn-primary" href="./stem-hub-mockup.html">Back to Main Hub</a>
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
+        <div>
+          <strong>SUMMIT LEADERSHIP</strong>
+          <span>Dashboard Console</span>
+        </div>
       </div>
-    </section>
+      <nav class="side-nav">
+        <a href="#overview">Leadership Overview</a>
+        <a href="#student-progress">Student Progress Tracking</a>
+        <a href="#project-analytics">Project Analytics</a>
+        <a href="#mentor-management">Mentor Management</a>
+        <a href="#internship-readiness">Internship Readiness</a>
+        <a href="#event-management">Event Management</a>
+        <a href="#leadership-tasks">Leadership Tasks</a>
+        <a href="#legacy-hub">Existing Leadership Hub</a>
+      </nav>
+      <div class="edit-controls">
+        <p>Private edit controls for You/Ferra</p>
+        <button id="edit-mode-btn" class="btn btn-secondary" type="button" disabled>Edit</button>
+        <button id="save-mode-btn" class="btn btn-primary hidden" type="button">Save</button>
+        <button id="exit-mode-btn" class="btn btn-danger hidden" type="button">Exit</button>
+      </div>
+    </aside>
 
-    <section class="section">
-      <div class="card">
-        <div class="section-header">
+    <section class="main">
+      <header class="topbar">
+        <h1>Leadership Dashboard - SUMMIT STEM Platform</h1>
+        <p>Comprehensive operations hub for mentorship routing, project visibility, event delivery, and leadership execution tracking.</p>
+        <div class="button-row">
+          <a class="btn btn-primary" href="./stem-hub-mockup.html">Back to Main Hub</a>
+          <button class="btn btn-secondary" type="button">Export Weekly Report (Mock)</button>
+        </div>
+      </header>
+
+      <section class="section" id="overview">
+        <div class="section-head">
           <div>
-            <h2>Private Viewer Gate (Mock)</h2>
-            <p>Mock-only local access control. No backend authentication connected.</p>
+            <h2>Leadership Overview</h2>
+            <p>High-level operating metrics, activity pulse, and communication updates.</p>
           </div>
-          <span class="badge status-follow">Private Mock</span>
+          <span class="pill">Live Snapshot</span>
         </div>
-        <div class="access-gate">
-          <label for="private-viewer"><strong>Current Viewer</strong></label>
-          <select id="private-viewer" aria-label="Select viewer for mock private access">
-            <option>Public Member</option>
-            <option>You</option>
-            <option>Ferra</option>
-          </select>
-          <p class="muted">Only You and Ferra can view the sections below in this demo.</p>
+        <div class="grid grid-6">
+          <article class="card metric"><strong>148</strong><span>Total Members</span></article>
+          <article class="card metric"><strong>109</strong><span>Active This Week</span></article>
+          <article class="card metric"><strong>36</strong><span>Projects Completed</span></article>
+          <article class="card metric"><strong>24</strong><span>Active Mentors</span></article>
+          <article class="card metric"><strong>7</strong><span>Upcoming Events</span></article>
+          <article class="card metric"><strong>5</strong><span>Recent Announcements</span></article>
         </div>
-        <div id="private-denied" class="private-message">
-          Access limited in mock mode. Select <strong>You</strong> or <strong>Ferra</strong> to preview this page.
+        <div class="grid grid-2" style="margin-top: 10px;">
+          <article class="card">
+            <h3 style="margin: 0 0 8px;">Recent Announcements</h3>
+            <ul class="announce-list">
+              <li>Cybersecurity Capture-the-Flag prep session opens Friday.</li>
+              <li>Engineering track added 4 new embedded systems project slots.</li>
+              <li>Mentor office hours now available on Tuesdays and Thursdays.</li>
+              <li>Resume + LinkedIn support night moved to 6:30 PM.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3 style="margin: 0 0 8px;">Leadership Pulse</h3>
+            <ul class="bullet-list">
+              <li>Member response time improved by 22% over last week.</li>
+              <li>Project intake demand strongest in Cyber and AI tracks.</li>
+              <li>Mentor load balancing needed for two high-volume cohorts.</li>
+              <li>Three event RSVPs have crossed capacity thresholds.</li>
+            </ul>
+          </article>
         </div>
-      </div>
+      </section>
+
+      <section class="section" id="student-progress">
+        <div class="section-head">
+          <div>
+            <h2>Student Progress Tracking</h2>
+            <p>Track participation, execution velocity, and current project status per student.</p>
+          </div>
+          <span class="pill">Operational Table</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>STEM Track</th>
+                <th>Current Project</th>
+                <th>Progress</th>
+                <th>Last Activity</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="student-progress-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="project-analytics">
+        <div class="section-head">
+          <div>
+            <h2>Project Analytics</h2>
+            <p>Demand trends, completion rates, and category distribution for active projects.</p>
+          </div>
+          <span class="pill">Portfolio Insights</span>
+        </div>
+        <div class="grid grid-4">
+          <article class="card metric"><strong>62</strong><span>Total Projects</span></article>
+          <article class="card metric"><strong>Cyber Labs</strong><span>Most Popular Category</span></article>
+          <article class="card metric"><strong>74%</strong><span>Average Completion Rate</span></article>
+          <article class="card metric"><strong>18</strong><span>Projects In Active Sprint</span></article>
+        </div>
+        <div class="grid grid-2" style="margin-top: 10px;">
+          <article class="card">
+            <h3 style="margin: 0 0 8px;">Most Popular Projects</h3>
+            <ul class="announce-list">
+              <li>SIEM Dashboard (27 active members)</li>
+              <li>LLM Prompt Injection Firewall (23 active members)</li>
+              <li>Robotics Design Group (19 active members)</li>
+              <li>Data Science Mini Project (17 active members)</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3 style="margin: 0 0 8px;">Projects by Category</h3>
+            <div class="bar-chart" id="project-category-bars"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="mentor-management">
+        <div class="section-head">
+          <div>
+            <h2>Mentor Management</h2>
+            <p>Directory, mentee assignments, workload balancing, and meeting status visibility.</p>
+          </div>
+          <span class="pill">Mentor Ops</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Mentor</th>
+                <th>Specialization</th>
+                <th>Assigned Mentees</th>
+                <th>Workload</th>
+                <th>Meeting Status</th>
+                <th>Availability</th>
+              </tr>
+            </thead>
+            <tbody id="mentor-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="internship-readiness">
+        <div class="section-head">
+          <div>
+            <h2>Internship Readiness Tracker</h2>
+            <p>Portfolio readiness signals across resume, LinkedIn, project output, and final score.</p>
+          </div>
+          <span class="pill">Career Readiness</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Resume</th>
+                <th>LinkedIn</th>
+                <th>Portfolio</th>
+                <th>Projects Completed</th>
+                <th>Readiness Score</th>
+              </tr>
+            </thead>
+            <tbody id="readiness-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="event-management">
+        <div class="section-head">
+          <div>
+            <h2>Event Management</h2>
+            <p>Coordinate workshops, track attendance, and stage upcoming event operations.</p>
+          </div>
+          <span class="pill">Event Ops</span>
+        </div>
+        <div class="grid grid-2">
+          <article class="card">
+            <h3 style="margin: 0 0 8px;">Upcoming Workshops</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>RSVP</th>
+                    <th>Attendance</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="events-table-body"></tbody>
+              </table>
+            </div>
+          </article>
+          <article class="card">
+            <h3 style="margin: 0 0 8px;">Event Ops Focus</h3>
+            <ul class="bullet-list">
+              <li>Monitor RSVP trends 72 hours before each workshop.</li>
+              <li>Track attendance vs RSVP for turnout forecasting.</li>
+              <li>Flag high-demand events for overflow planning.</li>
+              <li>Document post-event outcomes for leadership review.</li>
+            </ul>
+            <div class="button-row">
+              <button class="btn btn-secondary" type="button">Download Attendance Report (Mock)</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="leadership-tasks">
+        <div class="section-head">
+          <div>
+            <h2>Leadership Tasks</h2>
+            <p>Action board for pending reviews, support requests, and project approvals.</p>
+          </div>
+          <span class="pill">Execution Queue</span>
+        </div>
+        <div class="grid grid-4" id="task-columns"></div>
+      </section>
+
+      <section class="section" id="legacy-hub">
+        <div class="section-head">
+          <div>
+            <h2>Existing Leadership Hub (Original Content)</h2>
+            <p>Preserved and integrated into the dashboard exactly as requested.</p>
+          </div>
+          <span class="pill">Legacy + Active</span>
+        </div>
+
+        <section class="section" style="margin-bottom: 10px;">
+          <div class="card">
+            <div class="section-head" style="margin-bottom: 10px;">
+              <div>
+                <h2 style="margin: 0; font-size: 1.12rem;">Private Viewer Gate (Mock)</h2>
+                <p style="margin: 4px 0 0;">Mock-only local access control. No backend authentication connected.</p>
+              </div>
+              <span class="badge status-yellow">Private Mock</span>
+            </div>
+            <div class="card" style="background: rgba(120, 214, 226, 0.1); border-color: rgba(120, 214, 226, 0.35);">
+              <label for="private-viewer"><strong>Current Viewer</strong></label>
+              <select id="private-viewer" aria-label="Select viewer for mock private access">
+                <option>Public Member</option>
+                <option>You</option>
+                <option>Ferra</option>
+              </select>
+              <p style="margin: 8px 0 0; color: var(--muted);">Only You and Ferra can view the sections below in this demo.</p>
+            </div>
+            <div id="private-denied" class="card" style="border-style: dashed; border-color: rgba(120, 214, 226, 0.5); background: rgba(120, 214, 226, 0.08); margin-top: 10px;">
+              Access limited in mock mode. Select <strong>You</strong> or <strong>Ferra</strong> to preview this page.
+            </div>
+          </div>
+        </section>
+
+        <div id="private-area" class="legacy-hidden">
+          <section class="section">
+            <div class="card">
+              <div class="section-head">
+                <div>
+                  <h2>Member STEM Tracker (Mock)</h2>
+                  <p>Track goals, support gaps, follow-up ownership, and progress.</p>
+                </div>
+                <span class="badge status-purple">Local Mock Data</span>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Year</th>
+                      <th>Major</th>
+                      <th>Goal</th>
+                      <th>Needs Help With</th>
+                      <th>Resume</th>
+                      <th>LinkedIn</th>
+                      <th>Project Interest</th>
+                      <th>Internship Interest</th>
+                      <th>Assigned Follow-Up</th>
+                      <th>Next Step</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tracker-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="card">
+              <div class="section-head">
+                <div>
+                  <h2>Buddy System Split (Mock)</h2>
+                  <p>Assignments grouped by coordinator so ownership is clear.</p>
+                </div>
+              </div>
+              <div id="buddy-split-grid" class="grid grid-2"></div>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="card">
+              <div class="section-head">
+                <div>
+                  <h2>Mentorship and Check-Ins (Mock)</h2>
+                  <p>Weekly or biweekly prompts for leadership follow-up.</p>
+                </div>
+              </div>
+              <ul class="bullet-list">
+                <li>Who did we help this week?</li>
+                <li>Who needs follow-up?</li>
+                <li>What opportunities did we find?</li>
+                <li>What projects can we connect members to?</li>
+                <li>What event or outreach idea are we working on?</li>
+                <li>What is the next visible result we need?</li>
+              </ul>
+              <div class="button-row">
+                <button class="btn btn-primary" type="button">Log Weekly Check-In</button>
+                <button class="btn btn-secondary" type="button">Schedule Biweekly Review</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
     </section>
-
-    <div id="private-area" class="hidden">
-      <section class="section">
-        <div class="card">
-          <div class="section-header">
-            <div>
-              <h2>Member STEM Tracker (Mock)</h2>
-              <p>Track goals, support gaps, follow-up ownership, and progress.</p>
-            </div>
-            <span class="badge status-progress">Local Mock Data</span>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Year</th>
-                  <th>Major</th>
-                  <th>Goal</th>
-                  <th>Needs Help With</th>
-                  <th>Resume</th>
-                  <th>LinkedIn</th>
-                  <th>Project Interest</th>
-                  <th>Internship Interest</th>
-                  <th>Assigned Follow-Up</th>
-                  <th>Next Step</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="tracker-body"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="card">
-          <div class="section-header">
-            <div>
-              <h2>Buddy System Split (Mock)</h2>
-              <p>Assignments grouped by coordinator so ownership is clear.</p>
-            </div>
-          </div>
-          <div id="buddy-split-grid" class="grid grid-2"></div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="card">
-          <div class="section-header">
-            <div>
-              <h2>Mentorship and Check-Ins (Mock)</h2>
-              <p>Weekly or biweekly prompts for leadership follow-up.</p>
-            </div>
-          </div>
-          <ul class="info-list">
-            <li>Who did we help this week?</li>
-            <li>Who needs follow-up?</li>
-            <li>What opportunities did we find?</li>
-            <li>What projects can we connect members to?</li>
-            <li>What event or outreach idea are we working on?</li>
-            <li>What is the next visible result we need?</li>
-          </ul>
-          <div class="button-row">
-            <button class="btn btn-primary" type="button">Log Weekly Check-In</button>
-            <button class="btn" type="button">Schedule Biweekly Review</button>
-          </div>
-        </div>
-      </section>
-    </div>
   </main>
 
+  <div id="pin-overlay" class="pin-overlay" role="dialog" aria-modal="true" aria-labelledby="pin-title">
+    <div class="pin-modal">
+      <h3 id="pin-title">Leadership PIN Required</h3>
+      <p>Enter your PIN to access the private leadership interface.</p>
+      <input id="pin-input" class="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" />
+      <p id="pin-error" class="pin-error">Incorrect PIN. Please try again.</p>
+      <div class="button-row">
+        <button id="pin-submit" class="btn btn-primary" type="button">Unlock Access</button>
+        <button id="pin-cancel" class="btn btn-secondary" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const members = [
-      {
-        name: "Ariana M.",
-        year: "Freshman",
-        major: "Computer Science",
-        goal: "Join first coding project",
-        needsHelp: "Resume bullet writing",
-        resume: "Needs Update",
-        linkedin: "No",
-        projectInterest: "Beginner App Dev Team",
-        internshipInterest: "Mini-Internship",
-        followUp: "Co-Director Ferranmi",
-        nextStep: "Draft resume in template",
-        status: "Needs Follow-Up"
-      },
-      {
-        name: "Derek L.",
-        year: "Sophomore",
-        major: "Mechanical Engineering",
-        goal: "Build robotics portfolio",
-        needsHelp: "Finding beginner projects",
-        resume: "Yes",
-        linkedin: "Needs Improvement",
-        projectInterest: "Robotics Design Group",
-        internshipInterest: "Internship",
-        followUp: "Co-Director Manny",
-        nextStep: "Request to join robotics team",
-        status: "In Progress"
-      },
-      {
-        name: "Imani R.",
-        year: "Freshman",
-        major: "Biology",
-        goal: "Get first research experience",
-        needsHelp: "Professor outreach email",
-        resume: "No",
-        linkedin: "No",
-        projectInterest: "Research Starter Team",
-        internshipInterest: "Research",
-        followUp: "Co-Director Ferranmi",
-        nextStep: "Send one professor email",
-        status: "New"
-      },
-      {
-        name: "Jordan T.",
-        year: "Junior",
-        major: "Data Science",
-        goal: "Apply to summer data internship",
-        needsHelp: "Interview prep",
-        resume: "Yes",
-        linkedin: "Yes",
-        projectInterest: "Data Science Mini Project",
-        internshipInterest: "Internship",
-        followUp: "Co-Director Manny",
-        nextStep: "Complete two mock interview rounds",
-        status: "Connected"
-      },
-      {
-        name: "Priya S.",
-        year: "Sophomore",
-        major: "Civil Engineering",
-        goal: "Lead outreach project",
-        needsHelp: "Project story wording",
-        resume: "Yes",
-        linkedin: "Needs Improvement",
-        projectInterest: "Engineering Outreach Crew",
-        internshipInterest: "Outreach",
-        followUp: "Co-Director Ferranmi",
-        nextStep: "Finalize outreach event proposal",
-        status: "Completed"
-      }
+    const PIN_CODE = "2233";
+    const STORAGE_KEY = "summitLeadershipDashboardSavedMarkup";
+    let isPrivateAuthorized = false;
+    let editMode = false;
+    let pendingViewer = null;
+
+    const editableSectionIds = [
+      "overview",
+      "student-progress",
+      "project-analytics",
+      "mentor-management",
+      "internship-readiness",
+      "event-management",
+      "leadership-tasks",
+      "legacy-hub"
     ];
 
-    function statusClass(status) {
-      if (status === "New") return "status-new";
-      if (status === "Needs Follow-Up") return "status-follow";
-      if (status === "In Progress") return "status-progress";
-      if (status === "Connected") return "status-connected";
-      if (status === "Completed") return "status-completed";
-      return "";
+    const sectionDefaults = {
+      "student-progress-body": ["New Student", "Track", "Project", "50", "Today", "In Progress"],
+      "mentor-table-body": ["Mentor Name", "Specialization", "8", "Moderate", "0 completed / 0 pending", "Available"],
+      "readiness-table-body": ["Student Name", "No", "No", "Not Started", "0", "50"],
+      "events-table-body": ["New Workshop", "Jul 01", "0 / 40", "Projected 0", "Open"],
+      "tracker-body": ["Student Name", "Year", "Major", "Goal", "Needs Help", "No", "No", "Project", "Internship", "Owner", "Next Step", "New"]
+    };
+
+    function badgeClassForStatus(status) {
+      if (status === "Completed" || status === "Connected" || status === "Available" || status === "Ready") return "status-green";
+      if (status === "In Progress" || status === "Moderate" || status === "Balanced" || status === "Open") return "status-blue";
+      if (status === "Needs Follow-Up" || status === "Limited" || status === "Nearly Full" || status === "High Demand" || status === "Developing") return "status-yellow";
+      if (status === "New") return "status-purple";
+      return "status-red";
     }
 
-    const trackerBody = document.getElementById("tracker-body");
-    members.forEach((member) => {
+    function statusClass(status) {
+      if (status === "New") return "status-purple";
+      if (status === "Needs Follow-Up") return "status-yellow";
+      if (status === "In Progress") return "status-blue";
+      if (status === "Connected") return "status-blue";
+      if (status === "Completed") return "status-green";
+      return "status-red";
+    }
+
+    function markEditableText() {
+      document.querySelectorAll(".section h2, .section h3, .section p, .metric strong, .metric span, .announce-list li, .bullet-list li, .task-list li").forEach((el) => {
+        if (!el.closest("thead")) {
+          el.setAttribute("data-editable", "text");
+        }
+      });
+    }
+
+    function renderDefaultDataIfNeeded() {
+      const hasSaved = localStorage.getItem(STORAGE_KEY);
+      if (hasSaved) {
+        try {
+          const saved = JSON.parse(hasSaved);
+          editableSectionIds.forEach((id) => {
+            const section = document.getElementById(id);
+            if (section && saved[id]) section.innerHTML = saved[id];
+          });
+          return;
+        } catch (error) {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      }
+
+      const studentProgressData = [
+        { name: "Ariana M.", track: "Software Development", project: "Beginner App Dev Team", progress: 72, activity: "2h ago", status: "In Progress" },
+        { name: "Derek L.", track: "Engineering", project: "Robotics Design Group", progress: 61, activity: "Yesterday", status: "Needs Follow-Up" },
+        { name: "Imani R.", track: "AI", project: "Research Starter Team", progress: 43, activity: "Today", status: "New" },
+        { name: "Jordan T.", track: "Data & AI", project: "Data Science Mini Project", progress: 88, activity: "30 min ago", status: "Connected" },
+        { name: "Priya S.", track: "Engineering", project: "Engineering Outreach Crew", progress: 100, activity: "2 days ago", status: "Completed" }
+      ];
+      const studentProgressBody = document.getElementById("student-progress-body");
+      studentProgressBody.innerHTML = "";
+      studentProgressData.forEach((student) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${student.name}</td>
+          <td>${student.track}</td>
+          <td>${student.project}</td>
+          <td><strong>${student.progress}%</strong><div class="progress-track"><div class="progress-fill" style="width: ${student.progress}%"></div></div></td>
+          <td>${student.activity}</td>
+          <td><span class="badge ${badgeClassForStatus(student.status)}">${student.status}</span></td>
+        `;
+        studentProgressBody.appendChild(row);
+      });
+
+      const projectCategoryData = [
+        { category: "Engineering", count: 19 },
+        { category: "Cybersecurity", count: 22 },
+        { category: "AI", count: 11 },
+        { category: "Software Development", count: 10 }
+      ];
+      const maxCategoryCount = Math.max(...projectCategoryData.map((item) => item.count));
+      const categoryBars = document.getElementById("project-category-bars");
+      categoryBars.innerHTML = "";
+      projectCategoryData.forEach((item) => {
+        const row = document.createElement("div");
+        const width = (item.count / maxCategoryCount) * 100;
+        row.className = "bar-row";
+        row.innerHTML = `<span>${item.category}</span><div class="bar-shell"><div class="bar-fill" style="width: ${width}%"></div></div><strong>${item.count}</strong>`;
+        categoryBars.appendChild(row);
+      });
+
+      const mentorData = [
+        { name: "Ferranmi A.", specialty: "Mentorship Ops + Career Coaching", mentees: 14, workload: "High", meetings: "11 completed / 3 pending", availability: "Limited" },
+        { name: "Manny C.", specialty: "Engineering Projects", mentees: 12, workload: "Moderate", meetings: "9 completed / 2 pending", availability: "Available" },
+        { name: "Olivia H.", specialty: "Cybersecurity Track", mentees: 10, workload: "Moderate", meetings: "8 completed / 2 pending", availability: "Available" },
+        { name: "Samir P.", specialty: "AI + Data Science", mentees: 9, workload: "Balanced", meetings: "8 completed / 1 pending", availability: "Available" },
+        { name: "Jade R.", specialty: "Resume & LinkedIn Support", mentees: 13, workload: "High", meetings: "10 completed / 4 pending", availability: "Limited" }
+      ];
+      const mentorTableBody = document.getElementById("mentor-table-body");
+      mentorTableBody.innerHTML = "";
+      mentorData.forEach((mentor) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${mentor.name}</td><td>${mentor.specialty}</td><td>${mentor.mentees}</td><td><span class="badge ${badgeClassForStatus(mentor.workload)}">${mentor.workload}</span></td><td>${mentor.meetings}</td><td><span class="badge ${badgeClassForStatus(mentor.availability)}">${mentor.availability}</span></td>`;
+        mentorTableBody.appendChild(row);
+      });
+
+      const readinessData = [
+        { name: "Ariana M.", resume: "Needs Update", linkedin: "No", portfolio: "In Progress", projects: 2, score: 58 },
+        { name: "Derek L.", resume: "Yes", linkedin: "Needs Improvement", portfolio: "In Progress", projects: 3, score: 71 },
+        { name: "Imani R.", resume: "No", linkedin: "No", portfolio: "Not Started", projects: 1, score: 41 },
+        { name: "Jordan T.", resume: "Yes", linkedin: "Yes", portfolio: "Yes", projects: 4, score: 92 },
+        { name: "Priya S.", resume: "Yes", linkedin: "Needs Improvement", portfolio: "Yes", projects: 4, score: 84 }
+      ];
+      const readinessTableBody = document.getElementById("readiness-table-body");
+      readinessTableBody.innerHTML = "";
+      readinessData.forEach((student) => {
+        const readinessStatus = student.score >= 85 ? "Ready" : student.score >= 65 ? "Developing" : "At Risk";
+        const statusClass = readinessStatus === "Ready" ? "status-green" : readinessStatus === "Developing" ? "status-yellow" : "status-red";
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${student.name}</td><td>${student.resume}</td><td>${student.linkedin}</td><td>${student.portfolio}</td><td>${student.projects}</td><td><strong>${student.score}%</strong><div class="progress-track"><div class="progress-fill" style="width: ${student.score}%"></div></div><div style="margin-top: 5px;"><span class="badge ${statusClass}">${readinessStatus}</span></div></td>`;
+        readinessTableBody.appendChild(row);
+      });
+
+      const eventData = [
+        { name: "Cybersecurity CTF Prep", date: "Jun 20", rsvp: "52 / 60", attendance: "Projected 46", status: "Nearly Full" },
+        { name: "Engineering Prototype Sprint", date: "Jun 23", rsvp: "38 / 55", attendance: "Projected 34", status: "Open" },
+        { name: "AI Interview Practice Lab", date: "Jun 25", rsvp: "44 / 50", attendance: "Projected 40", status: "High Demand" },
+        { name: "Resume & LinkedIn Clinic", date: "Jun 27", rsvp: "29 / 45", attendance: "Projected 25", status: "Open" }
+      ];
+      const eventsTableBody = document.getElementById("events-table-body");
+      eventsTableBody.innerHTML = "";
+      eventData.forEach((event) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${event.name}</td><td>${event.date}</td><td>${event.rsvp}</td><td>${event.attendance}</td><td><span class="badge ${badgeClassForStatus(event.status)}">${event.status}</span></td>`;
+        eventsTableBody.appendChild(row);
+      });
+
+      const leadershipTasks = {
+        actionItems: ["Approve final agenda for AI workshop", "Review mentor load distribution report", "Publish this week's leadership recap"],
+        pendingReviews: ["8 project submissions awaiting feedback", "5 internship readiness profiles to validate", "3 event recap forms pending sign-off"],
+        supportRequests: ["11 students requested resume support", "7 students requested project reassignment", "4 students requested mentor escalation"],
+        approvalQueue: ["3 new cybersecurity projects", "2 engineering outreach proposals", "1 software team requesting expanded capacity"]
+      };
+      const taskColumns = document.getElementById("task-columns");
+      taskColumns.innerHTML = "";
+      [
+        { title: "Action Items", key: "actionItems", badge: "status-blue" },
+        { title: "Pending Reviews", key: "pendingReviews", badge: "status-yellow" },
+        { title: "Student Support Requests", key: "supportRequests", badge: "status-purple" },
+        { title: "Project Approval Queue", key: "approvalQueue", badge: "status-green" }
+      ].forEach((col) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `<h3 style="margin: 0 0 8px;">${col.title}</h3><ul class="task-list">${leadershipTasks[col.key].map((item) => `<li><span class="badge ${col.badge}" style="margin-right: 6px;">Queue</span>${item}</li>`).join("")}</ul>`;
+        taskColumns.appendChild(card);
+      });
+
+      const members = [
+        { name: "Ariana M.", year: "Freshman", major: "Computer Science", goal: "Join first coding project", needsHelp: "Resume bullet writing", resume: "Needs Update", linkedin: "No", projectInterest: "Beginner App Dev Team", internshipInterest: "Mini-Internship", followUp: "Co-Director Ferranmi", nextStep: "Draft resume in template", status: "Needs Follow-Up" },
+        { name: "Derek L.", year: "Sophomore", major: "Mechanical Engineering", goal: "Build robotics portfolio", needsHelp: "Finding beginner projects", resume: "Yes", linkedin: "Needs Improvement", projectInterest: "Robotics Design Group", internshipInterest: "Internship", followUp: "Co-Director Manny", nextStep: "Request to join robotics team", status: "In Progress" },
+        { name: "Imani R.", year: "Freshman", major: "Biology", goal: "Get first research experience", needsHelp: "Professor outreach email", resume: "No", linkedin: "No", projectInterest: "Research Starter Team", internshipInterest: "Research", followUp: "Co-Director Ferranmi", nextStep: "Send one professor email", status: "New" },
+        { name: "Jordan T.", year: "Junior", major: "Data Science", goal: "Apply to summer data internship", needsHelp: "Interview prep", resume: "Yes", linkedin: "Yes", projectInterest: "Data Science Mini Project", internshipInterest: "Internship", followUp: "Co-Director Manny", nextStep: "Complete two mock interview rounds", status: "Connected" },
+        { name: "Priya S.", year: "Sophomore", major: "Civil Engineering", goal: "Lead outreach project", needsHelp: "Project story wording", resume: "Yes", linkedin: "Needs Improvement", projectInterest: "Engineering Outreach Crew", internshipInterest: "Outreach", followUp: "Co-Director Ferranmi", nextStep: "Finalize outreach event proposal", status: "Completed" }
+      ];
+      const trackerBody = document.getElementById("tracker-body");
+      trackerBody.innerHTML = "";
+      members.forEach((member) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${member.name}</td><td>${member.year}</td><td>${member.major}</td><td>${member.goal}</td><td>${member.needsHelp}</td><td>${member.resume}</td><td>${member.linkedin}</td><td>${member.projectInterest}</td><td>${member.internshipInterest}</td><td>${member.followUp}</td><td>${member.nextStep}</td><td><span class="badge ${statusClass(member.status)}">${member.status}</span></td>`;
+        trackerBody.appendChild(row);
+      });
+      const buddySplitGrid = document.getElementById("buddy-split-grid");
+      buddySplitGrid.innerHTML = "";
+      ["Co-Director Ferranmi", "Co-Director Manny"].forEach((coDirector) => {
+        const assignedMembers = members.filter((member) => member.followUp === coDirector);
+        const assignmentList = assignedMembers.map((member) => `<li class="card" style="margin: 0; background: rgba(11, 24, 43, 0.56);"><strong>${member.name}</strong> - ${member.year}, ${member.major}<br /><span style="color: var(--muted);">Needs help with: ${member.needsHelp}</span><br /><span class="badge ${statusClass(member.status)}">${member.status}</span></li>`).join("");
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `<h3 style="margin: 0 0 6px;">${coDirector}</h3><p style="margin: 0 0 8px; color: var(--muted);"><strong>${assignedMembers.length}</strong> member(s) assigned</p><ul class="task-list">${assignmentList}</ul>`;
+        buddySplitGrid.appendChild(card);
+      });
+    }
+
+    function makeTextEditable(enabled) {
+      document.querySelectorAll("[data-editable='text']").forEach((node) => {
+        node.contentEditable = enabled ? "true" : "false";
+        if (enabled) {
+          if (!node.querySelector(".edit-chip") && node.tagName === "H2") {
+            const chip = document.createElement("span");
+            chip.className = "edit-chip";
+            chip.textContent = "editable";
+            node.appendChild(chip);
+          }
+        } else {
+          node.querySelectorAll(".edit-chip").forEach((chip) => chip.remove());
+        }
+      });
+    }
+
+    function toggleTableEdit(enabled) {
+      const tableBodies = document.querySelectorAll("tbody");
+      tableBodies.forEach((tbody) => {
+        tbody.querySelectorAll("tr").forEach((row) => {
+          const cells = Array.from(row.children);
+          cells.forEach((cell) => {
+            if (!cell.classList.contains("row-action-cell")) {
+              cell.contentEditable = enabled ? "true" : "false";
+              if (enabled) cell.setAttribute("data-editable", "text");
+              else cell.removeAttribute("data-editable");
+            }
+          });
+          const existingAction = row.querySelector(".row-action-cell");
+          if (enabled && !existingAction) {
+            const actionCell = document.createElement("td");
+            actionCell.className = "row-action-cell";
+            actionCell.innerHTML = `<button class="mini-btn danger" type="button" data-action="delete-row">Delete</button>`;
+            row.appendChild(actionCell);
+          }
+          if (!enabled && existingAction) existingAction.remove();
+        });
+
+        let actionBar = tbody.parentElement.parentElement.querySelector(".inline-actions");
+        if (enabled && !actionBar) {
+          actionBar = document.createElement("div");
+          actionBar.className = "inline-actions";
+          actionBar.innerHTML = `<button class="mini-btn" type="button" data-action="add-row" data-target="${tbody.id}">+ Add Row</button>`;
+          tbody.parentElement.parentElement.appendChild(actionBar);
+        }
+        if (!enabled && actionBar) actionBar.remove();
+      });
+    }
+
+    function toggleListEdit(enabled) {
+      document.querySelectorAll("ul.announce-list, ul.bullet-list, ul.task-list").forEach((list) => {
+        list.querySelectorAll("li").forEach((li) => {
+          li.contentEditable = enabled ? "true" : "false";
+          if (enabled) li.setAttribute("data-editable", "text");
+          else li.removeAttribute("data-editable");
+        });
+        let actions = list.parentElement.querySelector(".inline-actions");
+        if (enabled && !actions) {
+          actions = document.createElement("div");
+          actions.className = "inline-actions";
+          actions.innerHTML = `
+            <button class="mini-btn" type="button" data-action="add-list-item" data-target-list="${list.id || ""}">+ Add Item</button>
+            <button class="mini-btn danger" type="button" data-action="delete-last-item" data-target-list="${list.id || ""}">Delete Last</button>
+          `;
+          list.parentElement.appendChild(actions);
+        }
+        if (!enabled && actions) actions.remove();
+      });
+    }
+
+    function enterEditMode() {
+      if (!isPrivateAuthorized) return;
+      editMode = true;
+      document.body.classList.add("edit-mode");
+      makeTextEditable(true);
+      toggleTableEdit(true);
+      toggleListEdit(true);
+      document.getElementById("edit-mode-btn").classList.add("hidden");
+      document.getElementById("save-mode-btn").classList.remove("hidden");
+      document.getElementById("exit-mode-btn").classList.remove("hidden");
+    }
+
+    function exitEditMode() {
+      editMode = false;
+      document.body.classList.remove("edit-mode");
+      makeTextEditable(false);
+      toggleTableEdit(false);
+      toggleListEdit(false);
+      document.getElementById("edit-mode-btn").classList.remove("hidden");
+      document.getElementById("save-mode-btn").classList.add("hidden");
+      document.getElementById("exit-mode-btn").classList.add("hidden");
+    }
+
+    function saveEdits() {
+      const payload = {};
+      editableSectionIds.forEach((id) => {
+        const section = document.getElementById(id);
+        if (section) payload[id] = section.innerHTML;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      exitEditMode();
+    }
+
+    function addRowToTable(tbodyId) {
+      const tbody = document.getElementById(tbodyId);
+      if (!tbody) return;
       const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${member.name}</td>
-        <td>${member.year}</td>
-        <td>${member.major}</td>
-        <td>${member.goal}</td>
-        <td>${member.needsHelp}</td>
-        <td>${member.resume}</td>
-        <td>${member.linkedin}</td>
-        <td>${member.projectInterest}</td>
-        <td>${member.internshipInterest}</td>
-        <td>${member.followUp}</td>
-        <td>${member.nextStep}</td>
-        <td><span class="badge ${statusClass(member.status)}">${member.status}</span></td>
-      `;
-      trackerBody.appendChild(row);
-    });
+      const values = sectionDefaults[tbodyId] || ["New Value"];
+      row.innerHTML = values.map((value) => `<td contenteditable="true" data-editable="text">${value}</td>`).join("") +
+        `<td class="row-action-cell"><button class="mini-btn danger" type="button" data-action="delete-row">Delete</button></td>`;
+      tbody.appendChild(row);
+    }
 
-    const buddySplitGrid = document.getElementById("buddy-split-grid");
-    ["Co-Director Ferranmi", "Co-Director Manny"].forEach((coDirector) => {
-      const assignedMembers = members.filter((member) => member.followUp === coDirector);
-      const assignmentList = assignedMembers.map((member) => `
-        <li class="assignment-item">
-          <strong>${member.name}</strong> - ${member.year}, ${member.major}<br />
-          <span class="muted">Needs help with: ${member.needsHelp}</span><br />
-          <span class="badge ${statusClass(member.status)}">${member.status}</span>
-        </li>
-      `).join("");
+    function showPinModal() {
+      const overlay = document.getElementById("pin-overlay");
+      const input = document.getElementById("pin-input");
+      const error = document.getElementById("pin-error");
+      error.style.display = "none";
+      input.value = "";
+      overlay.classList.add("active");
+      setTimeout(() => input.focus(), 20);
+    }
 
-      const card = document.createElement("div");
-      card.className = "mini-card";
-      card.innerHTML = `
-        <h3>${coDirector}</h3>
-        <p><strong>${assignedMembers.length}</strong> member(s) assigned</p>
-        <ul class="assignment-list">${assignmentList}</ul>
-      `;
-      buddySplitGrid.appendChild(card);
-    });
+    function hidePinModal() {
+      document.getElementById("pin-overlay").classList.remove("active");
+    }
 
     const privateViewer = document.getElementById("private-viewer");
     const privateArea = document.getElementById("private-area");
     const privateDenied = document.getElementById("private-denied");
+    const editBtn = document.getElementById("edit-mode-btn");
+    const saveBtn = document.getElementById("save-mode-btn");
+    const exitBtn = document.getElementById("exit-mode-btn");
 
     function updatePrivateAccess() {
       const viewer = privateViewer.value;
-      const hasAccess = viewer === "You" || viewer === "Ferra";
-      privateArea.classList.toggle("hidden", !hasAccess);
-      privateDenied.classList.toggle("hidden", hasAccess);
+      const hasAccess = isPrivateAuthorized && (viewer === "You" || viewer === "Ferra");
+      privateArea.classList.toggle("legacy-hidden", !hasAccess);
+      privateDenied.classList.toggle("legacy-hidden", hasAccess);
+      editBtn.disabled = !hasAccess;
+      if (!hasAccess && editMode) exitEditMode();
     }
 
-    privateViewer.addEventListener("change", updatePrivateAccess);
+    function requestPrivateAccess(viewer) {
+      pendingViewer = viewer;
+      showPinModal();
+    }
+
+    privateViewer.addEventListener("change", () => {
+      const viewer = privateViewer.value;
+      if (viewer === "You" || viewer === "Ferra") {
+        if (!isPrivateAuthorized) requestPrivateAccess(viewer);
+        else updatePrivateAccess();
+      } else {
+        isPrivateAuthorized = false;
+        updatePrivateAccess();
+      }
+    });
+
+    document.getElementById("pin-submit").addEventListener("click", () => {
+      const input = document.getElementById("pin-input");
+      const error = document.getElementById("pin-error");
+      if (input.value === PIN_CODE) {
+        isPrivateAuthorized = true;
+        hidePinModal();
+        if (pendingViewer) privateViewer.value = pendingViewer;
+        pendingViewer = null;
+        updatePrivateAccess();
+      } else {
+        error.style.display = "block";
+      }
+    });
+
+    document.getElementById("pin-cancel").addEventListener("click", () => {
+      hidePinModal();
+      pendingViewer = null;
+      privateViewer.value = "Public Member";
+      isPrivateAuthorized = false;
+      updatePrivateAccess();
+    });
+
+    editBtn.addEventListener("click", enterEditMode);
+    saveBtn.addEventListener("click", saveEdits);
+    exitBtn.addEventListener("click", exitEditMode);
+
+    document.body.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const action = target.getAttribute("data-action");
+      if (!action) return;
+      if (action === "delete-row") {
+        target.closest("tr")?.remove();
+      } else if (action === "add-row") {
+        addRowToTable(target.getAttribute("data-target"));
+      } else if (action === "add-list-item") {
+        const list = target.closest(".card")?.querySelector("ul");
+        if (list) {
+          const li = document.createElement("li");
+          li.textContent = "New item";
+          li.contentEditable = "true";
+          li.setAttribute("data-editable", "text");
+          list.appendChild(li);
+        }
+      } else if (action === "delete-last-item") {
+        const list = target.closest(".card")?.querySelector("ul");
+        if (list && list.lastElementChild) list.removeChild(list.lastElementChild);
+      }
+    });
+
+    renderDefaultDataIfNeeded();
+    markEditableText();
     updatePrivateAccess();
   </script>
 </body>
