@@ -689,6 +689,98 @@
         grid-column: auto;
       }
     }
+
+    /* SUMMIT Foundation-inspired light theme override */
+    :root {
+      --bg: #dbe3ee;
+      --bg-soft: #d2dbe7;
+      --surface: #ffffff;
+      --surface-2: #ffffff;
+      --surface-3: #eef6ff;
+      --text: #0f172a;
+      --muted: #334155;
+      --line: #c5d1e0;
+      --accent: #2f5fa7;
+      --accent-soft: rgba(47, 95, 167, 0.1);
+      --accent-2: #67b7d7;
+      --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      --glow: 0 0 0 1px rgba(103, 183, 215, 0.24), 0 14px 30px rgba(47, 95, 167, 0.14);
+    }
+
+    body {
+      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      color: var(--text);
+    }
+
+    .top-nav,
+    .hero-panel,
+    .hero-visual,
+    .pulse-card,
+    .card,
+    .cta {
+      background: #dfe7f2 !important;
+      border-color: var(--line) !important;
+      color: var(--text) !important;
+      box-shadow: var(--shadow) !important;
+    }
+
+    .hero-stat,
+    .card .card,
+    .track-card,
+    .project-card,
+    .mentor-card,
+    .outcome-card,
+    .kpi-card,
+    .tag,
+    .filter,
+    .interest-form input,
+    .interest-form select,
+    .interest-form textarea {
+      background: #ffffff !important;
+      border-color: var(--line) !important;
+      color: var(--text) !important;
+    }
+
+    .nav-links,
+    .section-note,
+    .track-card p,
+    .project-card p,
+    .mentor-card p,
+    .outcome-card p,
+    .hero-subtitle,
+    .pulse-list,
+    .tag {
+      color: var(--muted) !important;
+    }
+
+    .btn-primary {
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #2f5fa7, #67b7d7) !important;
+      box-shadow: 0 10px 22px rgba(47, 95, 167, 0.22) !important;
+    }
+
+    .btn-secondary,
+    .filter {
+      color: #1f2937 !important;
+      background: #f2f7fd !important;
+      border-color: var(--line) !important;
+    }
+
+    .filter.active {
+      background: #e8f1ff !important;
+      color: #234d8d !important;
+      border-color: #bfd3ea !important;
+    }
+
+    .eyebrow {
+      color: #1f4d86 !important;
+      border-color: #bfd3ea !important;
+      background: #e8f1ff !important;
+    }
+
+    .micro-label {
+      color: #2b5a96 !important;
+    }
   </style>
 </head>
 <body>

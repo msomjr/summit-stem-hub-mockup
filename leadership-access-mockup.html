@@ -576,6 +576,83 @@
         gap: 5px;
       }
     }
+
+    /* SUMMIT Foundation-inspired light theme override */
+    :root {
+      --bg: #dbe3ee;
+      --surface: #ffffff;
+      --surface-2: #ffffff;
+      --surface-3: #eef6ff;
+      --text: #0f172a;
+      --muted: #475569;
+      --line: #c5d1e0;
+      --brand: #2f5fa7;
+      --brand-soft: #e8f1ff;
+      --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      --glow: 0 0 0 1px rgba(103, 183, 215, 0.24), 0 14px 30px rgba(47, 95, 167, 0.14);
+    }
+
+    body {
+      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      color: var(--text);
+    }
+
+    .sidebar,
+    .topbar,
+    .section,
+    .card,
+    .pin-modal {
+      background: #dfe7f2 !important;
+      border-color: var(--line) !important;
+      color: var(--text) !important;
+      box-shadow: var(--shadow) !important;
+    }
+
+    .side-nav a {
+      background: #ffffff !important;
+      color: #334155 !important;
+      border-color: var(--line) !important;
+    }
+
+    .side-nav a:hover {
+      background: var(--brand-soft) !important;
+      color: #234d8d !important;
+      border-color: #bfd3ea !important;
+    }
+
+    .topbar p,
+    .section-head p,
+    .metric span,
+    .bullet-list li,
+    .announce-list li,
+    .task-list li,
+    .muted {
+      color: var(--muted) !important;
+    }
+
+    .btn-primary {
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #2f5fa7, #67b7d7) !important;
+    }
+
+    .btn-secondary,
+    .mini-btn {
+      background: #ffffff !important;
+      color: #1f2937 !important;
+      border-color: var(--line) !important;
+    }
+
+    table, td, .table-wrap, .bar-shell, .progress-track {
+      border-color: var(--line) !important;
+      background: #ffffff !important;
+      color: var(--text) !important;
+    }
+
+    th {
+      border-color: var(--line) !important;
+      background: #ecf1f7 !important;
+      color: var(--text) !important;
+    }
   </style>
 </head>
 <body>

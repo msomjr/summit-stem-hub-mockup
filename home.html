@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SUMMIT STEM Hub Mockup</title>
+  <title>SUMMIT STEM Platform Home</title>
   <style>
     :root {
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #475569;
-      --border: #e2e8f0;
-      --brand: #1d4ed8;
-      --brand-soft: #dbeafe;
-      --purple: #6d28d9;
-      --purple-soft: #ede9fe;
-      --radius: 14px;
-      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --bg: #061225;
+      --surface: #102038;
+      --text: #f8fafc;
+      --muted: #9db0c8;
+      --line: rgba(157, 176, 200, 0.24);
+      --brand: #78d6e2;
+      --brand-soft: rgba(120, 214, 226, 0.2);
+      --radius: 18px;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
     }
 
     * {
@@ -26,7 +24,10 @@
     body {
       margin: 0;
       font-family: Inter, Segoe UI, Arial, sans-serif;
-      background: var(--bg);
+      background:
+        radial-gradient(circle at 8% -8%, rgba(120, 214, 226, 0.2), transparent 46%),
+        radial-gradient(circle at 88% -20%, rgba(79, 126, 200, 0.25), transparent 48%),
+        linear-gradient(180deg, #040b18 0%, #061225 30%, #0a1a33 100%);
       color: var(--text);
       line-height: 1.5;
     }
@@ -46,10 +47,23 @@
     }
 
     .navbar .brand {
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1rem;
+      color: #dff2ff;
       text-decoration: none;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 1px solid rgba(157, 176, 200, 0.45);
+      box-shadow: 0 8px 18px rgba(79, 126, 200, 0.35);
     }
 
     .login-btn {
@@ -59,8 +73,8 @@
       font-weight: 700;
       font-size: 0.92rem;
       text-decoration: none;
-      background: var(--brand);
-      color: #fff;
+      background: linear-gradient(135deg, #8ce3ee, #5ea6df);
+      color: #06223d;
       transition: transform 0.12s ease, opacity 0.12s ease;
     }
 
@@ -70,8 +84,9 @@
     }
 
     .hero {
-      background: linear-gradient(135deg, #1d4ed8, #2563eb, #0ea5e9);
-      color: #fff;
+      background: linear-gradient(150deg, rgba(16, 32, 56, 0.95), rgba(13, 28, 52, 0.94));
+      color: var(--text);
+      border: 1px solid var(--line);
       border-radius: calc(var(--radius) + 4px);
       padding: 32px;
       box-shadow: var(--shadow);
@@ -86,7 +101,7 @@
     .hero p {
       margin: 0;
       max-width: 820px;
-      color: #e2e8f0;
+      color: #c3d5ea;
       font-size: 1rem;
     }
 
@@ -95,8 +110,8 @@
     }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: linear-gradient(150deg, rgba(16, 32, 56, 0.88), rgba(12, 24, 43, 0.86));
+      border: 1px solid var(--line);
       border-radius: var(--radius);
       padding: 18px;
       box-shadow: var(--shadow);
@@ -121,9 +136,9 @@
     .nav-card {
       display: block;
       text-decoration: none;
-      border: 1px solid var(--border);
+      border: 1px solid var(--line);
       border-radius: 12px;
-      background: #fff;
+      background: rgba(31, 52, 83, 0.55);
       padding: 22px;
       min-height: 150px;
       box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
@@ -132,13 +147,13 @@
 
     .nav-card:hover {
       transform: translateY(-2px);
-      border-color: #bfdbfe;
-      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.1);
+      border-color: rgba(120, 214, 226, 0.58);
+      box-shadow: 0 0 0 1px rgba(120, 214, 226, 0.28), 0 0 34px rgba(79, 126, 200, 0.28);
     }
 
     .nav-card h3 {
       margin: 0 0 8px;
-      color: var(--brand);
+      color: #c9ebf3;
       font-size: 1.15rem;
     }
 
@@ -155,8 +170,9 @@
       padding: 4px 10px;
       font-size: 0.78rem;
       font-weight: 700;
-      color: var(--purple);
-      background: var(--purple-soft);
+      color: #dbf4f8;
+      border: 1px solid rgba(120, 214, 226, 0.38);
+      background: var(--brand-soft);
     }
 
     @media (max-width: 760px) {
@@ -172,23 +188,70 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* SUMMIT Foundation-inspired light theme override */
+    :root {
+      --bg: #dbe3ee;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --line: #c5d1e0;
+      --brand: #2f5fa7;
+      --brand-soft: #e8f1ff;
+      --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    body {
+      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      color: var(--text);
+    }
+
+    .hero, .card, .nav-card {
+      background: #dfe7f2 !important;
+      border-color: var(--line) !important;
+      color: var(--text) !important;
+      box-shadow: var(--shadow) !important;
+    }
+
+    .nav-card {
+      background: #ffffff !important;
+    }
+
+    .hero p, .section p, .nav-card p {
+      color: var(--muted) !important;
+    }
+
+    .login-btn {
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #2f5fa7, #67b7d7) !important;
+    }
+
+    .pill {
+      background: var(--brand-soft) !important;
+      color: #234d8d !important;
+      border-color: #bfd3ea !important;
+    }
   </style>
 </head>
 <body>
   <main class="container">
     <nav class="navbar">
-      <a class="brand" href="./home.html">SUMMIT STEM Hub</a>
+      <a class="brand" href="./home.html">
+        <img class="brand-mark" src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
+        <span>SUMMIT STEM PLATFORM</span>
+      </a>
+      <a class="login-btn" href="./index.html">Login</a>
     </nav>
 
     <section class="hero">
-      <h1>SUMMIT STEM Hub Mockup</h1>
-      <p>A preview hub for projects, GPA tracking, opportunities, and leadership access.</p>
+      <h1>SUMMIT STEM Platform</h1>
+      <p>Access projects, GPA tracking, opportunities, and leadership operations from one unified platform experience.</p>
     </section>
 
     <section class="section">
       <div class="card">
-        <h2>Navigate Mockup Pages</h2>
-        <p>Select a module below to open that mockup page.</p>
+        <h2>Navigate Platform Modules</h2>
+        <p>Select a module below to open that workspace in the shared Summit theme.</p>
 
         <div class="grid">
           <a class="nav-card" href="./stem-hub-mockup.html">

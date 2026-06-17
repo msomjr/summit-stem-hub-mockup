@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - SUMMIT STEM Hub</title>
+  <title>Login - SUMMIT STEM Platform</title>
   <style>
     :root {
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #475569;
-      --border: #e2e8f0;
-      --brand: #1d4ed8;
-      --brand-soft: #dbeafe;
-      --purple: #6d28d9;
-      --purple-soft: #ede9fe;
-      --radius: 14px;
-      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --bg: #061225;
+      --surface: #102038;
+      --text: #f8fafc;
+      --muted: #9db0c8;
+      --line: rgba(157, 176, 200, 0.24);
+      --brand: #78d6e2;
+      --brand-soft: rgba(120, 214, 226, 0.2);
+      --radius: 18px;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
     }
 
     * {
@@ -26,7 +24,10 @@
     body {
       margin: 0;
       font-family: Inter, Segoe UI, Arial, sans-serif;
-      background: var(--bg);
+      background:
+        radial-gradient(circle at 8% -8%, rgba(120, 214, 226, 0.2), transparent 46%),
+        radial-gradient(circle at 88% -20%, rgba(79, 126, 200, 0.25), transparent 48%),
+        linear-gradient(180deg, #040b18 0%, #061225 30%, #0a1a33 100%);
       color: var(--text);
       line-height: 1.5;
     }
@@ -42,8 +43,8 @@
 
     .auth-card {
       width: min(440px, 100%);
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: linear-gradient(150deg, rgba(16, 32, 56, 0.92), rgba(12, 24, 43, 0.9));
+      border: 1px solid var(--line);
       border-radius: calc(var(--radius) + 2px);
       box-shadow: var(--shadow);
       padding: 32px;
@@ -54,9 +55,20 @@
       margin-bottom: 24px;
     }
 
+    .auth-logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 1px solid rgba(157, 176, 200, 0.45);
+      box-shadow: 0 8px 18px rgba(79, 126, 200, 0.35);
+      margin-bottom: 10px;
+    }
+
     .auth-header h1 {
       margin: 0 0 6px;
       font-size: 1.6rem;
+      letter-spacing: -0.01em;
     }
 
     .auth-header p {
@@ -74,35 +86,35 @@
       margin-bottom: 6px;
       font-size: 0.88rem;
       font-weight: 600;
-      color: #1f2937;
+      color: #d5e7f8;
     }
 
     .field input {
       width: 100%;
-      border: 1px solid var(--border);
+      border: 1px solid var(--line);
       border-radius: 10px;
       padding: 11px 12px;
       font: inherit;
-      background: #fff;
+      background: rgba(11, 24, 43, 0.78);
       color: var(--text);
     }
 
     .field input:focus {
       outline: none;
       border-color: var(--brand);
-      box-shadow: 0 0 0 3px var(--brand-soft);
+      box-shadow: 0 0 0 3px rgba(120, 214, 226, 0.2);
     }
 
     .btn {
       width: 100%;
-      border: none;
+      border: 1px solid transparent;
       border-radius: 999px;
       padding: 12px 16px;
       font: inherit;
       font-weight: 700;
       cursor: pointer;
-      background: var(--brand);
-      color: #fff;
+      background: linear-gradient(135deg, #8ce3ee, #5ea6df);
+      color: #06223d;
       transition: transform 0.12s ease, opacity 0.12s ease;
     }
 
@@ -155,14 +167,65 @@
         padding: 24px;
       }
     }
+
+    /* SUMMIT Foundation-inspired light theme override */
+    :root {
+      --bg: #dbe3ee;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --line: #c5d1e0;
+      --brand: #2f5fa7;
+      --brand-soft: #e8f1ff;
+      --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    body {
+      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      color: var(--text);
+    }
+
+    .auth-card {
+      background: #dfe7f2 !important;
+      border-color: var(--line) !important;
+      color: var(--text) !important;
+      box-shadow: var(--shadow) !important;
+    }
+
+    .auth-header p,
+    .switch-link,
+    .back-home a {
+      color: var(--muted) !important;
+    }
+
+    .field label {
+      color: #1f2937 !important;
+    }
+
+    .field input {
+      background: #ffffff !important;
+      color: var(--text) !important;
+      border-color: var(--line) !important;
+    }
+
+    .btn {
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #2f5fa7, #67b7d7) !important;
+    }
+
+    .forgot a,
+    .switch-link a {
+      color: #234d8d !important;
+    }
   </style>
 </head>
 <body>
   <div class="auth-wrapper">
     <div class="auth-card">
       <div class="auth-header">
+        <img class="auth-logo" src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
         <h1>Welcome back</h1>
-        <p>Log in to your SUMMIT STEM Hub account.</p>
+        <p>Log in to your SUMMIT STEM Platform account.</p>
       </div>
 
       <!-- Front-end only: no real authentication yet. Logging in just goes to the hub. -->
@@ -187,6 +250,7 @@
       <p class="switch-link">
         Don't have an account? <a href="./signup.html">Sign up</a>
       </p>
+      <p class="back-home"><a href="./home.html">Back to platform home</a></p>
     </div>
   </div>
 </body>
