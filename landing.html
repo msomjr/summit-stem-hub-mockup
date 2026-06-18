@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - The Summit</title>
+  <style>
+    :root {
+      --bg: #dbe3ee;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --line: #c5d1e0;
+      --brand: #2f5fa7;
+      --brand-soft: #e8f1ff;
+      --radius: 18px;
+      --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Center the welcome card on the screen */
+    .home-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .home-card {
+      width: min(540px, 100%);
+      background: #dfe7f2;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 2px);
+      box-shadow: var(--shadow);
+      padding: 40px 32px;
+      text-align: center;
+    }
+
+    .home-logo {
+      width: 84px;
+      height: 84px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 1px solid rgba(47, 95, 167, 0.45);
+      box-shadow: 0 8px 18px rgba(47, 95, 167, 0.25);
+      margin-bottom: 14px;
+    }
+
+    .home-card h1 {
+      margin: 0 0 10px;
+      font-size: 1.9rem;
+      letter-spacing: -0.01em;
+    }
+
+    .home-card p {
+      margin: 0 auto 26px;
+      max-width: 420px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .home-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 12px 26px;
+      font: inherit;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2f5fa7, #67b7d7);
+      color: #ffffff;
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: var(--brand);
+      border-color: var(--line);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    @media (max-width: 480px) {
+      .home-card {
+        padding: 32px 22px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="home-wrapper">
+    <div class="home-card">
+      <img class="home-logo" src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
+      <h1>Welcome to The Summit</h1>
+      <p>Your starting point for the Summit community. Sign in or create an account to continue.</p>
+
+      <div class="home-actions">
+        <a class="btn btn-primary" href="./index.html">Login</a>
+        <a class="btn btn-secondary" href="./signup.html">Sign up</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
