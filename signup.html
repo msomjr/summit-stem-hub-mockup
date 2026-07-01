@@ -163,23 +163,23 @@
 
     /* SUMMIT Foundation-inspired light theme override */
     :root {
-      --bg: #dbe3ee;
+      --bg: #d6dee8;
       --surface: #ffffff;
       --text: #0f172a;
       --muted: #475569;
-      --line: #c5d1e0;
+      --line: #bcc9d8;
       --brand: #2f5fa7;
       --brand-soft: #e8f1ff;
       --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
     }
 
     body {
-      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
       color: var(--text);
     }
 
     .auth-card {
-      background: #dfe7f2 !important;
+      background: #ffffff !important;
       border-color: var(--line) !important;
       color: var(--text) !important;
       box-shadow: var(--shadow) !important;
@@ -221,7 +221,7 @@
       </div>
 
       <!-- Front-end only: no real authentication yet -->
-      <form onsubmit="event.preventDefault(); window.location.href='./home.html';">
+      <form id="signup-form">
         <div class="field">
           <label for="full-name">Full name</label>
           <input id="full-name" name="full-name" type="text" placeholder="Jane Doe" required />
@@ -251,5 +251,22 @@
       <p class="back-home"><a href="./landing.html">Back to platform home</a></p>
     </div>
   </div>
+  <script>
+    const approvedUsers = ["Manny", "ferranmi"];
+    const signupForm = document.getElementById("signup-form");
+
+    signupForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const fullName = (document.getElementById("full-name").value || "").trim();
+      localStorage.setItem("summitCurrentUser", fullName);
+      if (approvedUsers.includes(fullName.toLowerCase())) {
+        localStorage.setItem("summitLeadershipUser", fullName);
+      } else {
+        localStorage.removeItem("summitLeadershipUser");
+      }
+      // Front-end demo only: real access checks must be handled by backend authentication.
+      window.location.href = "./home.html";
+    });
+  </script>
 </body>
 </html>

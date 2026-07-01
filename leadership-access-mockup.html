@@ -579,13 +579,13 @@
 
     /* SUMMIT Foundation-inspired light theme override */
     :root {
-      --bg: #dbe3ee;
+      --bg: #d6dee8;
       --surface: #ffffff;
       --surface-2: #ffffff;
       --surface-3: #eef6ff;
       --text: #0f172a;
       --muted: #475569;
-      --line: #c5d1e0;
+      --line: #bcc9d8;
       --brand: #2f5fa7;
       --brand-soft: #e8f1ff;
       --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
@@ -593,7 +593,7 @@
     }
 
     body {
-      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
       color: var(--text);
     }
 
@@ -602,7 +602,7 @@
     .section,
     .card,
     .pin-modal {
-      background: #dfe7f2 !important;
+      background: #ffffff !important;
       border-color: var(--line) !important;
       color: var(--text) !important;
       box-shadow: var(--shadow) !important;
@@ -650,7 +650,7 @@
 
     th {
       border-color: var(--line) !important;
-      background: #ecf1f7 !important;
+      background: #f3f7fc !important;
       color: var(--text) !important;
     }
   </style>
@@ -669,6 +669,7 @@
         <a href="#overview">Leadership Overview</a>
         <a href="#student-progress">Student Progress Tracking</a>
         <a href="#project-analytics">Project Analytics</a>
+        <a href="#project-requests">Project Requests</a>
         <a href="#mentor-management">Mentor Management</a>
         <a href="#internship-readiness">Internship Readiness</a>
         <a href="#event-management">Event Management</a>
@@ -676,7 +677,7 @@
         <a href="#legacy-hub">Existing Leadership Hub</a>
       </nav>
       <div class="edit-controls">
-        <p>Private edit controls for You/Ferra</p>
+        <p>Private edit controls for approved leadership</p>
         <button id="edit-mode-btn" class="btn btn-secondary" type="button" disabled>Edit</button>
         <button id="save-mode-btn" class="btn btn-primary hidden" type="button">Save</button>
         <button id="exit-mode-btn" class="btn btn-danger hidden" type="button">Exit</button>
@@ -785,6 +786,38 @@
             <div class="bar-chart" id="project-category-bars"></div>
           </article>
         </div>
+      </section>
+
+      <section class="section legacy-hidden" id="project-requests">
+        <div class="section-head">
+          <div>
+            <h2>Project Requests</h2>
+            <p>Leadership-only application queue submitted from the Projects Hub.</p>
+          </div>
+          <span class="pill">Leadership Only</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Project</th>
+                <th>School/Org</th>
+                <th>Grade/Year</th>
+                <th>Interest Response</th>
+                <th>Skills Response</th>
+                <th>Availability</th>
+                <th>Submission Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="project-requests-body"></tbody>
+          </table>
+        </div>
+        <p id="project-requests-empty" class="muted" style="margin-top: 8px;">No project requests submitted yet.</p>
       </section>
 
       <section class="section" id="mentor-management">
@@ -911,13 +944,13 @@
               <label for="private-viewer"><strong>Current Viewer</strong></label>
               <select id="private-viewer" aria-label="Select viewer for mock private access">
                 <option>Public Member</option>
-                <option>You</option>
-                <option>Ferra</option>
+                <option>Manny</option>
+                <option>Ferranmi</option>
               </select>
-              <p style="margin: 8px 0 0; color: var(--muted);">Only You and Ferra can view the sections below in this demo.</p>
+              <p style="margin: 8px 0 0; color: var(--muted);">Only Manny and Ferranmi can view the private sections in this demo.</p>
             </div>
             <div id="private-denied" class="card" style="border-style: dashed; border-color: rgba(120, 214, 226, 0.5); background: rgba(120, 214, 226, 0.08); margin-top: 10px;">
-              Access limited in mock mode. Select <strong>You</strong> or <strong>Ferra</strong> to preview this page.
+              Access limited in mock mode. Select <strong>Manny</strong> or <strong>Ferranmi</strong> to preview this page.
             </div>
           </div>
         </section>
@@ -1011,6 +1044,8 @@
   <script>
     const PIN_CODE = "2233";
     const STORAGE_KEY = "summitLeadershipDashboardSavedMarkup";
+    const PROJECT_REQUESTS_KEY = "summitProjectApplications";
+    const APPROVED_LEADERSHIP_USERS = ["Manny", "Ferranmi"];
     let isPrivateAuthorized = false;
     let editMode = false;
     let pendingViewer = null;
@@ -1019,6 +1054,7 @@
       "overview",
       "student-progress",
       "project-analytics",
+      "project-requests",
       "mentor-management",
       "internship-readiness",
       "event-management",
@@ -1028,6 +1064,7 @@
 
     const sectionDefaults = {
       "student-progress-body": ["New Student", "Track", "Project", "50", "Today", "In Progress"],
+      "project-requests-body": ["Applicant Name", "email@example.com", "000-000-0000", "Project Name", "School", "Year", "Interest response", "Skills response", "Availability", "Date", "Pending", "Status Actions"],
       "mentor-table-body": ["Mentor Name", "Specialization", "8", "Moderate", "0 completed / 0 pending", "Available"],
       "readiness-table-body": ["Student Name", "No", "No", "Not Started", "0", "50"],
       "events-table-body": ["New Workshop", "Jul 01", "0 / 40", "Projected 0", "Open"],
@@ -1068,6 +1105,7 @@
             const section = document.getElementById(id);
             if (section && saved[id]) section.innerHTML = saved[id];
           });
+          renderProjectRequests();
           return;
         } catch (error) {
           localStorage.removeItem(STORAGE_KEY);
@@ -1203,6 +1241,68 @@
         card.innerHTML = `<h3 style="margin: 0 0 6px;">${coDirector}</h3><p style="margin: 0 0 8px; color: var(--muted);"><strong>${assignedMembers.length}</strong> member(s) assigned</p><ul class="task-list">${assignmentList}</ul>`;
         buddySplitGrid.appendChild(card);
       });
+
+      renderProjectRequests();
+    }
+
+    function loadProjectRequests() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(PROJECT_REQUESTS_KEY) || "[]");
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveProjectRequests(requests) {
+      localStorage.setItem(PROJECT_REQUESTS_KEY, JSON.stringify(requests));
+    }
+
+    function formatSubmissionDate(dateValue) {
+      const parsed = new Date(dateValue);
+      if (Number.isNaN(parsed.getTime())) return "N/A";
+      return parsed.toLocaleString();
+    }
+
+    function renderProjectRequests() {
+      const tbody = document.getElementById("project-requests-body");
+      const emptyState = document.getElementById("project-requests-empty");
+      if (!tbody || !emptyState) return;
+
+      const requests = loadProjectRequests();
+      tbody.innerHTML = "";
+
+      if (!requests.length) {
+        emptyState.classList.remove("legacy-hidden");
+        return;
+      }
+
+      emptyState.classList.add("legacy-hidden");
+      requests.forEach((request) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${request.applicantName || "N/A"}</td>
+          <td>${request.email || "N/A"}</td>
+          <td>${request.phone || "N/A"}</td>
+          <td>${request.projectName || "N/A"}</td>
+          <td>${request.schoolOrg || "N/A"}</td>
+          <td>${request.gradeLevel || "N/A"}</td>
+          <td>${request.interestResponse || "N/A"}</td>
+          <td>${request.skillsResponse || "N/A"}</td>
+          <td>${request.availability || "N/A"}</td>
+          <td>${formatSubmissionDate(request.submittedAt)}</td>
+          <td><span class="badge ${badgeClassForStatus(request.status || "Pending")}">${request.status || "Pending"}</span></td>
+          <td>
+            <div class="inline-actions" style="margin: 0;">
+              <button class="mini-btn" type="button" data-action="set-request-status" data-id="${request.id}" data-status="Pending">Pending</button>
+              <button class="mini-btn" type="button" data-action="set-request-status" data-id="${request.id}" data-status="Accepted">Accepted</button>
+              <button class="mini-btn" type="button" data-action="set-request-status" data-id="${request.id}" data-status="Waitlisted">Waitlisted</button>
+              <button class="mini-btn danger" type="button" data-action="set-request-status" data-id="${request.id}" data-status="Rejected">Rejected</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
     }
 
     function makeTextEditable(enabled) {
@@ -1335,15 +1435,19 @@
     const privateViewer = document.getElementById("private-viewer");
     const privateArea = document.getElementById("private-area");
     const privateDenied = document.getElementById("private-denied");
+    const projectRequestsSection = document.getElementById("project-requests");
     const editBtn = document.getElementById("edit-mode-btn");
     const saveBtn = document.getElementById("save-mode-btn");
     const exitBtn = document.getElementById("exit-mode-btn");
 
     function updatePrivateAccess() {
       const viewer = privateViewer.value;
-      const hasAccess = isPrivateAuthorized && (viewer === "You" || viewer === "Ferra");
+      const isApprovedViewer = APPROVED_LEADERSHIP_USERS.includes(viewer);
+      // Front-end demo only: real private access requires backend authentication and role checks.
+      const hasAccess = isPrivateAuthorized && isApprovedViewer;
       privateArea.classList.toggle("legacy-hidden", !hasAccess);
       privateDenied.classList.toggle("legacy-hidden", hasAccess);
+      projectRequestsSection.classList.toggle("legacy-hidden", !hasAccess);
       editBtn.disabled = !hasAccess;
       if (!hasAccess && editMode) exitEditMode();
     }
@@ -1355,11 +1459,12 @@
 
     privateViewer.addEventListener("change", () => {
       const viewer = privateViewer.value;
-      if (viewer === "You" || viewer === "Ferra") {
+      if (APPROVED_LEADERSHIP_USERS.includes(viewer)) {
         if (!isPrivateAuthorized) requestPrivateAccess(viewer);
         else updatePrivateAccess();
       } else {
         isPrivateAuthorized = false;
+        localStorage.removeItem("summitLeadershipUser");
         updatePrivateAccess();
       }
     });
@@ -1371,6 +1476,9 @@
         isPrivateAuthorized = true;
         hidePinModal();
         if (pendingViewer) privateViewer.value = pendingViewer;
+        localStorage.setItem("summitLeadershipUser", privateViewer.value);
+        localStorage.setItem("summitCurrentUser", privateViewer.value);
+        // Front-end demo only: real private access requires backend authentication and authorization.
         pendingViewer = null;
         updatePrivateAccess();
       } else {
@@ -1411,6 +1519,16 @@
       } else if (action === "delete-last-item") {
         const list = target.closest(".card")?.querySelector("ul");
         if (list && list.lastElementChild) list.removeChild(list.lastElementChild);
+      } else if (action === "set-request-status") {
+        const requestId = target.getAttribute("data-id");
+        const nextStatus = target.getAttribute("data-status");
+        const requests = loadProjectRequests();
+        const request = requests.find((item) => item.id === requestId);
+        if (request) {
+          request.status = nextStatus;
+          saveProjectRequests(requests);
+          renderProjectRequests();
+        }
       }
     });
 

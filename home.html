@@ -191,23 +191,23 @@
 
     /* SUMMIT Foundation-inspired light theme override */
     :root {
-      --bg: #dbe3ee;
+      --bg: #d6dee8;
       --surface: #ffffff;
       --text: #0f172a;
       --muted: #475569;
-      --line: #c5d1e0;
+      --line: #bcc9d8;
       --brand: #2f5fa7;
       --brand-soft: #e8f1ff;
       --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
     }
 
     body {
-      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
       color: var(--text);
     }
 
     .hero, .card, .nav-card {
-      background: #dfe7f2 !important;
+      background: #ffffff !important;
       border-color: var(--line) !important;
       color: var(--text) !important;
       box-shadow: var(--shadow) !important;
@@ -278,8 +278,20 @@
             <span class="pill">Open Leadership View</span>
           </a>
         </div>
+        <p id="leadership-access-note" style="margin-top: 12px; display: none;">Leadership Access appears after approved leadership login (Manny or Ferranmi).</p>
       </div>
     </section>
   </main>
+  <script>
+    const approvedUsers = ["Manny", "ferranmi"];
+    const currentUser = (localStorage.getItem("summitCurrentUser") || "").trim().toLowerCase();
+    const leadershipLink = document.querySelector('a[href="./leadership-access-mockup.html"]');
+    const leadershipNote = document.getElementById("leadership-access-note");
+
+    if (!approvedUsers.includes(currentUser) && leadershipLink) {
+      leadershipLink.style.display = "none";
+      if (leadershipNote) leadershipNote.style.display = "block";
+    }
+  </script>
 </body>
 </html>

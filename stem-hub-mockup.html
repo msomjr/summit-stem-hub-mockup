@@ -576,6 +576,18 @@
       color: #9db0c8;
     }
 
+    .project-actions {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn.project-btn {
+      padding: 8px 12px;
+      font-size: 0.78rem;
+    }
+
     .mentor-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -692,14 +704,14 @@
 
     /* SUMMIT Foundation-inspired light theme override */
     :root {
-      --bg: #dbe3ee;
-      --bg-soft: #d2dbe7;
+      --bg: #d6dee8;
+      --bg-soft: #cfd8e3;
       --surface: #ffffff;
       --surface-2: #ffffff;
       --surface-3: #eef6ff;
       --text: #0f172a;
       --muted: #334155;
-      --line: #c5d1e0;
+      --line: #bcc9d8;
       --accent: #2f5fa7;
       --accent-soft: rgba(47, 95, 167, 0.1);
       --accent-2: #67b7d7;
@@ -708,7 +720,7 @@
     }
 
     body {
-      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
       color: var(--text);
     }
 
@@ -718,7 +730,7 @@
     .pulse-card,
     .card,
     .cta {
-      background: #dfe7f2 !important;
+      background: #ffffff !important;
       border-color: var(--line) !important;
       color: var(--text) !important;
       box-shadow: var(--shadow) !important;
@@ -1107,6 +1119,7 @@
         <a class="btn btn-primary" href="./leadership-access-mockup.html">Open Leadership Access</a>
         <a class="btn btn-secondary" href="./leadership-access-mockup.html">View Buddy Assignments</a>
       </div>
+      <p id="leadership-note" class="section-note" style="display:none;">Leadership dashboard access is shown for approved leadership users (Manny or Ferranmi).</p>
     </section>
 
     <section class="section reveal" id="mentorship">
@@ -1184,61 +1197,113 @@
         title: "Hash Identifier",
         track: "Cybersecurity",
         level: "Beginner",
+        timeEstimate: "2-4 hours",
         stack: "Python, Pattern Matching",
-        summary: "Detect hash families and build practical understanding of secure credential formats."
+        skillsLearned: "Hash analysis, pattern detection, security basics",
+        summary: "Detect hash families and build practical understanding of secure credential formats.",
+        startLink: "./project-application.html?project=Hash%20Identifier",
+        sourceLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/foundations/hash-identifier",
+        guideLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/foundations/hash-identifier/learn"
       },
       {
         title: "HTTP Headers Scanner",
         track: "Cybersecurity",
         level: "Beginner",
+        timeEstimate: "3-5 hours",
         stack: "Python, HTTPX, Web Security",
-        summary: "Scan security headers and score web applications for defensive hardening."
+        skillsLearned: "Security headers, web auditing, HTTP response analysis",
+        summary: "Scan security headers and score web applications for defensive hardening.",
+        startLink: "./project-application.html?project=HTTP%20Headers%20Scanner",
+        sourceLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/foundations/http-headers-scanner",
+        guideLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/foundations/http-headers-scanner/learn"
       },
       {
         title: "SIEM Dashboard",
         track: "Cybersecurity",
         level: "Intermediate",
+        timeEstimate: "3-5 days",
         stack: "Flask, React, Log Correlation",
-        summary: "Aggregate and visualize security logs for SOC-style monitoring and triage."
+        skillsLearned: "SIEM workflows, log pipelines, dashboard development",
+        summary: "Aggregate and visualize security logs for SOC-style monitoring and triage.",
+        startLink: "./project-application.html?project=SIEM%20Dashboard",
+        sourceLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/intermediate/siem-dashboard",
+        guideLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/intermediate/siem-dashboard/learn"
       },
       {
         title: "Robotics Design Group",
         track: "Engineering",
         level: "Intermediate",
+        timeEstimate: "2-3 weeks",
         stack: "CAD, Prototyping, Testing",
-        summary: "Build and test components for real-world robotics challenge scenarios."
+        skillsLearned: "Design iteration, prototyping, systems thinking",
+        summary: "Build and test components for real-world robotics challenge scenarios.",
+        startLink: "./project-application.html?project=Robotics%20Design%20Group",
+        sourceLink: "#",
+        guideLink: "#"
       },
       {
         title: "Data Science Mini Project",
-        track: "Engineering",
+        track: "AI and Data",
         level: "Intermediate",
+        timeEstimate: "1-2 weeks",
         stack: "Python, Analytics, Dashboarding",
-        summary: "Translate raw datasets into actionable insights and technical narratives."
+        skillsLearned: "Data cleaning, visualization, storytelling with data",
+        summary: "Translate raw datasets into actionable insights and technical narratives.",
+        startLink: "./project-application.html?project=Data%20Science%20Mini%20Project",
+        sourceLink: "#",
+        guideLink: "#"
       },
       {
         title: "Health Awareness Outreach Team",
-        track: "Nursing",
+        track: "General STEM",
         level: "Beginner",
+        timeEstimate: "1-2 weeks",
         stack: "Health Education, Communication",
-        summary: "Design wellness awareness materials and deliver practical campus health interventions."
+        skillsLearned: "Community outreach, campaign planning, communication",
+        summary: "Design wellness awareness materials and deliver practical campus health interventions.",
+        startLink: "./project-application.html?project=Health%20Awareness%20Outreach%20Team",
+        sourceLink: "#",
+        guideLink: "#"
       },
       {
         title: "Student Budgeting Challenge",
         track: "Finance",
         level: "Beginner",
+        timeEstimate: "6-10 hours",
         stack: "Spreadsheets, Budget Modeling",
-        summary: "Create a student expense system with reporting and planning workflows."
+        skillsLearned: "Budget planning, spreadsheet analytics, financial literacy",
+        summary: "Create a student expense system with reporting and planning workflows.",
+        startLink: "./project-application.html?project=Student%20Budgeting%20Challenge",
+        sourceLink: "#",
+        guideLink: "#"
       },
       {
         title: "Student Stress & Study Habits Survey",
-        track: "Psychology",
+        track: "General STEM",
         level: "Beginner",
+        timeEstimate: "5-8 hours",
         stack: "Survey Design, Data Interpretation",
-        summary: "Research student behavior patterns and convert findings into support recommendations."
+        skillsLearned: "Survey design, behavioral data insights, reporting",
+        summary: "Research student behavior patterns and convert findings into support recommendations.",
+        startLink: "./project-application.html?project=Student%20Stress%20%26%20Study%20Habits%20Survey",
+        sourceLink: "#",
+        guideLink: "#"
+      },
+      {
+        title: "Portfolio Website Builder",
+        track: "Coding",
+        level: "Beginner",
+        timeEstimate: "6-12 hours",
+        stack: "HTML, CSS, JavaScript",
+        skillsLearned: "Front-end development, responsive layout, deployment basics",
+        summary: "Build and publish a personal portfolio page showcasing projects and resume highlights.",
+        startLink: "./project-application.html?project=Portfolio%20Website%20Builder",
+        sourceLink: "#",
+        guideLink: "#"
       }
     ];
 
-    const projectFilters = ["All", "Cybersecurity", "Engineering", "Nursing", "Finance", "Psychology"];
+    const projectFilters = ["All", "Cybersecurity", "Engineering", "Finance", "Coding", "AI and Data", "General STEM"];
     const filterContainer = document.getElementById("project-filters");
     const projectGrid = document.getElementById("projects-grid");
     const interestForm = document.getElementById("summit-interest-form");
@@ -1267,6 +1332,8 @@
         ? platformProjects
         : platformProjects.filter((project) => project.track === activeFilter);
 
+      localStorage.setItem("summitProjectCatalog", JSON.stringify(platformProjects.map((project) => project.title)));
+
       filtered.forEach((project) => {
         const card = document.createElement("article");
         card.className = "card project-card";
@@ -1274,13 +1341,21 @@
           <h3>${project.title}</h3>
           <p>${project.summary}</p>
           <div class="project-meta">
-            <strong>Track</strong><span>${project.track}</span>
-            <strong>Level</strong><span>${project.level}</span>
-            <strong>Stack</strong><span>${project.stack}</span>
+            <strong>Category</strong><span>${project.track}</span>
+            <strong>Difficulty</strong><span>${project.level}</span>
+            <strong>Estimated Time</strong><span>${project.timeEstimate}</span>
+            <strong>Skills Learned</strong><span>${project.skillsLearned}</span>
           </div>
           <div class="tag-row">
             <span class="tag">${project.track}</span>
             <span class="tag">${project.level}</span>
+          </div>
+          <div class="project-actions">
+            <a class="btn btn-primary project-btn" href="${project.startLink}">Start Project</a>
+            <a class="btn btn-secondary project-btn" href="${project.startLink}">Apply</a>
+            <a class="btn btn-secondary project-btn" href="${project.sourceLink}" target="_blank" rel="noopener noreferrer">View Source</a>
+            <a class="btn btn-secondary project-btn" href="${project.guideLink}" target="_blank" rel="noopener noreferrer">Open Guide</a>
+            ${project.sourceLink === "#" || project.guideLink === "#" ? "<!-- Replace with real project link. -->" : ""}
           </div>
         `;
         projectGrid.appendChild(card);
@@ -1303,6 +1378,15 @@
       interestSuccess.style.display = "block";
       interestForm.reset();
     });
+
+    const approvedLeadershipUsers = ["Manny", "ferranmi"];
+    const currentUser = (localStorage.getItem("summitCurrentUser") || "").trim().toLowerCase();
+    const leadershipLinks = document.querySelectorAll('a[href="./leadership-access-mockup.html"]');
+    const leadershipNote = document.getElementById("leadership-note");
+    if (!approvedLeadershipUsers.includes(currentUser)) {
+      leadershipLinks.forEach((link) => { link.style.display = "none"; });
+      if (leadershipNote) leadershipNote.style.display = "block";
+    }
 
     renderFilters();
     renderProjects();
