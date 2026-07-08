@@ -264,6 +264,12 @@
       white-space: nowrap;
     }
 
+    .dev-login-badge {
+      border-color: rgba(242, 194, 122, 0.55);
+      background: var(--warning-soft);
+      color: #f59e0b;
+    }
+
     .grid {
       display: grid;
       gap: 10px;
@@ -691,6 +697,7 @@
         <div class="button-row">
           <a class="btn btn-primary" href="./stem-hub-mockup.html">Back to Main Hub</a>
           <button class="btn btn-secondary" type="button">Export Weekly Report (Mock)</button>
+          <span id="dev-login-badge" class="pill dev-login-badge hidden">Dev Login Active</span>
         </div>
       </header>
 
@@ -807,7 +814,8 @@
                 <th>School/Org</th>
                 <th>Grade/Year</th>
                 <th>Interest Response</th>
-                <th>Skills Response</th>
+                <th>Current Skills</th>
+                <th>Skills To Learn</th>
                 <th>Availability</th>
                 <th>Submission Date</th>
                 <th>Status</th>
@@ -1041,11 +1049,14 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
   <script>
     const PIN_CODE = "2233";
     const STORAGE_KEY = "summitLeadershipDashboardSavedMarkup";
-    const PROJECT_REQUESTS_KEY = "summitProjectApplications";
     const APPROVED_LEADERSHIP_USERS = ["Manny", "Ferranmi"];
+    let supabaseClient = null;
+    let currentProfile = null;
     let isPrivateAuthorized = false;
     let editMode = false;
     let pendingViewer = null;
@@ -1064,7 +1075,7 @@
 
     const sectionDefaults = {
       "student-progress-body": ["New Student", "Track", "Project", "50", "Today", "In Progress"],
-      "project-requests-body": ["Applicant Name", "email@example.com", "000-000-0000", "Project Name", "School", "Year", "Interest response", "Skills response", "Availability", "Date", "Pending", "Status Actions"],
+      "project-requests-body": ["Applicant Name", "email@example.com", "000-000-0000", "Project Name", "School", "Year", "Interest response", "Current skills", "Skills to learn", "Availability", "Date", "Pending", "Status Actions"],
       "mentor-table-body": ["Mentor Name", "Specialization", "8", "Moderate", "0 completed / 0 pending", "Available"],
       "readiness-table-body": ["Student Name", "No", "No", "Not Started", "0", "50"],
       "events-table-body": ["New Workshop", "Jul 01", "0 / 40", "Projected 0", "Open"],
@@ -1245,34 +1256,33 @@
       renderProjectRequests();
     }
 
-    function loadProjectRequests() {
-      try {
-        const parsed = JSON.parse(localStorage.getItem(PROJECT_REQUESTS_KEY) || "[]");
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (error) {
-        return [];
-      }
-    }
-
-    function saveProjectRequests(requests) {
-      localStorage.setItem(PROJECT_REQUESTS_KEY, JSON.stringify(requests));
-    }
-
     function formatSubmissionDate(dateValue) {
       const parsed = new Date(dateValue);
       if (Number.isNaN(parsed.getTime())) return "N/A";
       return parsed.toLocaleString();
     }
 
-    function renderProjectRequests() {
+    async function renderProjectRequests() {
       const tbody = document.getElementById("project-requests-body");
       const emptyState = document.getElementById("project-requests-empty");
       if (!tbody || !emptyState) return;
 
-      const requests = loadProjectRequests();
+      if (!supabaseClient) return;
+      const { data: requests, error } = await supabaseClient
+        .from("project_applications")
+        .select("id, full_name, email, phone, school, grade_level, project_name, interest_response, current_skills, skills_to_learn, availability, status, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        emptyState.classList.remove("legacy-hidden");
+        emptyState.textContent = "Unable to load project requests.";
+        return;
+      }
+
       tbody.innerHTML = "";
 
-      if (!requests.length) {
+      if (!requests || !requests.length) {
         emptyState.classList.remove("legacy-hidden");
         return;
       }
@@ -1281,16 +1291,17 @@
       requests.forEach((request) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${request.applicantName || "N/A"}</td>
+          <td>${request.full_name || "N/A"}</td>
           <td>${request.email || "N/A"}</td>
           <td>${request.phone || "N/A"}</td>
-          <td>${request.projectName || "N/A"}</td>
-          <td>${request.schoolOrg || "N/A"}</td>
-          <td>${request.gradeLevel || "N/A"}</td>
-          <td>${request.interestResponse || "N/A"}</td>
-          <td>${request.skillsResponse || "N/A"}</td>
+          <td>${request.project_name || "N/A"}</td>
+          <td>${request.school || "N/A"}</td>
+          <td>${request.grade_level || "N/A"}</td>
+          <td>${request.interest_response || "N/A"}</td>
+          <td>${request.current_skills || "N/A"}</td>
+          <td>${request.skills_to_learn || "N/A"}</td>
           <td>${request.availability || "N/A"}</td>
-          <td>${formatSubmissionDate(request.submittedAt)}</td>
+          <td>${formatSubmissionDate(request.created_at)}</td>
           <td><span class="badge ${badgeClassForStatus(request.status || "Pending")}">${request.status || "Pending"}</span></td>
           <td>
             <div class="inline-actions" style="margin: 0;">
@@ -1436,6 +1447,7 @@
     const privateArea = document.getElementById("private-area");
     const privateDenied = document.getElementById("private-denied");
     const projectRequestsSection = document.getElementById("project-requests");
+    const devLoginBadge = document.getElementById("dev-login-badge");
     const editBtn = document.getElementById("edit-mode-btn");
     const saveBtn = document.getElementById("save-mode-btn");
     const exitBtn = document.getElementById("exit-mode-btn");
@@ -1452,22 +1464,11 @@
       if (!hasAccess && editMode) exitEditMode();
     }
 
-    function requestPrivateAccess(viewer) {
-      pendingViewer = viewer;
+    function requestPrivateAccess() {
       showPinModal();
     }
 
-    privateViewer.addEventListener("change", () => {
-      const viewer = privateViewer.value;
-      if (APPROVED_LEADERSHIP_USERS.includes(viewer)) {
-        if (!isPrivateAuthorized) requestPrivateAccess(viewer);
-        else updatePrivateAccess();
-      } else {
-        isPrivateAuthorized = false;
-        localStorage.removeItem("summitLeadershipUser");
-        updatePrivateAccess();
-      }
-    });
+    privateViewer.addEventListener("change", () => updatePrivateAccess());
 
     document.getElementById("pin-submit").addEventListener("click", () => {
       const input = document.getElementById("pin-input");
@@ -1476,9 +1477,6 @@
         isPrivateAuthorized = true;
         hidePinModal();
         if (pendingViewer) privateViewer.value = pendingViewer;
-        localStorage.setItem("summitLeadershipUser", privateViewer.value);
-        localStorage.setItem("summitCurrentUser", privateViewer.value);
-        // Front-end demo only: real private access requires backend authentication and authorization.
         pendingViewer = null;
         updatePrivateAccess();
       } else {
@@ -1522,19 +1520,79 @@
       } else if (action === "set-request-status") {
         const requestId = target.getAttribute("data-id");
         const nextStatus = target.getAttribute("data-status");
-        const requests = loadProjectRequests();
-        const request = requests.find((item) => item.id === requestId);
-        if (request) {
-          request.status = nextStatus;
-          saveProjectRequests(requests);
-          renderProjectRequests();
-        }
+        if (!requestId || !nextStatus || !supabaseClient) return;
+        supabaseClient
+          .from("project_applications")
+          .update({ status: nextStatus })
+          .eq("id", requestId)
+          .then(({ error }) => {
+            if (error) {
+              alert(error.message || "Unable to update application status.");
+              return;
+            }
+            renderProjectRequests();
+          });
       }
     });
 
-    renderDefaultDataIfNeeded();
-    markEditableText();
-    updatePrivateAccess();
+    async function bootstrapLeadershipAccess() {
+      const devLeaderBypass = localStorage.getItem("summitDevLeaderBypass") === "true";
+      const devLeaderName = localStorage.getItem("summitDevLeaderName") || "Manny";
+      if (devLeaderBypass) {
+        if (devLoginBadge) {
+          devLoginBadge.classList.remove("hidden");
+          devLoginBadge.textContent = `Dev Login Active (${devLeaderName})`;
+        }
+        currentProfile = { full_name: devLeaderName, role: "leader" };
+        isPrivateAuthorized = true;
+        privateViewer.value = APPROVED_LEADERSHIP_USERS.includes(devLeaderName) ? devLeaderName : "Manny";
+        privateViewer.disabled = true;
+        document.getElementById("pin-overlay").classList.remove("active");
+        renderDefaultDataIfNeeded();
+        markEditableText();
+        updatePrivateAccess();
+        await renderProjectRequests();
+        return;
+      }
+
+      supabaseClient = window.getSummitSupabaseClient();
+      if (devLoginBadge) devLoginBadge.classList.add("hidden");
+      const { data: authData } = await supabaseClient.auth.getUser();
+      const user = authData?.user;
+      if (!user) {
+        window.location.href = "./index.html";
+        return;
+      }
+
+      const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("full_name, role")
+        .eq("id", user.id)
+        .single();
+
+      if (error || !profile || profile.role !== "leader" || !APPROVED_LEADERSHIP_USERS.includes(profile.full_name)) {
+        alert("Access denied. Leadership dashboard is available only to approved leaders.");
+        window.location.href = "./home.html";
+        return;
+      }
+
+      currentProfile = profile;
+      isPrivateAuthorized = true;
+      privateViewer.value = profile.full_name;
+      privateViewer.disabled = true;
+      document.getElementById("pin-overlay").classList.remove("active");
+
+      renderDefaultDataIfNeeded();
+      markEditableText();
+      updatePrivateAccess();
+      await renderProjectRequests();
+    }
+
+    bootstrapLeadershipAccess().catch((error) => {
+      console.error(error);
+      alert("Unable to load leadership dashboard.");
+      window.location.href = "./home.html";
+    });
   </script>
 </body>
 </html>

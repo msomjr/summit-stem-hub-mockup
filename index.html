@@ -228,15 +228,11 @@
         <p>Log in to your SUMMIT STEM Platform account.</p>
       </div>
 
-      <!-- Front-end only: no real authentication yet. Logging in just goes to the hub. -->
+      <!-- Supabase email/password authentication -->
       <form id="login-form">
         <div class="field">
-          <label for="display-name">Display name</label>
-          <input id="display-name" name="display-name" type="text" placeholder="Manny or Ferranmi" />
-        </div>
-        <div class="field">
           <label for="email">Email</label>
-          <input id="email" name="email" type="email" placeholder="name@example.com" required />
+          <input id="email" name="email" type="text" placeholder="name@example.com" required />
         </div>
 
         <div class="field">
@@ -245,7 +241,7 @@
         </div>
 
         <div class="forgot">
-          <a href="#">Forgot password?</a>
+          <a id="forgot-password-link" href="#">Forgot password?</a>
         </div>
 
         <button class="btn" type="submit">Login</button>
@@ -254,30 +250,84 @@
       <p class="switch-link">
         Don't have an account? <a href="./signup.html">Sign up</a>
       </p>
-      <p class="back-home"><a href="./landing.html">Back to platform home</a></p>
+      <p class="back-home"><a href="./home.html">Back to platform home</a></p>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
   <script>
-    const approvedUsers = ["Manny", "ferranmi"];
+    const DEV_LEADER_PASSWORD = "1";
+    const DEV_LEADER_EMAILS = {
+      "1": "Manny",
+      "manny": "Manny",
+      "ferranmni": "Ferranmi",
+      "ferranmi": "Ferranmi"
+    };
     const loginForm = document.getElementById("login-form");
+    const forgotPasswordLink = document.getElementById("forgot-password-link");
 
-    loginForm.addEventListener("submit", (event) => {
+    loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const displayName = (document.getElementById("display-name").value || "").trim();
-      const email = (document.getElementById("email").value || "").trim();
-      const fallbackName = email.split("@")[0] || "";
-      const userName = displayName || fallbackName;
+      const email = (document.getElementById("email").value || "").trim().toLowerCase();
+      const password = document.getElementById("password").value;
 
-      localStorage.setItem("summitCurrentUser", userName);
-
-      if (approvedUsers.includes(userName.toLowerCase())) {
-        localStorage.setItem("summitLeadershipUser", userName);
-      } else {
-        localStorage.removeItem("summitLeadershipUser");
+      const devLeaderName = DEV_LEADER_EMAILS[email];
+      if (devLeaderName && password === DEV_LEADER_PASSWORD) {
+        localStorage.setItem("summitDevLeaderBypass", "true");
+        localStorage.setItem("summitDevLeaderName", devLeaderName);
+        window.location.href = "./leadership-dashboard.html";
+        return;
       }
 
-      // Front-end demo only: real access checks must be handled by backend authentication.
-      window.location.href = "./home.html";
+      try {
+        const supabase = window.getSummitSupabaseClient();
+        const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (error) throw error;
+        localStorage.removeItem("summitDevLeaderBypass");
+        localStorage.removeItem("summitDevLeaderName");
+
+        const userId = data.user?.id;
+        if (!userId) throw new Error("Login succeeded but user was not returned.");
+
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("id, full_name, email, role")
+          .eq("id", userId)
+          .single();
+
+        if (profileError || !profile) {
+          const metadataName = data.user?.user_metadata?.full_name || "";
+          const displayName = (metadataName || email.split("@")[0] || "Student").trim();
+          const { error: upsertError } = await supabase.from("profiles").upsert({
+            id: userId,
+            full_name: displayName,
+            email: data.user?.email || email
+          });
+          if (upsertError) throw upsertError;
+        }
+
+        window.location.href = "./home.html";
+      } catch (err) {
+        alert(err.message || "Login failed. Please check your credentials.");
+      }
+    });
+
+    forgotPasswordLink.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const email = (document.getElementById("email").value || "").trim();
+      if (!email) {
+        alert("Enter your email first, then click Forgot password.");
+        return;
+      }
+
+      try {
+        const supabase = window.getSummitSupabaseClient();
+        const { error } = await supabase.auth.resetPasswordForEmail(email);
+        if (error) throw error;
+        alert("Password reset email sent. Check your inbox and spam folder.");
+      } catch (err) {
+        alert(err.message || "Unable to send password reset email.");
+      }
     });
   </script>
 </body>

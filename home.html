@@ -272,26 +272,55 @@
             <span class="pill">Open Opportunities</span>
           </a>
 
-          <a class="nav-card" href="./leadership-access-mockup.html">
+          <a class="nav-card" href="./my-applications.html">
+            <h3>My Applications</h3>
+            <p>Track submitted project applications and status updates from leadership.</p>
+            <span class="pill">Open Application Tracker</span>
+          </a>
+
+          <a class="nav-card" href="./leadership-dashboard.html">
             <h3>Leadership Access</h3>
             <p>Preview leadership pathways, onboarding, and access workflows.</p>
             <span class="pill">Open Leadership View</span>
           </a>
         </div>
-        <p id="leadership-access-note" style="margin-top: 12px; display: none;">Leadership Access appears after approved leadership login (Manny or Ferranmi).</p>
+        <p id="leadership-access-note" style="margin-top: 12px; display: none;">Leadership Access appears only for leader accounts.</p>
       </div>
     </section>
   </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
   <script>
-    const approvedUsers = ["Manny", "ferranmi"];
-    const currentUser = (localStorage.getItem("summitCurrentUser") || "").trim().toLowerCase();
-    const leadershipLink = document.querySelector('a[href="./leadership-access-mockup.html"]');
+    const leadershipLink = document.querySelector('a[href="./leadership-dashboard.html"]');
     const leadershipNote = document.getElementById("leadership-access-note");
+    const devLeaderBypass = localStorage.getItem("summitDevLeaderBypass") === "true";
+    (async () => {
+      try {
+        if (devLeaderBypass) return;
 
-    if (!approvedUsers.includes(currentUser) && leadershipLink) {
-      leadershipLink.style.display = "none";
-      if (leadershipNote) leadershipNote.style.display = "block";
-    }
+        const supabase = window.getSummitSupabaseClient();
+        const { data: authData } = await supabase.auth.getUser();
+        const user = authData?.user;
+        if (!user) {
+          window.location.href = "./index.html";
+          return;
+        }
+
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        const isLeader = profile?.role === "leader";
+        if (!isLeader && leadershipLink) {
+          leadershipLink.style.display = "none";
+          if (leadershipNote) leadershipNote.style.display = "block";
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
   </script>
 </body>
 </html>

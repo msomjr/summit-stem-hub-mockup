@@ -135,6 +135,17 @@
       display: none;
     }
 
+    .success a {
+      color: #1e3a8a;
+      font-weight: 700;
+      text-decoration: none;
+      margin-left: 6px;
+    }
+
+    .success a:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 760px) {
       .grid-2 { grid-template-columns: 1fr; }
       .field.span-2 { grid-column: auto; }
@@ -148,6 +159,7 @@
       <p>Apply to join a project in the SUMMIT STEM Hub. Your request will appear in the leadership Project Requests board.</p>
       <div style="margin-top: 10px;">
         <a class="btn btn-secondary" href="./stem-hub-mockup.html">Back to Projects Hub</a>
+        <a class="btn btn-secondary" href="./my-applications.html">View My Applications</a>
       </div>
     </section>
 
@@ -198,13 +210,17 @@
         <div style="margin-top: 12px;">
           <button class="btn btn-primary" type="submit">Submit application</button>
         </div>
-        <div id="success-message" class="success">Application submitted successfully. Leadership can now review your request.</div>
+        <div id="success-message" class="success">
+          Application submitted successfully. Leadership can now review your request.
+          <a href="./my-applications.html">View My Applications</a>
+        </div>
       </form>
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
   <script>
-    const STORAGE_KEY = "summitProjectApplications";
     const FALLBACK_PROJECTS = [
       "Hash Identifier",
       "HTTP Headers Scanner",
@@ -222,8 +238,9 @@
     const successMessage = document.getElementById("success-message");
     const params = new URLSearchParams(window.location.search);
     const selectedProject = params.get("project");
+    let currentUserId = null;
 
-    const catalog = JSON.parse(localStorage.getItem("summitProjectCatalog") || "null") || FALLBACK_PROJECTS;
+    const catalog = FALLBACK_PROJECTS;
     catalog.forEach((projectTitle) => {
       const option = document.createElement("option");
       option.value = projectTitle;
@@ -235,32 +252,66 @@
       projectSelect.value = selectedProject;
     }
 
-    form.addEventListener("submit", (event) => {
+    async function bootstrapAuth() {
+      const supabase = window.getSummitSupabaseClient();
+      const { data: authData } = await supabase.auth.getUser();
+      const user = authData?.user;
+      if (!user) {
+        window.location.href = "./index.html";
+        return;
+      }
+      currentUserId = user.id;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, email")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.full_name) document.getElementById("fullName").value = profile.full_name;
+      if (profile?.email) document.getElementById("email").value = profile.email;
+    }
+
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
+      const supabase = window.getSummitSupabaseClient();
+      if (!currentUserId) {
+        alert("Please log in to submit an application.");
+        window.location.href = "./index.html";
+        return;
+      }
+
       const payload = {
-        id: crypto.randomUUID(),
-        applicantName: document.getElementById("fullName").value.trim(),
+        user_id: currentUserId,
+        full_name: document.getElementById("fullName").value.trim(),
         email: document.getElementById("email").value.trim(),
         phone: document.getElementById("phone").value.trim(),
-        schoolOrg: document.getElementById("schoolOrg").value.trim(),
-        gradeLevel: document.getElementById("gradeLevel").value.trim(),
-        projectName: projectSelect.value,
-        interestResponse: document.getElementById("interestResponse").value.trim(),
-        skillsResponse: document.getElementById("skillsHave").value.trim(),
-        skillsToLearn: document.getElementById("skillsLearn").value.trim(),
+        school: document.getElementById("schoolOrg").value.trim(),
+        grade_level: document.getElementById("gradeLevel").value.trim(),
+        project_name: projectSelect.value,
+        interest_response: document.getElementById("interestResponse").value.trim(),
+        current_skills: document.getElementById("skillsHave").value.trim(),
+        skills_to_learn: document.getElementById("skillsLearn").value.trim(),
         availability: document.getElementById("availability").value.trim(),
-        submittedAt: new Date().toISOString(),
         status: "Pending"
       };
 
-      const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      existing.push(payload);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+      try {
+        const { error } = await supabase.from("project_applications").insert(payload);
+        if (error) throw error;
+        // Real project submissions are persisted in Supabase; no localStorage fallback is used.
+        successMessage.style.display = "block";
+        form.reset();
+        projectSelect.value = selectedProject && catalog.includes(selectedProject) ? selectedProject : catalog[0];
+      } catch (error) {
+        alert(error.message || "Failed to submit application.");
+      }
+    });
 
-      // Front-end demo only: real form submissions require a backend or form service.
-      successMessage.style.display = "block";
-      form.reset();
-      projectSelect.value = selectedProject && catalog.includes(selectedProject) ? selectedProject : catalog[0];
+    bootstrapAuth().catch((error) => {
+      console.error(error);
+      alert("Unable to verify login session. Please log in again.");
+      window.location.href = "./index.html";
     });
   </script>
 </body>

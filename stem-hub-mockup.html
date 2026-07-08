@@ -1073,6 +1073,9 @@
           <h2 class="section-title">Curated Projects Across Majors</h2>
           <p class="section-note">Filter by focus area to discover project cards with clear build outcomes and practical learning targets.</p>
         </div>
+        <div class="hero-actions" style="margin: 0;">
+          <a class="btn btn-secondary" href="./my-applications.html">My Applications</a>
+        </div>
       </div>
       <div class="project-toolbar" id="project-filters"></div>
       <div class="grid projects-grid" id="projects-grid"></div>
@@ -1116,10 +1119,10 @@
         </article>
       </div>
       <div class="hero-actions" style="margin-top: 14px;">
-        <a class="btn btn-primary" href="./leadership-access-mockup.html">Open Leadership Access</a>
-        <a class="btn btn-secondary" href="./leadership-access-mockup.html">View Buddy Assignments</a>
+        <a class="btn btn-primary" href="./leadership-dashboard.html">Open Leadership Access</a>
+        <a class="btn btn-secondary" href="./leadership-dashboard.html">View Buddy Assignments</a>
       </div>
-      <p id="leadership-note" class="section-note" style="display:none;">Leadership dashboard access is shown for approved leadership users (Manny or Ferranmi).</p>
+      <p id="leadership-note" class="section-note" style="display:none;">Leadership dashboard access is shown for leader accounts.</p>
     </section>
 
     <section class="section reveal" id="mentorship">
@@ -1191,6 +1194,8 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
   <script>
     const platformProjects = [
       {
@@ -1332,8 +1337,6 @@
         ? platformProjects
         : platformProjects.filter((project) => project.track === activeFilter);
 
-      localStorage.setItem("summitProjectCatalog", JSON.stringify(platformProjects.map((project) => project.title)));
-
       filtered.forEach((project) => {
         const card = document.createElement("article");
         card.className = "card project-card";
@@ -1379,17 +1382,41 @@
       interestForm.reset();
     });
 
-    const approvedLeadershipUsers = ["Manny", "ferranmi"];
-    const currentUser = (localStorage.getItem("summitCurrentUser") || "").trim().toLowerCase();
-    const leadershipLinks = document.querySelectorAll('a[href="./leadership-access-mockup.html"]');
+    const leadershipLinks = document.querySelectorAll('a[href="./leadership-dashboard.html"]');
     const leadershipNote = document.getElementById("leadership-note");
-    if (!approvedLeadershipUsers.includes(currentUser)) {
-      leadershipLinks.forEach((link) => { link.style.display = "none"; });
-      if (leadershipNote) leadershipNote.style.display = "block";
-    }
+    const devLeaderBypass = localStorage.getItem("summitDevLeaderBypass") === "true";
+    (async () => {
+      try {
+        if (devLeaderBypass) {
+          return;
+        }
 
-    renderFilters();
-    renderProjects();
+        const supabase = window.getSummitSupabaseClient();
+        const { data: authData } = await supabase.auth.getUser();
+        const user = authData?.user;
+        if (!user) {
+          window.location.href = "./index.html";
+          return;
+        }
+
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        const isLeader = profile?.role === "leader";
+        if (!isLeader) {
+          leadershipLinks.forEach((link) => { link.style.display = "none"; });
+          if (leadershipNote) leadershipNote.style.display = "block";
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        renderFilters();
+        renderProjects();
+      }
+    })();
   </script>
 </body>
 </html>

@@ -220,7 +220,7 @@
         <p>Join the SUMMIT STEM Platform community.</p>
       </div>
 
-      <!-- Front-end only: no real authentication yet -->
+      <!-- Supabase email/password sign-up -->
       <form id="signup-form">
         <div class="field">
           <label for="full-name">Full name</label>
@@ -248,24 +248,55 @@
       <p class="switch-link">
         Already have an account? <a href="./index.html">Login</a>
       </p>
-      <p class="back-home"><a href="./landing.html">Back to platform home</a></p>
+      <p class="back-home"><a href="./home.html">Back to platform home</a></p>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
   <script>
-    const approvedUsers = ["Manny", "ferranmi"];
     const signupForm = document.getElementById("signup-form");
 
-    signupForm.addEventListener("submit", (event) => {
+    signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const fullName = (document.getElementById("full-name").value || "").trim();
-      localStorage.setItem("summitCurrentUser", fullName);
-      if (approvedUsers.includes(fullName.toLowerCase())) {
-        localStorage.setItem("summitLeadershipUser", fullName);
-      } else {
-        localStorage.removeItem("summitLeadershipUser");
+      const email = (document.getElementById("email").value || "").trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
       }
-      // Front-end demo only: real access checks must be handled by backend authentication.
-      window.location.href = "./home.html";
+
+      try {
+        const supabase = window.getSummitSupabaseClient();
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: fullName }
+          }
+        });
+        if (error) throw error;
+
+        const userId = data.user?.id;
+        if (userId) {
+          const { error: profileError } = await supabase.from("profiles").upsert({
+            id: userId,
+            full_name: fullName,
+            email
+          });
+          if (profileError) {
+            console.warn("Profile insert deferred until first login:", profileError.message);
+          }
+        }
+
+        // If email confirmation is enabled, Supabase may not create an active session immediately.
+        alert("Account created. If email confirmation is enabled, confirm your email, then log in.");
+        window.location.href = "./index.html";
+      } catch (err) {
+        alert(err.message || "Sign up failed.");
+      }
     });
   </script>
 </body>
