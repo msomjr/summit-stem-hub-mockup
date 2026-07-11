@@ -291,12 +291,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./supabase-config.js"></script>
   <script>
+    const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
     const leadershipLink = document.querySelector('a[href="./leadership-dashboard.html"]');
     const leadershipNote = document.getElementById("leadership-access-note");
-    const devLeaderBypass = localStorage.getItem("summitDevLeaderBypass") === "true";
     (async () => {
       try {
-        if (devLeaderBypass) return;
+        if (adminBypass) return;
 
         const supabase = window.getSummitSupabaseClient();
         const { data: authData } = await supabase.auth.getUser();

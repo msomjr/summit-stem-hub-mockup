@@ -256,25 +256,24 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./supabase-config.js"></script>
   <script>
-    const DEV_LEADER_PASSWORD = "1";
-    const DEV_LEADER_EMAILS = {
-      "1": "Manny",
-      "manny": "Manny",
-      "ferranmni": "Ferranmi",
-      "ferranmi": "Ferranmi"
-    };
+    const ADMIN_BYPASS_EMAIL = "1";
+    const ADMIN_BYPASS_PASSWORD = "1";
+    const ADMIN_BYPASS_KEY = "summitAdminBypass";
     const loginForm = document.getElementById("login-form");
     const forgotPasswordLink = document.getElementById("forgot-password-link");
+
+    if (localStorage.getItem(ADMIN_BYPASS_KEY) === "true") {
+      window.location.href = "./leadership-dashboard.html";
+    }
 
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const email = (document.getElementById("email").value || "").trim().toLowerCase();
       const password = document.getElementById("password").value;
 
-      const devLeaderName = DEV_LEADER_EMAILS[email];
-      if (devLeaderName && password === DEV_LEADER_PASSWORD) {
-        localStorage.setItem("summitDevLeaderBypass", "true");
-        localStorage.setItem("summitDevLeaderName", devLeaderName);
+      if (email === ADMIN_BYPASS_EMAIL && password === ADMIN_BYPASS_PASSWORD) {
+        localStorage.setItem(ADMIN_BYPASS_KEY, "true");
+        localStorage.setItem("summitAdminBypassUser", "Admin");
         window.location.href = "./leadership-dashboard.html";
         return;
       }
@@ -283,8 +282,8 @@
         const supabase = window.getSummitSupabaseClient();
         const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;
-        localStorage.removeItem("summitDevLeaderBypass");
-        localStorage.removeItem("summitDevLeaderName");
+        localStorage.removeItem(ADMIN_BYPASS_KEY);
+        localStorage.removeItem("summitAdminBypassUser");
 
         const userId = data.user?.id;
         if (!userId) throw new Error("Login succeeded but user was not returned.");
@@ -315,6 +314,10 @@
     forgotPasswordLink.addEventListener("click", async (event) => {
       event.preventDefault();
       const email = (document.getElementById("email").value || "").trim();
+      if (email === ADMIN_BYPASS_EMAIL) {
+        alert("Admin bypass login does not use password reset.");
+        return;
+      }
       if (!email) {
         alert("Enter your email first, then click Forgot password.");
         return;

@@ -25,8 +25,55 @@ create table if not exists public.project_applications (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.leadership_events (
+  id bigint generated always as identity primary key,
+  event_name text not null,
+  event_date timestamptz not null,
+  location text,
+  notes text,
+  created_by uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.leadership_announcements (
+  id bigint generated always as identity primary key,
+  title text not null,
+  body text,
+  created_by uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
 alter table public.profiles enable row level security;
 alter table public.project_applications enable row level security;
+alter table public.leadership_events enable row level security;
+alter table public.leadership_announcements enable row level security;
+
+-- Helper functions to avoid RLS policy recursion on profiles.
+create or replace function public.current_user_role()
+returns text
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select p.role
+  from public.profiles p
+  where p.id = auth.uid()
+  limit 1
+$$;
+
+create or replace function public.is_current_user_leader()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(public.current_user_role() = 'leader', false)
+$$;
+
+grant execute on function public.current_user_role() to authenticated;
+grant execute on function public.is_current_user_leader() to authenticated;
 
 -- PROFILES POLICIES
 drop policy if exists "profiles_select_own_or_leader" on public.profiles;
@@ -35,10 +82,7 @@ on public.profiles
 for select
 using (
   auth.uid() = id
-  or exists (
-    select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'leader'
-  )
+  or public.is_current_user_leader()
 );
 
 drop policy if exists "profiles_insert_self" on public.profiles;
@@ -56,24 +100,14 @@ on public.profiles
 for update
 using (
   auth.uid() = id
-  or exists (
-    select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'leader'
-  )
+  or public.is_current_user_leader()
 )
 with check (
   (
     auth.uid() = id
-    and role = (
-      select p.role
-      from public.profiles p
-      where p.id = auth.uid()
-    )
+    and role = public.current_user_role()
   )
-  or exists (
-    select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'leader'
-  )
+  or public.is_current_user_leader()
 );
 
 -- PROJECT APPLICATION POLICIES
@@ -89,10 +123,7 @@ on public.project_applications
 for select
 using (
   user_id = auth.uid()
-  or exists (
-    select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'leader'
-  )
+  or public.is_current_user_leader()
 );
 
 drop policy if exists "applications_update_leader_only" on public.project_applications;
@@ -100,16 +131,66 @@ create policy "applications_update_leader_only"
 on public.project_applications
 for update
 using (
-  exists (
-    select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'leader'
-  )
+  public.is_current_user_leader()
 )
 with check (
-  exists (
-    select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'leader'
-  )
+  public.is_current_user_leader()
+);
+
+-- LEADERSHIP EVENTS POLICIES
+drop policy if exists "leadership_events_leader_read" on public.leadership_events;
+create policy "leadership_events_leader_read"
+on public.leadership_events
+for select
+using (
+  public.is_current_user_leader()
+);
+
+drop policy if exists "leadership_events_leader_insert" on public.leadership_events;
+create policy "leadership_events_leader_insert"
+on public.leadership_events
+for insert
+with check (
+  public.is_current_user_leader()
+);
+
+drop policy if exists "leadership_events_leader_update" on public.leadership_events;
+create policy "leadership_events_leader_update"
+on public.leadership_events
+for update
+using (
+  public.is_current_user_leader()
+)
+with check (
+  public.is_current_user_leader()
+);
+
+-- LEADERSHIP ANNOUNCEMENT POLICIES
+drop policy if exists "leadership_announcements_leader_read" on public.leadership_announcements;
+create policy "leadership_announcements_leader_read"
+on public.leadership_announcements
+for select
+using (
+  public.is_current_user_leader()
+);
+
+drop policy if exists "leadership_announcements_leader_insert" on public.leadership_announcements;
+create policy "leadership_announcements_leader_insert"
+on public.leadership_announcements
+for insert
+with check (
+  public.is_current_user_leader()
+);
+
+drop policy if exists "leadership_announcements_leader_update" on public.leadership_announcements;
+create policy "leadership_announcements_leader_update"
+on public.leadership_announcements
+for update
+using (
+  public.is_current_user_leader()
+)
+with check (
+  public.is_current_user_leader()
 );
 
 -- Optional: set approved leaders after they sign up.

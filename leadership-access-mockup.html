@@ -264,11 +264,6 @@
       white-space: nowrap;
     }
 
-    .dev-login-badge {
-      border-color: rgba(242, 194, 122, 0.55);
-      background: var(--warning-soft);
-      color: #f59e0b;
-    }
 
     .grid {
       display: grid;
@@ -487,64 +482,6 @@
       background: var(--danger-soft);
     }
 
-    .pin-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 7, 16, 0.75);
-      backdrop-filter: blur(2px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-      padding: 16px;
-    }
-
-    .pin-overlay.active {
-      display: flex;
-    }
-
-    .pin-modal {
-      width: min(420px, 100%);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-xl);
-      background: linear-gradient(150deg, rgba(16, 32, 56, 0.95), rgba(13, 28, 52, 0.94));
-      box-shadow: var(--shadow);
-      padding: 16px;
-    }
-
-    .pin-modal h3 {
-      margin: 0 0 6px;
-      font-size: 1.15rem;
-    }
-
-    .pin-modal p {
-      margin: 0 0 12px;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .pin-input {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font: inherit;
-      background: rgba(11, 24, 43, 0.78);
-      color: var(--text);
-      letter-spacing: 0.15em;
-      font-weight: 800;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .pin-error {
-      margin: 0 0 10px;
-      color: var(--danger);
-      font-size: 0.84rem;
-      font-weight: 700;
-      display: none;
-    }
-
     @media (max-width: 1100px) {
       .layout {
         grid-template-columns: 1fr;
@@ -606,8 +543,7 @@
     .sidebar,
     .topbar,
     .section,
-    .card,
-    .pin-modal {
+    .card {
       background: #ffffff !important;
       border-color: var(--line) !important;
       color: var(--text) !important;
@@ -696,8 +632,8 @@
         <p>Comprehensive operations hub for mentorship routing, project visibility, event delivery, and leadership execution tracking.</p>
         <div class="button-row">
           <a class="btn btn-primary" href="./stem-hub-mockup.html">Back to Main Hub</a>
-          <button class="btn btn-secondary" type="button">Export Weekly Report (Mock)</button>
-          <span id="dev-login-badge" class="pill dev-login-badge hidden">Dev Login Active</span>
+          <button class="btn btn-secondary" type="button">Export Weekly Report</button>
+          <button id="exit-admin-mode-btn" class="btn btn-danger hidden" type="button">Exit Admin Mode</button>
         </div>
       </header>
 
@@ -710,30 +646,24 @@
           <span class="pill">Live Snapshot</span>
         </div>
         <div class="grid grid-6">
-          <article class="card metric"><strong>148</strong><span>Total Members</span></article>
-          <article class="card metric"><strong>109</strong><span>Active This Week</span></article>
-          <article class="card metric"><strong>36</strong><span>Projects Completed</span></article>
-          <article class="card metric"><strong>24</strong><span>Active Mentors</span></article>
-          <article class="card metric"><strong>7</strong><span>Upcoming Events</span></article>
-          <article class="card metric"><strong>5</strong><span>Recent Announcements</span></article>
+          <article class="card metric"><strong id="metric-total-members">0</strong><span>Total Members</span></article>
+          <article class="card metric"><strong id="metric-active-week">0</strong><span>Active This Week</span></article>
+          <article class="card metric"><strong id="metric-completed-projects">0</strong><span>Projects Completed</span></article>
+          <article class="card metric"><strong id="metric-active-mentors">0</strong><span>Active Mentors</span></article>
+          <article class="card metric"><strong id="metric-upcoming-events">0</strong><span>Upcoming Events</span></article>
+          <article class="card metric"><strong id="metric-announcements">0</strong><span>Recent Announcements</span></article>
         </div>
         <div class="grid grid-2" style="margin-top: 10px;">
           <article class="card">
             <h3 style="margin: 0 0 8px;">Recent Announcements</h3>
-            <ul class="announce-list">
-              <li>Cybersecurity Capture-the-Flag prep session opens Friday.</li>
-              <li>Engineering track added 4 new embedded systems project slots.</li>
-              <li>Mentor office hours now available on Tuesdays and Thursdays.</li>
-              <li>Resume + LinkedIn support night moved to 6:30 PM.</li>
+            <ul class="announce-list" id="overview-announcements-list">
+              <li>No announcements loaded yet.</li>
             </ul>
           </article>
           <article class="card">
             <h3 style="margin: 0 0 8px;">Leadership Pulse</h3>
-            <ul class="bullet-list">
-              <li>Member response time improved by 22% over last week.</li>
-              <li>Project intake demand strongest in Cyber and AI tracks.</li>
-              <li>Mentor load balancing needed for two high-volume cohorts.</li>
-              <li>Three event RSVPs have crossed capacity thresholds.</li>
+            <ul class="bullet-list" id="leadership-pulse-list">
+              <li>Pulse updates will appear once live data is available.</li>
             </ul>
           </article>
         </div>
@@ -773,23 +703,20 @@
           <span class="pill">Portfolio Insights</span>
         </div>
         <div class="grid grid-4">
-          <article class="card metric"><strong>62</strong><span>Total Projects</span></article>
-          <article class="card metric"><strong>Cyber Labs</strong><span>Most Popular Category</span></article>
-          <article class="card metric"><strong>74%</strong><span>Average Completion Rate</span></article>
-          <article class="card metric"><strong>18</strong><span>Projects In Active Sprint</span></article>
+          <article class="card metric"><strong id="metric-total-projects">0</strong><span>Total Projects</span></article>
+          <article class="card metric"><strong id="metric-most-requested-project">N/A</strong><span>Most Requested Project</span></article>
+          <article class="card metric"><strong id="metric-completion-rate">0%</strong><span>Average Completion Rate</span></article>
+          <article class="card metric"><strong id="metric-active-sprint">0</strong><span>Projects In Active Sprint</span></article>
         </div>
         <div class="grid grid-2" style="margin-top: 10px;">
           <article class="card">
             <h3 style="margin: 0 0 8px;">Most Popular Projects</h3>
-            <ul class="announce-list">
-              <li>SIEM Dashboard (27 active members)</li>
-              <li>LLM Prompt Injection Firewall (23 active members)</li>
-              <li>Robotics Design Group (19 active members)</li>
-              <li>Data Science Mini Project (17 active members)</li>
+            <ul class="announce-list" id="popular-projects-list">
+              <li>No project demand data yet.</li>
             </ul>
           </article>
           <article class="card">
-            <h3 style="margin: 0 0 8px;">Projects by Category</h3>
+            <h3 style="margin: 0 0 8px;">Applications by Status</h3>
             <div class="bar-chart" id="project-category-bars"></div>
           </article>
         </div>
@@ -913,7 +840,7 @@
               <li>Document post-event outcomes for leadership review.</li>
             </ul>
             <div class="button-row">
-              <button class="btn btn-secondary" type="button">Download Attendance Report (Mock)</button>
+              <button class="btn btn-secondary" type="button">Download Attendance Report</button>
             </div>
           </article>
         </div>
@@ -943,22 +870,17 @@
           <div class="card">
             <div class="section-head" style="margin-bottom: 10px;">
               <div>
-                <h2 style="margin: 0; font-size: 1.12rem;">Private Viewer Gate (Mock)</h2>
-                <p style="margin: 4px 0 0;">Mock-only local access control. No backend authentication connected.</p>
+                <h2 style="margin: 0; font-size: 1.12rem;">Admin Access Gate</h2>
+                <p style="margin: 4px 0 0;">Access is enforced through Supabase authentication and admin role checks.</p>
               </div>
-              <span class="badge status-yellow">Private Mock</span>
+              <span class="badge status-yellow">Private Access</span>
             </div>
             <div class="card" style="background: rgba(120, 214, 226, 0.1); border-color: rgba(120, 214, 226, 0.35);">
-              <label for="private-viewer"><strong>Current Viewer</strong></label>
-              <select id="private-viewer" aria-label="Select viewer for mock private access">
-                <option>Public Member</option>
-                <option>Manny</option>
-                <option>Ferranmi</option>
-              </select>
-              <p style="margin: 8px 0 0; color: var(--muted);">Only Manny and Ferranmi can view the private sections in this demo.</p>
+              <label><strong>Admin Control</strong></label>
+              <p style="margin: 8px 0 0; color: var(--muted);">Leadership content now uses a single admin control interface.</p>
             </div>
             <div id="private-denied" class="card" style="border-style: dashed; border-color: rgba(120, 214, 226, 0.5); background: rgba(120, 214, 226, 0.08); margin-top: 10px;">
-              Access limited in mock mode. Select <strong>Manny</strong> or <strong>Ferranmi</strong> to preview this page.
+              Access limited. Sign in with an admin account to view private sections.
             </div>
           </div>
         </section>
@@ -968,10 +890,10 @@
             <div class="card">
               <div class="section-head">
                 <div>
-                  <h2>Member STEM Tracker (Mock)</h2>
+                  <h2>Member STEM Tracker</h2>
                   <p>Track goals, support gaps, follow-up ownership, and progress.</p>
                 </div>
-                <span class="badge status-purple">Local Mock Data</span>
+                <span class="badge status-purple">Editable Data Layer</span>
               </div>
               <div class="table-wrap">
                 <table>
@@ -1001,7 +923,7 @@
             <div class="card">
               <div class="section-head">
                 <div>
-                  <h2>Buddy System Split (Mock)</h2>
+                  <h2>Buddy System Split</h2>
                   <p>Assignments grouped by coordinator so ownership is clear.</p>
                 </div>
               </div>
@@ -1013,7 +935,7 @@
             <div class="card">
               <div class="section-head">
                 <div>
-                  <h2>Mentorship and Check-Ins (Mock)</h2>
+                  <h2>Mentorship and Check-Ins</h2>
                   <p>Weekly or biweekly prompts for leadership follow-up.</p>
                 </div>
               </div>
@@ -1036,30 +958,14 @@
     </section>
   </main>
 
-  <div id="pin-overlay" class="pin-overlay" role="dialog" aria-modal="true" aria-labelledby="pin-title">
-    <div class="pin-modal">
-      <h3 id="pin-title">Leadership PIN Required</h3>
-      <p>Enter your PIN to access the private leadership interface.</p>
-      <input id="pin-input" class="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" />
-      <p id="pin-error" class="pin-error">Incorrect PIN. Please try again.</p>
-      <div class="button-row">
-        <button id="pin-submit" class="btn btn-primary" type="button">Unlock Access</button>
-        <button id="pin-cancel" class="btn btn-secondary" type="button">Cancel</button>
-      </div>
-    </div>
-  </div>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./supabase-config.js"></script>
   <script>
-    const PIN_CODE = "2233";
     const STORAGE_KEY = "summitLeadershipDashboardSavedMarkup";
-    const APPROVED_LEADERSHIP_USERS = ["Manny", "Ferranmi"];
     let supabaseClient = null;
     let currentProfile = null;
     let isPrivateAuthorized = false;
     let editMode = false;
-    let pendingViewer = null;
 
     const editableSectionIds = [
       "overview",
@@ -1107,159 +1013,160 @@
       });
     }
 
+    function setTableEmptyState(tbodyId, columnCount, message) {
+      const tbody = document.getElementById(tbodyId);
+      if (!tbody) return;
+      tbody.innerHTML = `<tr><td colspan="${columnCount}" class="muted">${message}</td></tr>`;
+    }
+
     function renderDefaultDataIfNeeded() {
-      const hasSaved = localStorage.getItem(STORAGE_KEY);
-      if (hasSaved) {
-        try {
-          const saved = JSON.parse(hasSaved);
-          editableSectionIds.forEach((id) => {
-            const section = document.getElementById(id);
-            if (section && saved[id]) section.innerHTML = saved[id];
-          });
-          renderProjectRequests();
-          return;
-        } catch (error) {
-          localStorage.removeItem(STORAGE_KEY);
-        }
+      // Clear any prior local mock snapshots to avoid rehydrating fake records.
+      localStorage.removeItem(STORAGE_KEY);
+
+      setTableEmptyState("student-progress-body", 6, "No student progress data yet. Connect your student progress data source to populate this table.");
+      setTableEmptyState("mentor-table-body", 6, "No mentor records yet. Add mentors from your backend data source.");
+      setTableEmptyState("readiness-table-body", 6, "No internship readiness records yet.");
+      setTableEmptyState("events-table-body", 5, "No event records yet.");
+      setTableEmptyState("tracker-body", 12, "No member tracker records yet.");
+
+      const categoryBars = document.getElementById("project-category-bars");
+      if (categoryBars) {
+        categoryBars.innerHTML = `<p class="muted" style="margin: 0;">No project analytics loaded yet.</p>`;
       }
 
-      const studentProgressData = [
-        { name: "Ariana M.", track: "Software Development", project: "Beginner App Dev Team", progress: 72, activity: "2h ago", status: "In Progress" },
-        { name: "Derek L.", track: "Engineering", project: "Robotics Design Group", progress: 61, activity: "Yesterday", status: "Needs Follow-Up" },
-        { name: "Imani R.", track: "AI", project: "Research Starter Team", progress: 43, activity: "Today", status: "New" },
-        { name: "Jordan T.", track: "Data & AI", project: "Data Science Mini Project", progress: 88, activity: "30 min ago", status: "Connected" },
-        { name: "Priya S.", track: "Engineering", project: "Engineering Outreach Crew", progress: 100, activity: "2 days ago", status: "Completed" }
-      ];
-      const studentProgressBody = document.getElementById("student-progress-body");
-      studentProgressBody.innerHTML = "";
-      studentProgressData.forEach((student) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${student.name}</td>
-          <td>${student.track}</td>
-          <td>${student.project}</td>
-          <td><strong>${student.progress}%</strong><div class="progress-track"><div class="progress-fill" style="width: ${student.progress}%"></div></div></td>
-          <td>${student.activity}</td>
-          <td><span class="badge ${badgeClassForStatus(student.status)}">${student.status}</span></td>
-        `;
-        studentProgressBody.appendChild(row);
-      });
-
-      const projectCategoryData = [
-        { category: "Engineering", count: 19 },
-        { category: "Cybersecurity", count: 22 },
-        { category: "AI", count: 11 },
-        { category: "Software Development", count: 10 }
-      ];
-      const maxCategoryCount = Math.max(...projectCategoryData.map((item) => item.count));
-      const categoryBars = document.getElementById("project-category-bars");
-      categoryBars.innerHTML = "";
-      projectCategoryData.forEach((item) => {
-        const row = document.createElement("div");
-        const width = (item.count / maxCategoryCount) * 100;
-        row.className = "bar-row";
-        row.innerHTML = `<span>${item.category}</span><div class="bar-shell"><div class="bar-fill" style="width: ${width}%"></div></div><strong>${item.count}</strong>`;
-        categoryBars.appendChild(row);
-      });
-
-      const mentorData = [
-        { name: "Ferranmi A.", specialty: "Mentorship Ops + Career Coaching", mentees: 14, workload: "High", meetings: "11 completed / 3 pending", availability: "Limited" },
-        { name: "Manny C.", specialty: "Engineering Projects", mentees: 12, workload: "Moderate", meetings: "9 completed / 2 pending", availability: "Available" },
-        { name: "Olivia H.", specialty: "Cybersecurity Track", mentees: 10, workload: "Moderate", meetings: "8 completed / 2 pending", availability: "Available" },
-        { name: "Samir P.", specialty: "AI + Data Science", mentees: 9, workload: "Balanced", meetings: "8 completed / 1 pending", availability: "Available" },
-        { name: "Jade R.", specialty: "Resume & LinkedIn Support", mentees: 13, workload: "High", meetings: "10 completed / 4 pending", availability: "Limited" }
-      ];
-      const mentorTableBody = document.getElementById("mentor-table-body");
-      mentorTableBody.innerHTML = "";
-      mentorData.forEach((mentor) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `<td>${mentor.name}</td><td>${mentor.specialty}</td><td>${mentor.mentees}</td><td><span class="badge ${badgeClassForStatus(mentor.workload)}">${mentor.workload}</span></td><td>${mentor.meetings}</td><td><span class="badge ${badgeClassForStatus(mentor.availability)}">${mentor.availability}</span></td>`;
-        mentorTableBody.appendChild(row);
-      });
-
-      const readinessData = [
-        { name: "Ariana M.", resume: "Needs Update", linkedin: "No", portfolio: "In Progress", projects: 2, score: 58 },
-        { name: "Derek L.", resume: "Yes", linkedin: "Needs Improvement", portfolio: "In Progress", projects: 3, score: 71 },
-        { name: "Imani R.", resume: "No", linkedin: "No", portfolio: "Not Started", projects: 1, score: 41 },
-        { name: "Jordan T.", resume: "Yes", linkedin: "Yes", portfolio: "Yes", projects: 4, score: 92 },
-        { name: "Priya S.", resume: "Yes", linkedin: "Needs Improvement", portfolio: "Yes", projects: 4, score: 84 }
-      ];
-      const readinessTableBody = document.getElementById("readiness-table-body");
-      readinessTableBody.innerHTML = "";
-      readinessData.forEach((student) => {
-        const readinessStatus = student.score >= 85 ? "Ready" : student.score >= 65 ? "Developing" : "At Risk";
-        const statusClass = readinessStatus === "Ready" ? "status-green" : readinessStatus === "Developing" ? "status-yellow" : "status-red";
-        const row = document.createElement("tr");
-        row.innerHTML = `<td>${student.name}</td><td>${student.resume}</td><td>${student.linkedin}</td><td>${student.portfolio}</td><td>${student.projects}</td><td><strong>${student.score}%</strong><div class="progress-track"><div class="progress-fill" style="width: ${student.score}%"></div></div><div style="margin-top: 5px;"><span class="badge ${statusClass}">${readinessStatus}</span></div></td>`;
-        readinessTableBody.appendChild(row);
-      });
-
-      const eventData = [
-        { name: "Cybersecurity CTF Prep", date: "Jun 20", rsvp: "52 / 60", attendance: "Projected 46", status: "Nearly Full" },
-        { name: "Engineering Prototype Sprint", date: "Jun 23", rsvp: "38 / 55", attendance: "Projected 34", status: "Open" },
-        { name: "AI Interview Practice Lab", date: "Jun 25", rsvp: "44 / 50", attendance: "Projected 40", status: "High Demand" },
-        { name: "Resume & LinkedIn Clinic", date: "Jun 27", rsvp: "29 / 45", attendance: "Projected 25", status: "Open" }
-      ];
-      const eventsTableBody = document.getElementById("events-table-body");
-      eventsTableBody.innerHTML = "";
-      eventData.forEach((event) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `<td>${event.name}</td><td>${event.date}</td><td>${event.rsvp}</td><td>${event.attendance}</td><td><span class="badge ${badgeClassForStatus(event.status)}">${event.status}</span></td>`;
-        eventsTableBody.appendChild(row);
-      });
-
-      const leadershipTasks = {
-        actionItems: ["Approve final agenda for AI workshop", "Review mentor load distribution report", "Publish this week's leadership recap"],
-        pendingReviews: ["8 project submissions awaiting feedback", "5 internship readiness profiles to validate", "3 event recap forms pending sign-off"],
-        supportRequests: ["11 students requested resume support", "7 students requested project reassignment", "4 students requested mentor escalation"],
-        approvalQueue: ["3 new cybersecurity projects", "2 engineering outreach proposals", "1 software team requesting expanded capacity"]
-      };
       const taskColumns = document.getElementById("task-columns");
-      taskColumns.innerHTML = "";
-      [
-        { title: "Action Items", key: "actionItems", badge: "status-blue" },
-        { title: "Pending Reviews", key: "pendingReviews", badge: "status-yellow" },
-        { title: "Student Support Requests", key: "supportRequests", badge: "status-purple" },
-        { title: "Project Approval Queue", key: "approvalQueue", badge: "status-green" }
-      ].forEach((col) => {
-        const card = document.createElement("article");
-        card.className = "card";
-        card.innerHTML = `<h3 style="margin: 0 0 8px;">${col.title}</h3><ul class="task-list">${leadershipTasks[col.key].map((item) => `<li><span class="badge ${col.badge}" style="margin-right: 6px;">Queue</span>${item}</li>`).join("")}</ul>`;
-        taskColumns.appendChild(card);
-      });
+      if (taskColumns) {
+        taskColumns.innerHTML = `<article class="card"><h3 style="margin: 0 0 6px;">Leadership Tasks</h3><p class="muted" style="margin: 0;">No tasks loaded yet. Connect your task data source to populate this section.</p></article>`;
+      }
 
-      const members = [
-        { name: "Ariana M.", year: "Freshman", major: "Computer Science", goal: "Join first coding project", needsHelp: "Resume bullet writing", resume: "Needs Update", linkedin: "No", projectInterest: "Beginner App Dev Team", internshipInterest: "Mini-Internship", followUp: "Co-Director Ferranmi", nextStep: "Draft resume in template", status: "Needs Follow-Up" },
-        { name: "Derek L.", year: "Sophomore", major: "Mechanical Engineering", goal: "Build robotics portfolio", needsHelp: "Finding beginner projects", resume: "Yes", linkedin: "Needs Improvement", projectInterest: "Robotics Design Group", internshipInterest: "Internship", followUp: "Co-Director Manny", nextStep: "Request to join robotics team", status: "In Progress" },
-        { name: "Imani R.", year: "Freshman", major: "Biology", goal: "Get first research experience", needsHelp: "Professor outreach email", resume: "No", linkedin: "No", projectInterest: "Research Starter Team", internshipInterest: "Research", followUp: "Co-Director Ferranmi", nextStep: "Send one professor email", status: "New" },
-        { name: "Jordan T.", year: "Junior", major: "Data Science", goal: "Apply to summer data internship", needsHelp: "Interview prep", resume: "Yes", linkedin: "Yes", projectInterest: "Data Science Mini Project", internshipInterest: "Internship", followUp: "Co-Director Manny", nextStep: "Complete two mock interview rounds", status: "Connected" },
-        { name: "Priya S.", year: "Sophomore", major: "Civil Engineering", goal: "Lead outreach project", needsHelp: "Project story wording", resume: "Yes", linkedin: "Needs Improvement", projectInterest: "Engineering Outreach Crew", internshipInterest: "Outreach", followUp: "Co-Director Ferranmi", nextStep: "Finalize outreach event proposal", status: "Completed" }
-      ];
-      const trackerBody = document.getElementById("tracker-body");
-      trackerBody.innerHTML = "";
-      members.forEach((member) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `<td>${member.name}</td><td>${member.year}</td><td>${member.major}</td><td>${member.goal}</td><td>${member.needsHelp}</td><td>${member.resume}</td><td>${member.linkedin}</td><td>${member.projectInterest}</td><td>${member.internshipInterest}</td><td>${member.followUp}</td><td>${member.nextStep}</td><td><span class="badge ${statusClass(member.status)}">${member.status}</span></td>`;
-        trackerBody.appendChild(row);
-      });
       const buddySplitGrid = document.getElementById("buddy-split-grid");
-      buddySplitGrid.innerHTML = "";
-      ["Co-Director Ferranmi", "Co-Director Manny"].forEach((coDirector) => {
-        const assignedMembers = members.filter((member) => member.followUp === coDirector);
-        const assignmentList = assignedMembers.map((member) => `<li class="card" style="margin: 0; background: rgba(11, 24, 43, 0.56);"><strong>${member.name}</strong> - ${member.year}, ${member.major}<br /><span style="color: var(--muted);">Needs help with: ${member.needsHelp}</span><br /><span class="badge ${statusClass(member.status)}">${member.status}</span></li>`).join("");
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `<h3 style="margin: 0 0 6px;">${coDirector}</h3><p style="margin: 0 0 8px; color: var(--muted);"><strong>${assignedMembers.length}</strong> member(s) assigned</p><ul class="task-list">${assignmentList}</ul>`;
-        buddySplitGrid.appendChild(card);
-      });
-
-      renderProjectRequests();
+      if (buddySplitGrid) {
+        buddySplitGrid.innerHTML = `<article class="card"><h3 style="margin: 0 0 6px;">Buddy Assignments</h3><p class="muted" style="margin: 0;">No buddy assignments loaded yet.</p></article>`;
+      }
     }
 
     function formatSubmissionDate(dateValue) {
       const parsed = new Date(dateValue);
       if (Number.isNaN(parsed.getTime())) return "N/A";
       return parsed.toLocaleString();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function renderOverviewData() {
+      if (!supabaseClient) return;
+
+      const weekAgoIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      const [profilesCountRes, mentorCountRes, applicationsRes, eventsRes, announcementsRes] = await Promise.all([
+        supabaseClient.from("profiles").select("*", { count: "exact", head: true }),
+        supabaseClient.from("profiles").select("*", { count: "exact", head: true }).eq("role", "leader"),
+        supabaseClient.from("project_applications").select("id, user_id, full_name, project_name, status, created_at"),
+        supabaseClient.from("leadership_events").select("id").gte("event_date", new Date().toISOString()),
+        supabaseClient.from("leadership_announcements").select("id, title, body, created_at").order("created_at", { ascending: false }).limit(5)
+      ]);
+
+      const applications = applicationsRes.data || [];
+      const activeUsersThisWeek = new Set(
+        applications
+          .filter((app) => app.created_at && app.created_at >= weekAgoIso)
+          .map((app) => app.user_id)
+          .filter(Boolean)
+      );
+
+      const completedProjects = applications.filter((app) => app.status === "Accepted").length;
+      const announcements = announcementsRes.error
+        ? []
+        : (announcementsRes.data || []);
+      const fallbackAnnouncements = applications
+        .slice(0, 5)
+        .map((app) => `New application: ${app.full_name || "Student"} -> ${app.project_name || "Project"}`);
+
+      document.getElementById("metric-total-members").textContent = String(profilesCountRes.count || 0);
+      document.getElementById("metric-active-week").textContent = String(activeUsersThisWeek.size);
+      document.getElementById("metric-completed-projects").textContent = String(completedProjects);
+      document.getElementById("metric-active-mentors").textContent = String(mentorCountRes.count || 0);
+      document.getElementById("metric-upcoming-events").textContent = String(eventsRes.error ? 0 : (eventsRes.data || []).length);
+      document.getElementById("metric-announcements").textContent = String(announcements.length || fallbackAnnouncements.length || 0);
+
+      const announcementsList = document.getElementById("overview-announcements-list");
+      if (announcements.length) {
+        announcementsList.innerHTML = announcements
+          .map((item) => `<li>${escapeHtml(item.title || item.body || "Announcement")}</li>`)
+          .join("");
+      } else if (fallbackAnnouncements.length) {
+        announcementsList.innerHTML = fallbackAnnouncements
+          .map((line) => `<li>${escapeHtml(line)}</li>`)
+          .join("");
+      } else {
+        announcementsList.innerHTML = "<li>No announcements loaded yet.</li>";
+      }
+
+      const pulseLines = [];
+      pulseLines.push(`Total member accounts: ${profilesCountRes.count || 0}.`);
+      pulseLines.push(`Active applicants in last 7 days: ${activeUsersThisWeek.size}.`);
+      pulseLines.push(`Accepted applications to date: ${completedProjects}.`);
+      if (!eventsRes.error) pulseLines.push(`Upcoming events on record: ${(eventsRes.data || []).length}.`);
+
+      const pulseList = document.getElementById("leadership-pulse-list");
+      pulseList.innerHTML = pulseLines.map((line) => `<li>${escapeHtml(line)}</li>`).join("");
+    }
+
+    async function renderProjectAnalyticsData() {
+      if (!supabaseClient) return;
+      const { data: applications, error } = await supabaseClient
+        .from("project_applications")
+        .select("project_name, status");
+
+      if (error) return;
+
+      const rows = applications || [];
+      const demandMap = new Map();
+      rows.forEach((row) => {
+        const key = row.project_name || "Unknown Project";
+        demandMap.set(key, (demandMap.get(key) || 0) + 1);
+      });
+
+      const sortedProjects = Array.from(demandMap.entries()).sort((a, b) => b[1] - a[1]);
+      const totalProjects = demandMap.size;
+      const mostRequested = sortedProjects[0]?.[0] || "N/A";
+      const acceptedCount = rows.filter((row) => row.status === "Accepted").length;
+      const completionRate = rows.length ? Math.round((acceptedCount / rows.length) * 100) : 0;
+      const activeSprint = rows.filter((row) => row.status === "Pending" || row.status === "Waitlisted").length;
+
+      document.getElementById("metric-total-projects").textContent = String(totalProjects);
+      document.getElementById("metric-most-requested-project").textContent = mostRequested;
+      document.getElementById("metric-completion-rate").textContent = `${completionRate}%`;
+      document.getElementById("metric-active-sprint").textContent = String(activeSprint);
+
+      const projectsList = document.getElementById("popular-projects-list");
+      if (sortedProjects.length) {
+        projectsList.innerHTML = sortedProjects
+          .slice(0, 4)
+          .map(([name, count]) => `<li>${escapeHtml(name)} (${count} application${count === 1 ? "" : "s"})</li>`)
+          .join("");
+      } else {
+        projectsList.innerHTML = "<li>No project demand data yet.</li>";
+      }
+
+      const statusCounts = {
+        Pending: rows.filter((row) => row.status === "Pending").length,
+        Accepted: rows.filter((row) => row.status === "Accepted").length,
+        Waitlisted: rows.filter((row) => row.status === "Waitlisted").length,
+        Rejected: rows.filter((row) => row.status === "Rejected").length
+      };
+      const maxStatus = Math.max(...Object.values(statusCounts), 1);
+      const categoryBars = document.getElementById("project-category-bars");
+      categoryBars.innerHTML = Object.entries(statusCounts).map(([status, count]) => {
+        const width = Math.round((count / maxStatus) * 100);
+        return `<div class="bar-row"><span>${escapeHtml(status)}</span><div class="bar-shell"><div class="bar-fill" style="width: ${width}%"></div></div><strong>${count}</strong></div>`;
+      }).join("");
     }
 
     async function renderProjectRequests() {
@@ -1429,34 +1336,16 @@
       tbody.appendChild(row);
     }
 
-    function showPinModal() {
-      const overlay = document.getElementById("pin-overlay");
-      const input = document.getElementById("pin-input");
-      const error = document.getElementById("pin-error");
-      error.style.display = "none";
-      input.value = "";
-      overlay.classList.add("active");
-      setTimeout(() => input.focus(), 20);
-    }
-
-    function hidePinModal() {
-      document.getElementById("pin-overlay").classList.remove("active");
-    }
-
-    const privateViewer = document.getElementById("private-viewer");
     const privateArea = document.getElementById("private-area");
     const privateDenied = document.getElementById("private-denied");
     const projectRequestsSection = document.getElementById("project-requests");
-    const devLoginBadge = document.getElementById("dev-login-badge");
     const editBtn = document.getElementById("edit-mode-btn");
     const saveBtn = document.getElementById("save-mode-btn");
     const exitBtn = document.getElementById("exit-mode-btn");
+    const exitAdminModeBtn = document.getElementById("exit-admin-mode-btn");
 
     function updatePrivateAccess() {
-      const viewer = privateViewer.value;
-      const isApprovedViewer = APPROVED_LEADERSHIP_USERS.includes(viewer);
-      // Front-end demo only: real private access requires backend authentication and role checks.
-      const hasAccess = isPrivateAuthorized && isApprovedViewer;
+      const hasAccess = isPrivateAuthorized;
       privateArea.classList.toggle("legacy-hidden", !hasAccess);
       privateDenied.classList.toggle("legacy-hidden", hasAccess);
       projectRequestsSection.classList.toggle("legacy-hidden", !hasAccess);
@@ -1464,37 +1353,21 @@
       if (!hasAccess && editMode) exitEditMode();
     }
 
-    function requestPrivateAccess() {
-      showPinModal();
-    }
-
-    privateViewer.addEventListener("change", () => updatePrivateAccess());
-
-    document.getElementById("pin-submit").addEventListener("click", () => {
-      const input = document.getElementById("pin-input");
-      const error = document.getElementById("pin-error");
-      if (input.value === PIN_CODE) {
-        isPrivateAuthorized = true;
-        hidePinModal();
-        if (pendingViewer) privateViewer.value = pendingViewer;
-        pendingViewer = null;
-        updatePrivateAccess();
-      } else {
-        error.style.display = "block";
-      }
-    });
-
-    document.getElementById("pin-cancel").addEventListener("click", () => {
-      hidePinModal();
-      pendingViewer = null;
-      privateViewer.value = "Public Member";
-      isPrivateAuthorized = false;
-      updatePrivateAccess();
-    });
-
     editBtn.addEventListener("click", enterEditMode);
     saveBtn.addEventListener("click", saveEdits);
     exitBtn.addEventListener("click", exitEditMode);
+    exitAdminModeBtn.addEventListener("click", async () => {
+      localStorage.removeItem("summitAdminBypass");
+      localStorage.removeItem("summitAdminBypassUser");
+      try {
+        if (supabaseClient) {
+          await supabaseClient.auth.signOut();
+        }
+      } catch (error) {
+        console.warn("Sign out warning:", error);
+      }
+      window.location.href = "./index.html";
+    });
 
     document.body.addEventListener("click", (event) => {
       const target = event.target;
@@ -1531,23 +1404,19 @@
               return;
             }
             renderProjectRequests();
+            renderOverviewData();
+            renderProjectAnalyticsData();
           });
       }
     });
 
     async function bootstrapLeadershipAccess() {
-      const devLeaderBypass = localStorage.getItem("summitDevLeaderBypass") === "true";
-      const devLeaderName = localStorage.getItem("summitDevLeaderName") || "Manny";
-      if (devLeaderBypass) {
-        if (devLoginBadge) {
-          devLoginBadge.classList.remove("hidden");
-          devLoginBadge.textContent = `Dev Login Active (${devLeaderName})`;
-        }
-        currentProfile = { full_name: devLeaderName, role: "leader" };
+      const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
+      if (adminBypass) {
+        supabaseClient = window.getSummitSupabaseClient();
+        exitAdminModeBtn.classList.remove("hidden");
         isPrivateAuthorized = true;
-        privateViewer.value = APPROVED_LEADERSHIP_USERS.includes(devLeaderName) ? devLeaderName : "Manny";
-        privateViewer.disabled = true;
-        document.getElementById("pin-overlay").classList.remove("active");
+        currentProfile = { full_name: "Admin", role: "leader" };
         renderDefaultDataIfNeeded();
         markEditableText();
         updatePrivateAccess();
@@ -1556,7 +1425,7 @@
       }
 
       supabaseClient = window.getSummitSupabaseClient();
-      if (devLoginBadge) devLoginBadge.classList.add("hidden");
+      exitAdminModeBtn.classList.add("hidden");
       const { data: authData } = await supabaseClient.auth.getUser();
       const user = authData?.user;
       if (!user) {
@@ -1570,21 +1439,20 @@
         .eq("id", user.id)
         .single();
 
-      if (error || !profile || profile.role !== "leader" || !APPROVED_LEADERSHIP_USERS.includes(profile.full_name)) {
-        alert("Access denied. Leadership dashboard is available only to approved leaders.");
+      if (error || !profile || profile.role !== "leader") {
+        alert("Access denied. Leadership dashboard is available only to admin accounts.");
         window.location.href = "./home.html";
         return;
       }
 
       currentProfile = profile;
       isPrivateAuthorized = true;
-      privateViewer.value = profile.full_name;
-      privateViewer.disabled = true;
-      document.getElementById("pin-overlay").classList.remove("active");
 
       renderDefaultDataIfNeeded();
       markEditableText();
       updatePrivateAccess();
+      await renderOverviewData();
+      await renderProjectAnalyticsData();
       await renderProjectRequests();
     }
 

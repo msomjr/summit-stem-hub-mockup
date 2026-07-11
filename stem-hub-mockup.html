@@ -1197,6 +1197,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./supabase-config.js"></script>
   <script>
+    const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
     const platformProjects = [
       {
         title: "Hash Identifier",
@@ -1384,10 +1385,11 @@
 
     const leadershipLinks = document.querySelectorAll('a[href="./leadership-dashboard.html"]');
     const leadershipNote = document.getElementById("leadership-note");
-    const devLeaderBypass = localStorage.getItem("summitDevLeaderBypass") === "true";
     (async () => {
       try {
-        if (devLeaderBypass) {
+        if (adminBypass) {
+          renderFilters();
+          renderProjects();
           return;
         }
 
