@@ -113,6 +113,19 @@
       color: var(--text);
     }
 
+    .account-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .account-greeting {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #c9dff5;
+      white-space: nowrap;
+    }
+
     .btn {
       border: 1px solid transparent;
       border-radius: 999px;
@@ -754,6 +767,7 @@
     }
 
     .nav-links,
+    .account-greeting,
     .section-note,
     .track-card p,
     .project-card p,
@@ -812,7 +826,10 @@
         <a href="#mentorship">Mentorship</a>
         <a href="#outcomes">Outcomes</a>
       </nav>
-      <a class="btn btn-primary" href="#cta">Join Platform</a>
+      <div class="account-controls">
+        <span id="account-greeting" class="account-greeting"></span>
+        <button id="logout-btn" class="btn btn-primary" type="button">Logout</button>
+      </div>
     </header>
 
     <section class="hero section reveal" id="hero">
@@ -1385,9 +1402,29 @@
 
     const leadershipLinks = document.querySelectorAll('a[href="./leadership-dashboard.html"]');
     const leadershipNote = document.getElementById("leadership-note");
+    const accountGreeting = document.getElementById("account-greeting");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    function bindLogoutAction(supabase) {
+      logoutBtn.addEventListener("click", async () => {
+        localStorage.removeItem("summitAdminBypass");
+        localStorage.removeItem("summitAdminBypassUser");
+        if (supabase) {
+          try {
+            await supabase.auth.signOut();
+          } catch (error) {
+            console.warn("Sign out warning:", error);
+          }
+        }
+        window.location.href = "./index.html";
+      }, { once: true });
+    }
+
     (async () => {
       try {
         if (adminBypass) {
+          accountGreeting.textContent = "Hello, Admin";
+          bindLogoutAction(null);
           renderFilters();
           renderProjects();
           return;
@@ -1403,9 +1440,13 @@
 
         const { data: profile } = await supabase
           .from("profiles")
-          .select("role")
+          .select("full_name, role")
           .eq("id", user.id)
           .single();
+
+        const displayName = (profile?.full_name || user.email || "Student").trim();
+        accountGreeting.textContent = `Hello, ${displayName}`;
+        bindLogoutAction(supabase);
 
         const isLeader = profile?.role === "leader";
         if (!isLeader) {

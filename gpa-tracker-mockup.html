@@ -562,6 +562,8 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
   <script>
     const gradeScale = {
       "A": 4.0,
@@ -583,6 +585,12 @@
       { id: crypto.randomUUID(), name: "Intro to Programming", credits: 3, grade: "A-", semester: "Fall 2026", notes: "Strong project score" },
       { id: crypto.randomUUID(), name: "General Biology", credits: 3, grade: "B", semester: "Fall 2026", notes: "Improve lab report detail" }
     ];
+    const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
+    const GPA_STATE_TABLE = "user_gpa_profiles";
+    let supabaseClient = null;
+    let currentUserId = null;
+    let isHydratingAccountState = false;
+    let persistTimer = null;
 
     const savedSemesters = [
       {
@@ -628,6 +636,79 @@
     const newGrade = document.getElementById("new-course-grade");
     const newSemester = document.getElementById("new-course-semester");
     const newNotes = document.getElementById("new-course-notes");
+
+    function getAccountSnapshot() {
+      return {
+        courses,
+        previousGpa: previousGpaInput.value,
+        completedCredits: completedCreditsInput.value,
+        targetGpa: targetGpaInput.value
+      };
+    }
+
+    function applyAccountSnapshot(snapshot) {
+      if (!snapshot || typeof snapshot !== "object") return;
+      isHydratingAccountState = true;
+
+      if (Array.isArray(snapshot.courses)) {
+        courses = snapshot.courses.map((course) => ({
+          id: crypto.randomUUID(),
+          name: course.name || "Course",
+          credits: Math.max(0, Number(course.credits) || 0),
+          grade: gradeScale[course.grade] !== undefined ? course.grade : "A",
+          semester: course.semester || "Fall 2026",
+          notes: course.notes || ""
+        }));
+      }
+
+      if (snapshot.previousGpa !== undefined) previousGpaInput.value = snapshot.previousGpa;
+      if (snapshot.completedCredits !== undefined) completedCreditsInput.value = snapshot.completedCredits;
+      if (snapshot.targetGpa !== undefined) targetGpaInput.value = snapshot.targetGpa;
+
+      isHydratingAccountState = false;
+    }
+
+    async function persistAccountSnapshot() {
+      if (!supabaseClient || !currentUserId || isHydratingAccountState) return;
+      const payload = {
+        user_id: currentUserId,
+        data: getAccountSnapshot(),
+        updated_at: new Date().toISOString()
+      };
+      const { error } = await supabaseClient.from(GPA_STATE_TABLE).upsert(payload, { onConflict: "user_id" });
+      if (error) console.warn("Unable to save GPA account state:", error.message);
+    }
+
+    function queuePersistAccountSnapshot() {
+      if (!supabaseClient || !currentUserId || isHydratingAccountState) return;
+      clearTimeout(persistTimer);
+      persistTimer = setTimeout(() => {
+        persistAccountSnapshot();
+      }, 500);
+    }
+
+    async function bootstrapAccountState() {
+      if (adminBypass) return;
+      supabaseClient = window.getSummitSupabaseClient();
+      const { data: authData } = await supabaseClient.auth.getUser();
+      const user = authData?.user;
+      if (!user) {
+        window.location.href = "./index.html";
+        return;
+      }
+      currentUserId = user.id;
+
+      const { data: row, error } = await supabaseClient
+        .from(GPA_STATE_TABLE)
+        .select("data")
+        .eq("user_id", currentUserId)
+        .maybeSingle();
+      if (error) {
+        console.warn("Unable to load GPA account state:", error.message);
+        return;
+      }
+      if (row?.data) applyAccountSnapshot(row.data);
+    }
 
     function toNumber(value, fallback = 0) {
       const n = Number(value);
@@ -854,6 +935,7 @@
       newNotes.value = "";
       newGrade.value = "A";
       renderAll();
+      queuePersistAccountSnapshot();
     });
 
     coursesBody.addEventListener("input", (event) => {
@@ -874,6 +956,7 @@
       renderSemesterSummary();
       renderCumulativeSummary();
       renderGoalPlanner();
+      queuePersistAccountSnapshot();
     });
 
     coursesBody.addEventListener("click", (event) => {
@@ -883,12 +966,14 @@
       const id = target.getAttribute("data-id");
       courses = courses.filter((course) => course.id !== id);
       renderAll();
+      queuePersistAccountSnapshot();
     });
 
     [previousGpaInput, completedCreditsInput, targetGpaInput].forEach((input) => {
       input.addEventListener("input", () => {
         renderCumulativeSummary();
         renderGoalPlanner();
+        queuePersistAccountSnapshot();
       });
     });
 
@@ -905,9 +990,15 @@
         ...course
       }));
       renderAll();
+      queuePersistAccountSnapshot();
     });
-
-    renderAll();
+    bootstrapAccountState()
+      .catch((error) => {
+        console.warn("GPA account bootstrap warning:", error);
+      })
+      .finally(() => {
+        renderAll();
+      });
   </script>
 </body>
 </html>

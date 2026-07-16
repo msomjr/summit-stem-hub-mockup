@@ -43,10 +43,17 @@ create table if not exists public.leadership_announcements (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.user_gpa_profiles (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  data jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
 alter table public.profiles enable row level security;
 alter table public.project_applications enable row level security;
 alter table public.leadership_events enable row level security;
 alter table public.leadership_announcements enable row level security;
+alter table public.user_gpa_profiles enable row level security;
 
 -- Helper functions to avoid RLS policy recursion on profiles.
 create or replace function public.current_user_role()
@@ -192,6 +199,26 @@ using (
 with check (
   public.is_current_user_leader()
 );
+
+-- GPA PROFILE POLICIES
+drop policy if exists "user_gpa_profiles_select_own" on public.user_gpa_profiles;
+create policy "user_gpa_profiles_select_own"
+on public.user_gpa_profiles
+for select
+using (auth.uid() = user_id);
+
+drop policy if exists "user_gpa_profiles_insert_own" on public.user_gpa_profiles;
+create policy "user_gpa_profiles_insert_own"
+on public.user_gpa_profiles
+for insert
+with check (auth.uid() = user_id);
+
+drop policy if exists "user_gpa_profiles_update_own" on public.user_gpa_profiles;
+create policy "user_gpa_profiles_update_own"
+on public.user_gpa_profiles
+for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
 
 -- Optional: set approved leaders after they sign up.
 -- update public.profiles set role = 'leader' where full_name in ('Manny', 'Ferranmi');

@@ -73,6 +73,8 @@
       font-weight: 700;
       font-size: 0.92rem;
       text-decoration: none;
+      border: none;
+      cursor: pointer;
       background: linear-gradient(135deg, #8ce3ee, #5ea6df);
       color: #06223d;
       transition: transform 0.12s ease, opacity 0.12s ease;
@@ -81,6 +83,18 @@
     .login-btn:hover {
       transform: translateY(-1px);
       opacity: 0.95;
+    }
+
+    .account-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .account-greeting {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #334155;
     }
 
     .hero {
@@ -240,7 +254,10 @@
         <img class="brand-mark" src="./assets/summit-emblem.png?v=2" alt="The Summit emblem" />
         <span>SUMMIT STEM PLATFORM</span>
       </a>
-      <a class="login-btn" href="./index.html">Login</a>
+      <div class="account-controls">
+        <span id="account-greeting" class="account-greeting"></span>
+        <button id="auth-action-btn" class="login-btn" type="button">Logout</button>
+      </div>
     </nav>
 
     <section class="hero">
@@ -294,9 +311,31 @@
     const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
     const leadershipLink = document.querySelector('a[href="./leadership-dashboard.html"]');
     const leadershipNote = document.getElementById("leadership-access-note");
+    const accountGreeting = document.getElementById("account-greeting");
+    const authActionBtn = document.getElementById("auth-action-btn");
+
+    function bindLogoutAction(supabase) {
+      authActionBtn.addEventListener("click", async () => {
+        localStorage.removeItem("summitAdminBypass");
+        localStorage.removeItem("summitAdminBypassUser");
+        if (supabase) {
+          try {
+            await supabase.auth.signOut();
+          } catch (error) {
+            console.warn("Sign out warning:", error);
+          }
+        }
+        window.location.href = "./index.html";
+      }, { once: true });
+    }
+
     (async () => {
       try {
-        if (adminBypass) return;
+        if (adminBypass) {
+          accountGreeting.textContent = "Hello, Admin";
+          bindLogoutAction(null);
+          return;
+        }
 
         const supabase = window.getSummitSupabaseClient();
         const { data: authData } = await supabase.auth.getUser();
@@ -308,9 +347,13 @@
 
         const { data: profile } = await supabase
           .from("profiles")
-          .select("role")
+          .select("full_name, role")
           .eq("id", user.id)
           .single();
+
+        const displayName = (profile?.full_name || user.email || "Student").trim();
+        accountGreeting.textContent = `Hello, ${displayName}`;
+        bindLogoutAction(supabase);
 
         const isLeader = profile?.role === "leader";
         if (!isLeader && leadershipLink) {
