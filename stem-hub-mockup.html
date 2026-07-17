@@ -113,6 +113,19 @@
       color: var(--text);
     }
 
+    .account-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .account-greeting {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #c9dff5;
+      white-space: nowrap;
+    }
+
     .btn {
       border: 1px solid transparent;
       border-radius: 999px;
@@ -576,6 +589,18 @@
       color: #9db0c8;
     }
 
+    .project-actions {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn.project-btn {
+      padding: 8px 12px;
+      font-size: 0.78rem;
+    }
+
     .mentor-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -692,14 +717,14 @@
 
     /* SUMMIT Foundation-inspired light theme override */
     :root {
-      --bg: #dbe3ee;
-      --bg-soft: #d2dbe7;
+      --bg: #d6dee8;
+      --bg-soft: #cfd8e3;
       --surface: #ffffff;
       --surface-2: #ffffff;
       --surface-3: #eef6ff;
       --text: #0f172a;
       --muted: #334155;
-      --line: #c5d1e0;
+      --line: #bcc9d8;
       --accent: #2f5fa7;
       --accent-soft: rgba(47, 95, 167, 0.1);
       --accent-2: #67b7d7;
@@ -708,7 +733,7 @@
     }
 
     body {
-      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
       color: var(--text);
     }
 
@@ -718,7 +743,7 @@
     .pulse-card,
     .card,
     .cta {
-      background: #dfe7f2 !important;
+      background: #ffffff !important;
       border-color: var(--line) !important;
       color: var(--text) !important;
       box-shadow: var(--shadow) !important;
@@ -742,6 +767,7 @@
     }
 
     .nav-links,
+    .account-greeting,
     .section-note,
     .track-card p,
     .project-card p,
@@ -787,7 +813,7 @@
   <main class="platform-shell">
     <header class="top-nav">
       <div class="brand">
-        <img class="brand-mark" src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
+        <img class="brand-mark" src="./assets/summit-emblem.png?v=2" alt="The Summit emblem" />
         <span>SUMMIT STEM PLATFORM</span>
       </div>
       <nav class="nav-links">
@@ -800,7 +826,10 @@
         <a href="#mentorship">Mentorship</a>
         <a href="#outcomes">Outcomes</a>
       </nav>
-      <a class="btn btn-primary" href="#cta">Join Platform</a>
+      <div class="account-controls">
+        <span id="account-greeting" class="account-greeting"></span>
+        <button id="logout-btn" class="btn btn-primary" type="button">Logout</button>
+      </div>
     </header>
 
     <section class="hero section reveal" id="hero">
@@ -1061,6 +1090,9 @@
           <h2 class="section-title">Curated Projects Across Majors</h2>
           <p class="section-note">Filter by focus area to discover project cards with clear build outcomes and practical learning targets.</p>
         </div>
+        <div class="hero-actions" style="margin: 0;">
+          <a class="btn btn-secondary" href="./my-applications.html">My Applications</a>
+        </div>
       </div>
       <div class="project-toolbar" id="project-filters"></div>
       <div class="grid projects-grid" id="projects-grid"></div>
@@ -1104,9 +1136,10 @@
         </article>
       </div>
       <div class="hero-actions" style="margin-top: 14px;">
-        <a class="btn btn-primary" href="./leadership-access-mockup.html">Open Leadership Access</a>
-        <a class="btn btn-secondary" href="./leadership-access-mockup.html">View Buddy Assignments</a>
+        <a class="btn btn-primary" href="./leadership-dashboard.html">Open Leadership Access</a>
+        <a class="btn btn-secondary" href="./leadership-dashboard.html">View Buddy Assignments</a>
       </div>
+      <p id="leadership-note" class="section-note" style="display:none;">Leadership dashboard access is shown for leader accounts.</p>
     </section>
 
     <section class="section reveal" id="mentorship">
@@ -1178,67 +1211,122 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
   <script>
+    const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
     const platformProjects = [
       {
         title: "Hash Identifier",
         track: "Cybersecurity",
         level: "Beginner",
+        timeEstimate: "2-4 hours",
         stack: "Python, Pattern Matching",
-        summary: "Detect hash families and build practical understanding of secure credential formats."
+        skillsLearned: "Hash analysis, pattern detection, security basics",
+        summary: "Detect hash families and build practical understanding of secure credential formats.",
+        startLink: "./project-application.html?project=Hash%20Identifier",
+        sourceLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/foundations/hash-identifier",
+        guideLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/foundations/hash-identifier/learn"
       },
       {
         title: "HTTP Headers Scanner",
         track: "Cybersecurity",
         level: "Beginner",
+        timeEstimate: "3-5 hours",
         stack: "Python, HTTPX, Web Security",
-        summary: "Scan security headers and score web applications for defensive hardening."
+        skillsLearned: "Security headers, web auditing, HTTP response analysis",
+        summary: "Scan security headers and score web applications for defensive hardening.",
+        startLink: "./project-application.html?project=HTTP%20Headers%20Scanner",
+        sourceLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/foundations/http-headers-scanner",
+        guideLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/foundations/http-headers-scanner/learn"
       },
       {
         title: "SIEM Dashboard",
         track: "Cybersecurity",
         level: "Intermediate",
+        timeEstimate: "3-5 days",
         stack: "Flask, React, Log Correlation",
-        summary: "Aggregate and visualize security logs for SOC-style monitoring and triage."
+        skillsLearned: "SIEM workflows, log pipelines, dashboard development",
+        summary: "Aggregate and visualize security logs for SOC-style monitoring and triage.",
+        startLink: "./project-application.html?project=SIEM%20Dashboard",
+        sourceLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/intermediate/siem-dashboard",
+        guideLink: "https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/intermediate/siem-dashboard/learn"
       },
       {
         title: "Robotics Design Group",
         track: "Engineering",
         level: "Intermediate",
+        timeEstimate: "2-3 weeks",
         stack: "CAD, Prototyping, Testing",
-        summary: "Build and test components for real-world robotics challenge scenarios."
+        skillsLearned: "Design iteration, prototyping, systems thinking",
+        summary: "Build and test components for real-world robotics challenge scenarios.",
+        startLink: "./project-application.html?project=Robotics%20Design%20Group",
+        sourceLink: "#",
+        guideLink: "#"
       },
       {
         title: "Data Science Mini Project",
-        track: "Engineering",
+        track: "AI and Data",
         level: "Intermediate",
+        timeEstimate: "1-2 weeks",
         stack: "Python, Analytics, Dashboarding",
-        summary: "Translate raw datasets into actionable insights and technical narratives."
+        skillsLearned: "Data cleaning, visualization, storytelling with data",
+        summary: "Translate raw datasets into actionable insights and technical narratives.",
+        startLink: "./project-application.html?project=Data%20Science%20Mini%20Project",
+        sourceLink: "#",
+        guideLink: "#"
       },
       {
         title: "Health Awareness Outreach Team",
-        track: "Nursing",
+        track: "General STEM",
         level: "Beginner",
+        timeEstimate: "1-2 weeks",
         stack: "Health Education, Communication",
-        summary: "Design wellness awareness materials and deliver practical campus health interventions."
+        skillsLearned: "Community outreach, campaign planning, communication",
+        summary: "Design wellness awareness materials and deliver practical campus health interventions.",
+        startLink: "./project-application.html?project=Health%20Awareness%20Outreach%20Team",
+        sourceLink: "#",
+        guideLink: "#"
       },
       {
         title: "Student Budgeting Challenge",
         track: "Finance",
         level: "Beginner",
+        timeEstimate: "6-10 hours",
         stack: "Spreadsheets, Budget Modeling",
-        summary: "Create a student expense system with reporting and planning workflows."
+        skillsLearned: "Budget planning, spreadsheet analytics, financial literacy",
+        summary: "Create a student expense system with reporting and planning workflows.",
+        startLink: "./project-application.html?project=Student%20Budgeting%20Challenge",
+        sourceLink: "#",
+        guideLink: "#"
       },
       {
         title: "Student Stress & Study Habits Survey",
-        track: "Psychology",
+        track: "General STEM",
         level: "Beginner",
+        timeEstimate: "5-8 hours",
         stack: "Survey Design, Data Interpretation",
-        summary: "Research student behavior patterns and convert findings into support recommendations."
+        skillsLearned: "Survey design, behavioral data insights, reporting",
+        summary: "Research student behavior patterns and convert findings into support recommendations.",
+        startLink: "./project-application.html?project=Student%20Stress%20%26%20Study%20Habits%20Survey",
+        sourceLink: "#",
+        guideLink: "#"
+      },
+      {
+        title: "Portfolio Website Builder",
+        track: "Coding",
+        level: "Beginner",
+        timeEstimate: "6-12 hours",
+        stack: "HTML, CSS, JavaScript",
+        skillsLearned: "Front-end development, responsive layout, deployment basics",
+        summary: "Build and publish a personal portfolio page showcasing projects and resume highlights.",
+        startLink: "./project-application.html?project=Portfolio%20Website%20Builder",
+        sourceLink: "#",
+        guideLink: "#"
       }
     ];
 
-    const projectFilters = ["All", "Cybersecurity", "Engineering", "Nursing", "Finance", "Psychology"];
+    const projectFilters = ["All", "Cybersecurity", "Engineering", "Finance", "Coding", "AI and Data", "General STEM"];
     const filterContainer = document.getElementById("project-filters");
     const projectGrid = document.getElementById("projects-grid");
     const interestForm = document.getElementById("summit-interest-form");
@@ -1274,13 +1362,21 @@
           <h3>${project.title}</h3>
           <p>${project.summary}</p>
           <div class="project-meta">
-            <strong>Track</strong><span>${project.track}</span>
-            <strong>Level</strong><span>${project.level}</span>
-            <strong>Stack</strong><span>${project.stack}</span>
+            <strong>Category</strong><span>${project.track}</span>
+            <strong>Difficulty</strong><span>${project.level}</span>
+            <strong>Estimated Time</strong><span>${project.timeEstimate}</span>
+            <strong>Skills Learned</strong><span>${project.skillsLearned}</span>
           </div>
           <div class="tag-row">
             <span class="tag">${project.track}</span>
             <span class="tag">${project.level}</span>
+          </div>
+          <div class="project-actions">
+            <a class="btn btn-primary project-btn" href="${project.startLink}">Start Project</a>
+            <a class="btn btn-secondary project-btn" href="${project.startLink}">Apply</a>
+            <a class="btn btn-secondary project-btn" href="${project.sourceLink}" target="_blank" rel="noopener noreferrer">View Source</a>
+            <a class="btn btn-secondary project-btn" href="${project.guideLink}" target="_blank" rel="noopener noreferrer">Open Guide</a>
+            ${project.sourceLink === "#" || project.guideLink === "#" ? "<!-- Replace with real project link. -->" : ""}
           </div>
         `;
         projectGrid.appendChild(card);
@@ -1304,8 +1400,66 @@
       interestForm.reset();
     });
 
-    renderFilters();
-    renderProjects();
+    const leadershipLinks = document.querySelectorAll('a[href="./leadership-dashboard.html"]');
+    const leadershipNote = document.getElementById("leadership-note");
+    const accountGreeting = document.getElementById("account-greeting");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    function bindLogoutAction(supabase) {
+      logoutBtn.addEventListener("click", async () => {
+        localStorage.removeItem("summitAdminBypass");
+        localStorage.removeItem("summitAdminBypassUser");
+        if (supabase) {
+          try {
+            await supabase.auth.signOut();
+          } catch (error) {
+            console.warn("Sign out warning:", error);
+          }
+        }
+        window.location.href = "./index.html";
+      }, { once: true });
+    }
+
+    (async () => {
+      try {
+        if (adminBypass) {
+          accountGreeting.textContent = "Hello, Admin";
+          bindLogoutAction(null);
+          renderFilters();
+          renderProjects();
+          return;
+        }
+
+        const supabase = window.getSummitSupabaseClient();
+        const { data: authData } = await supabase.auth.getUser();
+        const user = authData?.user;
+        if (!user) {
+          window.location.href = "./index.html";
+          return;
+        }
+
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name, role")
+          .eq("id", user.id)
+          .single();
+
+        const displayName = (profile?.full_name || user.email || "Student").trim();
+        accountGreeting.textContent = `Hello, ${displayName}`;
+        bindLogoutAction(supabase);
+
+        const isLeader = profile?.role === "leader";
+        if (!isLeader) {
+          leadershipLinks.forEach((link) => { link.style.display = "none"; });
+          if (leadershipNote) leadershipNote.style.display = "block";
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        renderFilters();
+        renderProjects();
+      }
+    })();
   </script>
 </body>
 </html>

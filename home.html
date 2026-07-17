@@ -73,6 +73,8 @@
       font-weight: 700;
       font-size: 0.92rem;
       text-decoration: none;
+      border: none;
+      cursor: pointer;
       background: linear-gradient(135deg, #8ce3ee, #5ea6df);
       color: #06223d;
       transition: transform 0.12s ease, opacity 0.12s ease;
@@ -81,6 +83,18 @@
     .login-btn:hover {
       transform: translateY(-1px);
       opacity: 0.95;
+    }
+
+    .account-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .account-greeting {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #334155;
     }
 
     .hero {
@@ -191,23 +205,23 @@
 
     /* SUMMIT Foundation-inspired light theme override */
     :root {
-      --bg: #dbe3ee;
+      --bg: #d6dee8;
       --surface: #ffffff;
       --text: #0f172a;
       --muted: #475569;
-      --line: #c5d1e0;
+      --line: #bcc9d8;
       --brand: #2f5fa7;
       --brand-soft: #e8f1ff;
       --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
     }
 
     body {
-      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
       color: var(--text);
     }
 
     .hero, .card, .nav-card {
-      background: #dfe7f2 !important;
+      background: #ffffff !important;
       border-color: var(--line) !important;
       color: var(--text) !important;
       box-shadow: var(--shadow) !important;
@@ -237,10 +251,13 @@
   <main class="container">
     <nav class="navbar">
       <a class="brand" href="./home.html">
-        <img class="brand-mark" src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
+        <img class="brand-mark" src="./assets/summit-emblem.png?v=2" alt="The Summit emblem" />
         <span>SUMMIT STEM PLATFORM</span>
       </a>
-      <a class="login-btn" href="./index.html">Login</a>
+      <div class="account-controls">
+        <span id="account-greeting" class="account-greeting"></span>
+        <button id="auth-action-btn" class="login-btn" type="button">Logout</button>
+      </div>
     </nav>
 
     <section class="hero">
@@ -272,14 +289,81 @@
             <span class="pill">Open Opportunities</span>
           </a>
 
-          <a class="nav-card" href="./leadership-access-mockup.html">
+          <a class="nav-card" href="./my-applications.html">
+            <h3>My Applications</h3>
+            <p>Track submitted project applications and status updates from leadership.</p>
+            <span class="pill">Open Application Tracker</span>
+          </a>
+
+          <a class="nav-card" href="./leadership-dashboard.html">
             <h3>Leadership Access</h3>
             <p>Preview leadership pathways, onboarding, and access workflows.</p>
             <span class="pill">Open Leadership View</span>
           </a>
         </div>
+        <p id="leadership-access-note" style="margin-top: 12px; display: none;">Leadership Access appears only for leader accounts.</p>
       </div>
     </section>
   </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script>
+    const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
+    const leadershipLink = document.querySelector('a[href="./leadership-dashboard.html"]');
+    const leadershipNote = document.getElementById("leadership-access-note");
+    const accountGreeting = document.getElementById("account-greeting");
+    const authActionBtn = document.getElementById("auth-action-btn");
+
+    function bindLogoutAction(supabase) {
+      authActionBtn.addEventListener("click", async () => {
+        localStorage.removeItem("summitAdminBypass");
+        localStorage.removeItem("summitAdminBypassUser");
+        if (supabase) {
+          try {
+            await supabase.auth.signOut();
+          } catch (error) {
+            console.warn("Sign out warning:", error);
+          }
+        }
+        window.location.href = "./index.html";
+      }, { once: true });
+    }
+
+    (async () => {
+      try {
+        if (adminBypass) {
+          accountGreeting.textContent = "Hello, Admin";
+          bindLogoutAction(null);
+          return;
+        }
+
+        const supabase = window.getSummitSupabaseClient();
+        const { data: authData } = await supabase.auth.getUser();
+        const user = authData?.user;
+        if (!user) {
+          window.location.href = "./index.html";
+          return;
+        }
+
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name, role")
+          .eq("id", user.id)
+          .single();
+
+        const displayName = (profile?.full_name || user.email || "Student").trim();
+        accountGreeting.textContent = `Hello, ${displayName}`;
+        bindLogoutAction(supabase);
+
+        const isLeader = profile?.role === "leader";
+        if (!isLeader && leadershipLink) {
+          leadershipLink.style.display = "none";
+          if (leadershipNote) leadershipNote.style.display = "block";
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  </script>
 </body>
 </html>

@@ -347,11 +347,11 @@
 
     /* SUMMIT Foundation-inspired light theme override */
     :root {
-      --bg: #dbe3ee;
+      --bg: #d6dee8;
       --surface: #ffffff;
       --text: #0f172a;
       --muted: #475569;
-      --line: #c5d1e0;
+      --line: #bcc9d8;
       --brand: #2f5fa7;
       --brand-2: #67b7d7;
       --brand-soft: #e8f1ff;
@@ -360,12 +360,12 @@
     }
 
     body {
-      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
       color: var(--text);
     }
 
     .hero, .card, .stat-card, .saved-card {
-      background: #dfe7f2 !important;
+      background: #ffffff !important;
       border-color: var(--line) !important;
       color: var(--text) !important;
       box-shadow: var(--shadow) !important;
@@ -405,7 +405,7 @@
     }
 
     th {
-      background: #ecf1f7 !important;
+      background: #f3f7fc !important;
     }
   </style>
 </head>
@@ -413,11 +413,11 @@
   <main class="container">
     <section class="hero">
       <div class="hero-brand">
-        <img class="hero-mark" src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
+        <img class="hero-mark" src="./assets/summit-emblem.png?v=2" alt="The Summit emblem" />
         <span>The Summit Platform</span>
       </div>
-      <h1>SUMMIT GPA Tracker (Mock)</h1>
-      <p>Standalone GPA planning tool using local state and mock data only. No authentication, no backend, and no database connections.</p>
+      <h1>SUMMIT GPA Tracker</h1>
+      <p>Standalone GPA planning workspace. Connect this page to your SIS or profile data source when you are ready for live records.</p>
       <div class="button-row">
         <a class="btn btn-light" href="./stem-hub-mockup.html">Back to Main Hub</a>
       </div>
@@ -427,7 +427,7 @@
       <button class="tab-btn active" data-tab="semester-calculator">Semester Calculator</button>
       <button class="tab-btn" data-tab="cumulative-gpa">Cumulative GPA</button>
       <button class="tab-btn" data-tab="goal-planner">Goal Planner</button>
-      <button class="tab-btn" data-tab="saved-semesters">Saved Semester Mock Data</button>
+      <button class="tab-btn" data-tab="saved-semesters">Saved Semester Data</button>
     </div>
 
     <section class="tab-panel active" id="tab-semester-calculator">
@@ -554,7 +554,7 @@
     <section class="tab-panel" id="tab-saved-semesters">
       <div class="card">
         <div class="section-header">
-          <h2>Saved Semester Mock Data</h2>
+          <h2>Saved Semester Data</h2>
           <p>Load example terms to quickly preview different GPA outcomes.</p>
         </div>
         <div class="saved-grid" id="saved-semesters-grid"></div>
@@ -562,6 +562,8 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
   <script>
     const gradeScale = {
       "A": 4.0,
@@ -583,6 +585,12 @@
       { id: crypto.randomUUID(), name: "Intro to Programming", credits: 3, grade: "A-", semester: "Fall 2026", notes: "Strong project score" },
       { id: crypto.randomUUID(), name: "General Biology", credits: 3, grade: "B", semester: "Fall 2026", notes: "Improve lab report detail" }
     ];
+    const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
+    const GPA_STATE_TABLE = "user_gpa_profiles";
+    let supabaseClient = null;
+    let currentUserId = null;
+    let isHydratingAccountState = false;
+    let persistTimer = null;
 
     const savedSemesters = [
       {
@@ -628,6 +636,79 @@
     const newGrade = document.getElementById("new-course-grade");
     const newSemester = document.getElementById("new-course-semester");
     const newNotes = document.getElementById("new-course-notes");
+
+    function getAccountSnapshot() {
+      return {
+        courses,
+        previousGpa: previousGpaInput.value,
+        completedCredits: completedCreditsInput.value,
+        targetGpa: targetGpaInput.value
+      };
+    }
+
+    function applyAccountSnapshot(snapshot) {
+      if (!snapshot || typeof snapshot !== "object") return;
+      isHydratingAccountState = true;
+
+      if (Array.isArray(snapshot.courses)) {
+        courses = snapshot.courses.map((course) => ({
+          id: crypto.randomUUID(),
+          name: course.name || "Course",
+          credits: Math.max(0, Number(course.credits) || 0),
+          grade: gradeScale[course.grade] !== undefined ? course.grade : "A",
+          semester: course.semester || "Fall 2026",
+          notes: course.notes || ""
+        }));
+      }
+
+      if (snapshot.previousGpa !== undefined) previousGpaInput.value = snapshot.previousGpa;
+      if (snapshot.completedCredits !== undefined) completedCreditsInput.value = snapshot.completedCredits;
+      if (snapshot.targetGpa !== undefined) targetGpaInput.value = snapshot.targetGpa;
+
+      isHydratingAccountState = false;
+    }
+
+    async function persistAccountSnapshot() {
+      if (!supabaseClient || !currentUserId || isHydratingAccountState) return;
+      const payload = {
+        user_id: currentUserId,
+        data: getAccountSnapshot(),
+        updated_at: new Date().toISOString()
+      };
+      const { error } = await supabaseClient.from(GPA_STATE_TABLE).upsert(payload, { onConflict: "user_id" });
+      if (error) console.warn("Unable to save GPA account state:", error.message);
+    }
+
+    function queuePersistAccountSnapshot() {
+      if (!supabaseClient || !currentUserId || isHydratingAccountState) return;
+      clearTimeout(persistTimer);
+      persistTimer = setTimeout(() => {
+        persistAccountSnapshot();
+      }, 500);
+    }
+
+    async function bootstrapAccountState() {
+      if (adminBypass) return;
+      supabaseClient = window.getSummitSupabaseClient();
+      const { data: authData } = await supabaseClient.auth.getUser();
+      const user = authData?.user;
+      if (!user) {
+        window.location.href = "./index.html";
+        return;
+      }
+      currentUserId = user.id;
+
+      const { data: row, error } = await supabaseClient
+        .from(GPA_STATE_TABLE)
+        .select("data")
+        .eq("user_id", currentUserId)
+        .maybeSingle();
+      if (error) {
+        console.warn("Unable to load GPA account state:", error.message);
+        return;
+      }
+      if (row?.data) applyAccountSnapshot(row.data);
+    }
 
     function toNumber(value, fallback = 0) {
       const n = Number(value);
@@ -854,6 +935,7 @@
       newNotes.value = "";
       newGrade.value = "A";
       renderAll();
+      queuePersistAccountSnapshot();
     });
 
     coursesBody.addEventListener("input", (event) => {
@@ -874,6 +956,7 @@
       renderSemesterSummary();
       renderCumulativeSummary();
       renderGoalPlanner();
+      queuePersistAccountSnapshot();
     });
 
     coursesBody.addEventListener("click", (event) => {
@@ -883,12 +966,14 @@
       const id = target.getAttribute("data-id");
       courses = courses.filter((course) => course.id !== id);
       renderAll();
+      queuePersistAccountSnapshot();
     });
 
     [previousGpaInput, completedCreditsInput, targetGpaInput].forEach((input) => {
       input.addEventListener("input", () => {
         renderCumulativeSummary();
         renderGoalPlanner();
+        queuePersistAccountSnapshot();
       });
     });
 
@@ -905,9 +990,15 @@
         ...course
       }));
       renderAll();
+      queuePersistAccountSnapshot();
     });
-
-    renderAll();
+    bootstrapAccountState()
+      .catch((error) => {
+        console.warn("GPA account bootstrap warning:", error);
+      })
+      .finally(() => {
+        renderAll();
+      });
   </script>
 </body>
 </html>

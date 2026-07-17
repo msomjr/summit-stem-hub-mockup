@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Applications - SUMMIT STEM Platform</title>
+  <style>
+    :root {
+      --bg: #d6dee8;
+      --line: #bcc9d8;
+      --text: #0f172a;
+      --muted: #475569;
+      --brand: #2f5fa7;
+      --brand-soft: #e8f1ff;
+      --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(1120px, 94%);
+      margin: 0 auto;
+      padding: 24px 0 44px;
+    }
+
+    .hero,
+    .card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .hero {
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.45rem, 2.8vw, 2rem);
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.84rem;
+      transition: transform 0.15s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      color: #ffffff;
+      background: linear-gradient(135deg, #2f5fa7, #67b7d7);
+    }
+
+    .btn-secondary {
+      color: #1f2937;
+      background: #ffffff;
+      border-color: var(--line);
+    }
+
+    .meta {
+      margin-top: 6px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      padding: 10px 8px;
+      font-size: 0.9rem;
+    }
+
+    th {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #334155;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .status-pending {
+      background: #eef2ff;
+      color: #3730a3;
+      border-color: #c7d2fe;
+    }
+
+    .status-accepted {
+      background: #ecfdf3;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .status-waitlisted {
+      background: #fff7ed;
+      color: #9a3412;
+      border-color: #fed7aa;
+    }
+
+    .status-rejected {
+      background: #fef2f2;
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+
+    .empty {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>My Project Applications</h1>
+      <p>Track your submitted project applications and current review status.</p>
+      <div class="button-row">
+        <a class="btn btn-secondary" href="./stem-hub-mockup.html">Back to Projects Hub</a>
+        <a class="btn btn-secondary" href="./project-application.html">Submit New Application</a>
+      </div>
+      <p id="viewer-meta" class="meta"></p>
+    </section>
+
+    <section class="card">
+      <div class="button-row" style="margin-top:0;">
+        <button id="refresh-btn" class="btn btn-primary" type="button">Refresh Applications</button>
+      </div>
+      <div class="table-wrap">
+        <table aria-label="My applications">
+          <thead>
+            <tr>
+              <th>Submitted</th>
+              <th>Project</th>
+              <th>Status</th>
+              <th>School/Org</th>
+              <th>Grade/Year</th>
+              <th>Availability</th>
+              <th>Interest Response</th>
+            </tr>
+          </thead>
+          <tbody id="applications-body"></tbody>
+        </table>
+      </div>
+      <p id="empty-state" class="empty">No applications submitted yet.</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script>
+    const applicationsBody = document.getElementById("applications-body");
+    const emptyState = document.getElementById("empty-state");
+    const viewerMeta = document.getElementById("viewer-meta");
+    const refreshBtn = document.getElementById("refresh-btn");
+
+    function formatDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "N/A";
+      return date.toLocaleString();
+    }
+
+    function statusClass(status) {
+      if (status === "Accepted") return "status-accepted";
+      if (status === "Waitlisted") return "status-waitlisted";
+      if (status === "Rejected") return "status-rejected";
+      return "status-pending";
+    }
+
+    async function loadMyApplications() {
+      const supabase = window.getSummitSupabaseClient();
+      const { data: authData } = await supabase.auth.getUser();
+      const user = authData?.user;
+      if (!user) {
+        window.location.href = "./index.html";
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, email")
+        .eq("id", user.id)
+        .single();
+
+      viewerMeta.textContent = profile?.full_name
+        ? `Signed in as ${profile.full_name} (${profile.email || user.email || "No email"})`
+        : `Signed in as ${user.email || "Student"}`;
+
+      const { data: applications, error } = await supabase
+        .from("project_applications")
+        .select("created_at, project_name, status, school, grade_level, availability, interest_response")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      applicationsBody.innerHTML = "";
+
+      if (error) {
+        console.error(error);
+        emptyState.textContent = "Unable to load applications right now.";
+        emptyState.style.display = "block";
+        return;
+      }
+
+      if (!applications || !applications.length) {
+        emptyState.style.display = "block";
+        return;
+      }
+
+      emptyState.style.display = "none";
+      applications.forEach((item) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${formatDate(item.created_at)}</td>
+          <td>${item.project_name || "N/A"}</td>
+          <td><span class="badge ${statusClass(item.status)}">${item.status || "Pending"}</span></td>
+          <td>${item.school || "N/A"}</td>
+          <td>${item.grade_level || "N/A"}</td>
+          <td>${item.availability || "N/A"}</td>
+          <td>${item.interest_response || "N/A"}</td>
+        `;
+        applicationsBody.appendChild(row);
+      });
+    }
+
+    refreshBtn.addEventListener("click", () => {
+      loadMyApplications().catch((error) => {
+        console.error(error);
+        alert("Unable to refresh applications.");
+      });
+    });
+
+    loadMyApplications().catch((error) => {
+      console.error(error);
+      alert("Unable to load your applications.");
+      window.location.href = "./home.html";
+    });
+  </script>
+</body>
+</html>

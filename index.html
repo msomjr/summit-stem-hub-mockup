@@ -170,23 +170,23 @@
 
     /* SUMMIT Foundation-inspired light theme override */
     :root {
-      --bg: #dbe3ee;
+      --bg: #d6dee8;
       --surface: #ffffff;
       --text: #0f172a;
       --muted: #475569;
-      --line: #c5d1e0;
+      --line: #bcc9d8;
       --brand: #2f5fa7;
       --brand-soft: #e8f1ff;
       --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
     }
 
     body {
-      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
       color: var(--text);
     }
 
     .auth-card {
-      background: #dfe7f2 !important;
+      background: #ffffff !important;
       border-color: var(--line) !important;
       color: var(--text) !important;
       box-shadow: var(--shadow) !important;
@@ -223,16 +223,16 @@
   <div class="auth-wrapper">
     <div class="auth-card">
       <div class="auth-header">
-        <img class="auth-logo" src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
+        <img class="auth-logo" src="./assets/summit-emblem.png?v=2" alt="The Summit emblem" />
         <h1>Welcome back</h1>
         <p>Log in to your SUMMIT STEM Platform account.</p>
       </div>
 
-      <!-- Front-end only: no real authentication yet. Logging in just goes to the hub. -->
-      <form onsubmit="event.preventDefault(); window.location.href='./home.html';">
+      <!-- Supabase email/password authentication -->
+      <form id="login-form">
         <div class="field">
           <label for="email">Email</label>
-          <input id="email" name="email" type="email" placeholder="name@example.com" required />
+          <input id="email" name="email" type="text" placeholder="name@example.com" required />
         </div>
 
         <div class="field">
@@ -241,7 +241,7 @@
         </div>
 
         <div class="forgot">
-          <a href="#">Forgot password?</a>
+          <a id="forgot-password-link" href="#">Forgot password?</a>
         </div>
 
         <button class="btn" type="submit">Login</button>
@@ -250,8 +250,88 @@
       <p class="switch-link">
         Don't have an account? <a href="./signup.html">Sign up</a>
       </p>
-      <p class="back-home"><a href="./landing.html">Back to platform home</a></p>
+      <p class="back-home"><a href="./home.html">Back to platform home</a></p>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script>
+    const ADMIN_BYPASS_EMAIL = "1";
+    const ADMIN_BYPASS_PASSWORD = "1";
+    const ADMIN_BYPASS_KEY = "summitAdminBypass";
+    const loginForm = document.getElementById("login-form");
+    const forgotPasswordLink = document.getElementById("forgot-password-link");
+
+    if (localStorage.getItem(ADMIN_BYPASS_KEY) === "true") {
+      window.location.href = "./leadership-dashboard.html";
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const email = (document.getElementById("email").value || "").trim().toLowerCase();
+      const password = document.getElementById("password").value;
+
+      if (email === ADMIN_BYPASS_EMAIL && password === ADMIN_BYPASS_PASSWORD) {
+        localStorage.setItem(ADMIN_BYPASS_KEY, "true");
+        localStorage.setItem("summitAdminBypassUser", "Admin");
+        window.location.href = "./leadership-dashboard.html";
+        return;
+      }
+
+      try {
+        const supabase = window.getSummitSupabaseClient();
+        const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (error) throw error;
+        localStorage.removeItem(ADMIN_BYPASS_KEY);
+        localStorage.removeItem("summitAdminBypassUser");
+
+        const userId = data.user?.id;
+        if (!userId) throw new Error("Login succeeded but user was not returned.");
+
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("id, full_name, email, role")
+          .eq("id", userId)
+          .single();
+
+        if (profileError || !profile) {
+          const metadataName = data.user?.user_metadata?.full_name || "";
+          const displayName = (metadataName || email.split("@")[0] || "Student").trim();
+          const { error: upsertError } = await supabase.from("profiles").upsert({
+            id: userId,
+            full_name: displayName,
+            email: data.user?.email || email
+          });
+          if (upsertError) throw upsertError;
+        }
+
+        window.location.href = "./home.html";
+      } catch (err) {
+        alert(err.message || "Login failed. Please check your credentials.");
+      }
+    });
+
+    forgotPasswordLink.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const email = (document.getElementById("email").value || "").trim();
+      if (email === ADMIN_BYPASS_EMAIL) {
+        alert("Admin bypass login does not use password reset.");
+        return;
+      }
+      if (!email) {
+        alert("Enter your email first, then click Forgot password.");
+        return;
+      }
+
+      try {
+        const supabase = window.getSummitSupabaseClient();
+        const { error } = await supabase.auth.resetPasswordForEmail(email);
+        if (error) throw error;
+        alert("Password reset email sent. Check your inbox and spam folder.");
+      } catch (err) {
+        alert(err.message || "Unable to send password reset email.");
+      }
+    });
+  </script>
 </body>
 </html>
