@@ -142,6 +142,13 @@
 
     .kv strong { color: #334155; }
 
+    .price {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #234d8d;
+    }
+
     @media (max-width: 980px) {
       .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
@@ -160,17 +167,25 @@
         <img class="hero-mark" src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
         <span>The Summit Platform</span>
       </div>
-      <h1>SUMMIT Opportunities Board</h1>
-      <p>Standalone mock page for internships, mini-internships, research, outreach, scholarships, and workshops.</p>
+      <h1>Opportunities Board</h1>
+      <p>Internships, mini-internships, research, outreach, scholarships, and workshops.</p>
       <a class="btn" href="./stem-hub-mockup.html">Back to Opportunity Hub</a>
     </section>
 
     <section class="card">
       <div class="section-header">
-        <h2>Opportunities Board (Mock)</h2>
-        <p>Mock data only. Buttons are placeholders and do not connect to a backend.</p>
+        <h2>Opportunities Board</h2>
+        <p>Buttons are placeholders and do not connect to a backend.</p>
       </div>
       <div id="opportunities-grid" class="grid"></div>
+    </section>
+
+    <section class="card" style="margin-top: 18px;">
+      <div class="section-header">
+        <h2>Projects</h2>
+        <p>Placeholder projects. Pricing shown is an example, as these projects will be paid.</p>
+      </div>
+      <div id="projects-grid" class="grid"></div>
     </section>
   </main>
 
@@ -199,30 +214,73 @@
         deadline: "Jul 1",
         eligibility: "Interested in lab work",
         description: "Intro research placement with mentor pairing and onboarding support."
+      }
+    ];
+
+    const projects = [
+      {
+        title: "Web App Build Sprint",
+        category: "Software",
+        duration: "4 weeks",
+        skills: "HTML, CSS, JavaScript",
+        description: "Build a small web app from design to deployment with a mentor.",
+        price: "N/A"
       },
       {
-        title: "Future Engineers Outreach Day",
-        organization: "BridgeEd",
-        type: "Outreach",
-        deadline: "May 30",
-        eligibility: "Volunteers needed",
-        description: "Lead small groups through engineering design activities."
+        title: "Robotics Prototype Lab",
+        category: "Engineering",
+        duration: "6 weeks",
+        skills: "CAD, prototyping, teamwork",
+        description: "Design and test a working robotics prototype for a real challenge.",
+        price: "N/A"
       },
       {
-        title: "STEM Equity Scholarship",
-        organization: "Northstar Foundation",
-        type: "Scholarship",
-        deadline: "Aug 10",
-        eligibility: "First-generation applicants encouraged",
-        description: "Scholarship award supporting students pursuing STEM pathways."
+        title: "Data Dashboard Project",
+        category: "Data Science",
+        duration: "5 weeks",
+        skills: "Python, charts, storytelling",
+        description: "Turn a raw dataset into an interactive dashboard with insights.",
+        price: "N/A"
       },
       {
-        title: "LinkedIn Branding Workshop",
-        organization: "Career Launch Collective",
-        type: "Workshop",
-        deadline: "Weekly sessions",
-        eligibility: "Open to all members",
-        description: "Hands-on workshop to optimize profiles and networking strategy."
+        title: "Beginner Web App Sprint",
+        category: "Software",
+        duration: "2 weeks",
+        skills: "HTML, CSS, and JavaScript",
+        description: "A 2-week starter project where students build a simple web app such as a GPA calculator or personal portfolio.",
+        price: "N/A"
+      },
+      {
+        title: "Network Safety Simulation",
+        category: "Cybersecurity",
+        duration: "2 weeks",
+        skills: "Encryption basics and safe authentication practices",
+        description: "A 2-week project introducing basic cybersecurity concepts. Students simulate a secure login system and learn how to protect user data.",
+        price: "N/A"
+      },
+      {
+        title: "Data Dashboard Sprint",
+        category: "Data Science",
+        duration: "2 weeks",
+        skills: "Python, chart creation, and data storytelling",
+        description: "A 2-week project where students analyze simple datasets and create visual dashboards.",
+        price: "N/A"
+      },
+      {
+        title: "Vital Signs Tracker Prototype",
+        category: "Health Tech",
+        duration: "2 weeks",
+        skills: "UX design and basic sensor/IoT concepts",
+        description: "A 2-week project where students design a basic interface that records and displays simulated vital signs.",
+        price: "N/A"
+      },
+      {
+        title: "Budget Automation Challenge",
+        category: "FinTech",
+        duration: "2 weeks",
+        skills: "Excel formulas, JavaScript, and financial modeling",
+        description: "A 2-week project where students create a simple budgeting tool that tracks spending and savings goals.",
+        price: "N/A"
       }
     ];
 
@@ -242,6 +300,24 @@
         <button class="btn" type="button">Learn More</button>
       `;
       opportunitiesGrid.appendChild(card);
+    });
+
+    const projectsGrid = document.getElementById("projects-grid");
+    projects.forEach((project) => {
+      const card = document.createElement("article");
+      card.className = "mini-card";
+      card.innerHTML = `
+        <h3>${project.title}</h3>
+        <div class="kv">
+          <strong>Category</strong><span>${project.category}</span>
+          <strong>Duration</strong><span>${project.duration}</span>
+          <strong>Skills</strong><span>${project.skills}</span>
+        </div>
+        <p>${project.description}</p>
+        <p class="price">Price: ${project.price}</p>
+        <button class="btn" type="button">Request to Join</button>
+      `;
+      projectsGrid.appendChild(card);
     });
   </script>
 </body>
