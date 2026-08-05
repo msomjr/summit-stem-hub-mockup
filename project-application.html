@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Application - SUMMIT STEM Platform</title>
+  <style>
+    :root {
+      --bg: #d6dee8;
+      --line: #bcc9d8;
+      --text: #0f172a;
+      --muted: #475569;
+      --brand: #2f5fa7;
+      --brand-soft: #e8f1ff;
+      --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(980px, 94%);
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .hero {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 4px);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.84rem;
+      transition: transform 0.15s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, #2f5fa7, #67b7d7);
+    }
+
+    .btn-secondary {
+      color: #1f2937;
+      background: #ffffff;
+      border-color: var(--line);
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+      color: var(--text);
+      background: #ffffff;
+    }
+
+    .field textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .field.span-2 {
+      grid-column: span 2;
+    }
+
+    .success {
+      margin-top: 12px;
+      border-radius: 12px;
+      border: 1px solid #bfd3ea;
+      background: var(--brand-soft);
+      color: #234d8d;
+      font-weight: 700;
+      padding: 10px 12px;
+      display: none;
+    }
+
+    .success a {
+      color: #1e3a8a;
+      font-weight: 700;
+      text-decoration: none;
+      margin-left: 6px;
+    }
+
+    .success a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 760px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .field.span-2 { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>Project Application</h1>
+      <p>Apply to join a project in the SUMMIT STEM Hub. Your request will appear in the leadership Project Requests board.</p>
+      <div style="margin-top: 10px;">
+        <a class="btn btn-secondary" href="./stem-hub-mockup.html">Back to Projects Hub</a>
+        <a class="btn btn-secondary" href="./my-applications.html">View My Applications</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <form id="project-application-form">
+        <div class="grid grid-2">
+          <div class="field">
+            <label for="fullName">Full name</label>
+            <input id="fullName" name="fullName" required />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required />
+          </div>
+          <div class="field">
+            <label for="phone">Phone number</label>
+            <input id="phone" name="phone" type="tel" required />
+          </div>
+          <div class="field">
+            <label for="schoolOrg">School or organization</label>
+            <input id="schoolOrg" name="schoolOrg" placeholder="Old Dominion University" required />
+          </div>
+          <div class="field">
+            <label for="gradeLevel">Grade level or college year</label>
+            <input id="gradeLevel" name="gradeLevel" placeholder="Sophomore" required />
+          </div>
+          <div class="field">
+            <label for="projectName">Project selection</label>
+            <select id="projectName" name="projectName" required></select>
+          </div>
+          <div class="field span-2">
+            <label for="interestResponse">Why are you interested in this project?</label>
+            <textarea id="interestResponse" name="interestResponse" required></textarea>
+          </div>
+          <div class="field span-2">
+            <label for="skillsHave">What skills or experience do you already have?</label>
+            <textarea id="skillsHave" name="skillsHave" required></textarea>
+          </div>
+          <div class="field span-2">
+            <label for="skillsLearn">What skills do you want to learn?</label>
+            <textarea id="skillsLearn" name="skillsLearn" required></textarea>
+          </div>
+          <div class="field span-2">
+            <label for="availability">Availability</label>
+            <input id="availability" name="availability" placeholder="Mon/Wed evenings, 6-8 PM" required />
+          </div>
+        </div>
+        <div style="margin-top: 12px;">
+          <button class="btn btn-primary" type="submit">Submit application</button>
+        </div>
+        <div id="success-message" class="success">
+          Application submitted successfully. Leadership can now review your request.
+          <a href="./my-applications.html">View My Applications</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script>
+    const FALLBACK_PROJECTS = [
+      "Hash Identifier",
+      "HTTP Headers Scanner",
+      "SIEM Dashboard",
+      "Robotics Design Group",
+      "Data Science Mini Project",
+      "Health Awareness Outreach Team",
+      "Student Budgeting Challenge",
+      "Student Stress & Study Habits Survey",
+      "Portfolio Website Builder"
+    ];
+
+    const projectSelect = document.getElementById("projectName");
+    const form = document.getElementById("project-application-form");
+    const successMessage = document.getElementById("success-message");
+    const params = new URLSearchParams(window.location.search);
+    const selectedProject = params.get("project");
+    let currentUserId = null;
+
+    const catalog = FALLBACK_PROJECTS;
+    catalog.forEach((projectTitle) => {
+      const option = document.createElement("option");
+      option.value = projectTitle;
+      option.textContent = projectTitle;
+      projectSelect.appendChild(option);
+    });
+
+    if (selectedProject && catalog.includes(selectedProject)) {
+      projectSelect.value = selectedProject;
+    }
+
+    async function bootstrapAuth() {
+      const supabase = window.getSummitSupabaseClient();
+      const { data: authData } = await supabase.auth.getUser();
+      const user = authData?.user;
+      if (!user) {
+        window.location.href = "./index.html";
+        return;
+      }
+      currentUserId = user.id;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, email")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.full_name) document.getElementById("fullName").value = profile.full_name;
+      if (profile?.email) document.getElementById("email").value = profile.email;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const supabase = window.getSummitSupabaseClient();
+      if (!currentUserId) {
+        alert("Please log in to submit an application.");
+        window.location.href = "./index.html";
+        return;
+      }
+
+      const payload = {
+        user_id: currentUserId,
+        full_name: document.getElementById("fullName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        school: document.getElementById("schoolOrg").value.trim(),
+        grade_level: document.getElementById("gradeLevel").value.trim(),
+        project_name: projectSelect.value,
+        interest_response: document.getElementById("interestResponse").value.trim(),
+        current_skills: document.getElementById("skillsHave").value.trim(),
+        skills_to_learn: document.getElementById("skillsLearn").value.trim(),
+        availability: document.getElementById("availability").value.trim(),
+        status: "Pending"
+      };
+
+      try {
+        const { error } = await supabase.from("project_applications").insert(payload);
+        if (error) throw error;
+        // Real project submissions are persisted in Supabase; no localStorage fallback is used.
+        successMessage.style.display = "block";
+        form.reset();
+        projectSelect.value = selectedProject && catalog.includes(selectedProject) ? selectedProject : catalog[0];
+      } catch (error) {
+        alert(error.message || "Failed to submit application.");
+      }
+    });
+
+    bootstrapAuth().catch((error) => {
+      console.error(error);
+      alert("Unable to verify login session. Please log in again.");
+      window.location.href = "./index.html";
+    });
+  </script>
+</body>
+</html>

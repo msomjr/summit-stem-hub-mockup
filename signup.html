@@ -163,23 +163,23 @@
 
     /* SUMMIT Foundation-inspired light theme override */
     :root {
-      --bg: #dbe3ee;
+      --bg: #d6dee8;
       --surface: #ffffff;
       --text: #0f172a;
       --muted: #475569;
-      --line: #c5d1e0;
+      --line: #bcc9d8;
       --brand: #2f5fa7;
       --brand-soft: #e8f1ff;
       --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
     }
 
     body {
-      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
       color: var(--text);
     }
 
     .auth-card {
-      background: #dfe7f2 !important;
+      background: #ffffff !important;
       border-color: var(--line) !important;
       color: var(--text) !important;
       box-shadow: var(--shadow) !important;
@@ -215,13 +215,13 @@
   <div class="auth-wrapper">
     <div class="auth-card">
       <div class="auth-header">
-        <img class="auth-logo" src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
+        <img class="auth-logo" src="./assets/summit-emblem.png?v=2" alt="The Summit emblem" />
         <h1>Create your account</h1>
         <p>Join the SUMMIT STEM Platform community.</p>
       </div>
 
-      <!-- Front-end only: no real authentication yet -->
-      <form onsubmit="event.preventDefault(); window.location.href='./home.html';">
+      <!-- Supabase email/password sign-up -->
+      <form id="signup-form">
         <div class="field">
           <label for="full-name">Full name</label>
           <input id="full-name" name="full-name" type="text" placeholder="Jane Doe" required />
@@ -248,8 +248,56 @@
       <p class="switch-link">
         Already have an account? <a href="./index.html">Login</a>
       </p>
-      <p class="back-home"><a href="./landing.html">Back to platform home</a></p>
+      <p class="back-home"><a href="./home.html">Back to platform home</a></p>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script>
+    const signupForm = document.getElementById("signup-form");
+
+    signupForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const fullName = (document.getElementById("full-name").value || "").trim();
+      const email = (document.getElementById("email").value || "").trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+      }
+
+      try {
+        const supabase = window.getSummitSupabaseClient();
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: fullName }
+          }
+        });
+        if (error) throw error;
+
+        const userId = data.user?.id;
+        if (userId) {
+          const { error: profileError } = await supabase.from("profiles").upsert({
+            id: userId,
+            full_name: fullName,
+            email
+          });
+          if (profileError) {
+            console.warn("Profile insert deferred until first login:", profileError.message);
+          }
+        }
+
+        // If email confirmation is enabled, Supabase may not create an active session immediately.
+        alert("Account created. If email confirmation is enabled, confirm your email, then log in.");
+        window.location.href = "./index.html";
+      } catch (err) {
+        alert(err.message || "Sign up failed.");
+      }
+    });
+  </script>
 </body>
 </html>

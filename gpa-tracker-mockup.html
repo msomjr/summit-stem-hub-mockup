@@ -347,11 +347,11 @@
 
     /* SUMMIT Foundation-inspired light theme override */
     :root {
-      --bg: #dbe3ee;
+      --bg: #d6dee8;
       --surface: #ffffff;
       --text: #0f172a;
       --muted: #475569;
-      --line: #c5d1e0;
+      --line: #bcc9d8;
       --brand: #2f5fa7;
       --brand-2: #67b7d7;
       --brand-soft: #e8f1ff;
@@ -360,12 +360,12 @@
     }
 
     body {
-      background: linear-gradient(180deg, #eef3f9 0%, #dbe3ee 70%, #d2dbe7 100%);
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
       color: var(--text);
     }
 
     .hero, .card, .stat-card, .saved-card {
-      background: #dfe7f2 !important;
+      background: #ffffff !important;
       border-color: var(--line) !important;
       color: var(--text) !important;
       box-shadow: var(--shadow) !important;
@@ -405,7 +405,7 @@
     }
 
     th {
-      background: #ecf1f7 !important;
+      background: #f3f7fc !important;
     }
   </style>
 </head>
@@ -413,11 +413,11 @@
   <main class="container">
     <section class="hero">
       <div class="hero-brand">
-        <img class="hero-mark" src="../.cursor/projects/c-Users-somua-stem-hub/assets/c__Users_somua_AppData_Roaming_Cursor_User_workspaceStorage_24680e058e870a4f6fd8d8a08909f716_images_banner-60e51b41-103b-418d-87d3-44b0b6d3372d.png" alt="The Summit emblem" />
+        <img class="hero-mark" src="./assets/summit-emblem.png?v=2" alt="The Summit emblem" />
         <span>The Summit Platform</span>
       </div>
-      <h1>SUMMIT GPA Tracker (Mock)</h1>
-      <p>Standalone GPA planning tool using local state and mock data only. No authentication, no backend, and no database connections.</p>
+      <h1>SUMMIT GPA Tracker</h1>
+      <p>Standalone GPA planning workspace. Connect this page to your SIS or profile data source when you are ready for live records.</p>
       <div class="button-row">
         <a class="btn btn-light" href="./stem-hub-mockup.html">Back to Main Hub</a>
       </div>
@@ -427,10 +427,33 @@
       <button class="tab-btn active" data-tab="semester-calculator">Semester Calculator</button>
       <button class="tab-btn" data-tab="cumulative-gpa">Cumulative GPA</button>
       <button class="tab-btn" data-tab="goal-planner">Goal Planner</button>
-      <button class="tab-btn" data-tab="saved-semesters">Saved Semester Mock Data</button>
+      <button class="tab-btn" data-tab="saved-semesters">Saved Semester Data</button>
     </div>
 
     <section class="tab-panel active" id="tab-semester-calculator">
+      <div class="card">
+        <div class="section-header">
+          <h2>Course Entry</h2>
+          <p>Add, edit, and remove semester courses. GPA updates live whenever values change.</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Course Name</th>
+                <th>Credit Hours</th>
+                <th>Grade</th>
+                <th>Semester</th>
+                <th>Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="courses-body"></tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="card">
         <div class="section-header">
           <h2>Add Course</h2>
@@ -439,8 +462,7 @@
         <div class="grid grid-3">
           <div>
             <label for="new-course-name">Course Name</label>
-            <input id="new-course-name" list="course-catalog-list" placeholder="Type to search ODU courses..." autocomplete="off" />
-            <datalist id="course-catalog-list"></datalist>
+            <input id="new-course-name" placeholder="Intro to Programming" />
           </div>
           <div>
             <label for="new-course-credits">Credit Hours</label>
@@ -472,29 +494,6 @@
           <h2>Semester Summary</h2>
         </div>
         <div class="grid grid-4" id="semester-summary-cards"></div>
-      </div>
-
-      <div class="card">
-        <div class="section-header">
-          <h2>Course Entry</h2>
-          <p>Add, edit, and remove semester courses. GPA updates live whenever values change.</p>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Course Name</th>
-                <th>Credit Hours</th>
-                <th>Grade</th>
-                <th>Semester</th>
-                <th>Notes</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="courses-body"></tbody>
-          </table>
-        </div>
       </div>
     </section>
 
@@ -555,7 +554,7 @@
     <section class="tab-panel" id="tab-saved-semesters">
       <div class="card">
         <div class="section-header">
-          <h2>Saved Semester Mock Data</h2>
+          <h2>Saved Semester Data</h2>
           <p>Load example terms to quickly preview different GPA outcomes.</p>
         </div>
         <div class="saved-grid" id="saved-semesters-grid"></div>
@@ -563,13 +562,9 @@
     </section>
   </main>
 
-  <script src="./odu-course-catalog.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
   <script>
-    // "N/A" means no grade has been chosen yet. It is intentionally NOT part of
-    // gradeScale, so it is excluded from all GPA math (contributes 0 credits and
-    // 0 quality points) until the user picks a real letter grade.
-    const NO_GRADE = "N/A";
-
     const gradeScale = {
       "A": 4.0,
       "A-": 3.7,
@@ -586,10 +581,16 @@
     const semesterOptions = ["Fall 2026", "Spring 2027"];
 
     let courses = [
-      { id: crypto.randomUUID(), name: "Calculus I", credits: 4, grade: NO_GRADE, semester: "Fall 2026", notes: "Need stronger quiz prep" },
-      { id: crypto.randomUUID(), name: "Intro to Programming", credits: 3, grade: NO_GRADE, semester: "Fall 2026", notes: "Strong project score" },
-      { id: crypto.randomUUID(), name: "General Biology", credits: 3, grade: NO_GRADE, semester: "Fall 2026", notes: "Improve lab report detail" }
+      { id: crypto.randomUUID(), name: "Calculus I", credits: 4, grade: "B+", semester: "Fall 2026", notes: "Need stronger quiz prep" },
+      { id: crypto.randomUUID(), name: "Intro to Programming", credits: 3, grade: "A-", semester: "Fall 2026", notes: "Strong project score" },
+      { id: crypto.randomUUID(), name: "General Biology", credits: 3, grade: "B", semester: "Fall 2026", notes: "Improve lab report detail" }
     ];
+    const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
+    const GPA_STATE_TABLE = "user_gpa_profiles";
+    let supabaseClient = null;
+    let currentUserId = null;
+    let isHydratingAccountState = false;
+    let persistTimer = null;
 
     const savedSemesters = [
       {
@@ -636,6 +637,79 @@
     const newSemester = document.getElementById("new-course-semester");
     const newNotes = document.getElementById("new-course-notes");
 
+    function getAccountSnapshot() {
+      return {
+        courses,
+        previousGpa: previousGpaInput.value,
+        completedCredits: completedCreditsInput.value,
+        targetGpa: targetGpaInput.value
+      };
+    }
+
+    function applyAccountSnapshot(snapshot) {
+      if (!snapshot || typeof snapshot !== "object") return;
+      isHydratingAccountState = true;
+
+      if (Array.isArray(snapshot.courses)) {
+        courses = snapshot.courses.map((course) => ({
+          id: crypto.randomUUID(),
+          name: course.name || "Course",
+          credits: Math.max(0, Number(course.credits) || 0),
+          grade: gradeScale[course.grade] !== undefined ? course.grade : "A",
+          semester: course.semester || "Fall 2026",
+          notes: course.notes || ""
+        }));
+      }
+
+      if (snapshot.previousGpa !== undefined) previousGpaInput.value = snapshot.previousGpa;
+      if (snapshot.completedCredits !== undefined) completedCreditsInput.value = snapshot.completedCredits;
+      if (snapshot.targetGpa !== undefined) targetGpaInput.value = snapshot.targetGpa;
+
+      isHydratingAccountState = false;
+    }
+
+    async function persistAccountSnapshot() {
+      if (!supabaseClient || !currentUserId || isHydratingAccountState) return;
+      const payload = {
+        user_id: currentUserId,
+        data: getAccountSnapshot(),
+        updated_at: new Date().toISOString()
+      };
+      const { error } = await supabaseClient.from(GPA_STATE_TABLE).upsert(payload, { onConflict: "user_id" });
+      if (error) console.warn("Unable to save GPA account state:", error.message);
+    }
+
+    function queuePersistAccountSnapshot() {
+      if (!supabaseClient || !currentUserId || isHydratingAccountState) return;
+      clearTimeout(persistTimer);
+      persistTimer = setTimeout(() => {
+        persistAccountSnapshot();
+      }, 500);
+    }
+
+    async function bootstrapAccountState() {
+      if (adminBypass) return;
+      supabaseClient = window.getSummitSupabaseClient();
+      const { data: authData } = await supabaseClient.auth.getUser();
+      const user = authData?.user;
+      if (!user) {
+        window.location.href = "./index.html";
+        return;
+      }
+      currentUserId = user.id;
+
+      const { data: row, error } = await supabaseClient
+        .from(GPA_STATE_TABLE)
+        .select("data")
+        .eq("user_id", currentUserId)
+        .maybeSingle();
+      if (error) {
+        console.warn("Unable to load GPA account state:", error.message);
+        return;
+      }
+      if (row?.data) applyAccountSnapshot(row.data);
+    }
+
     function toNumber(value, fallback = 0) {
       const n = Number(value);
       return Number.isFinite(n) ? n : fallback;
@@ -654,11 +728,8 @@
       let qualityPoints = 0;
 
       courses.forEach((course) => {
-        // Courses without a real letter grade (N/A) are excluded from GPA math
-        // entirely - no credits and no quality points, so they are not penalized.
-        if (!(course.grade in gradeScale)) return;
         const c = Math.max(0, toNumber(course.credits));
-        const gradePoints = gradeScale[course.grade];
+        const gradePoints = gradeScale[course.grade] ?? 0;
         credits += c;
         qualityPoints += c * gradePoints;
       });
@@ -696,8 +767,7 @@
     }
 
     function gradeOptionsHtml(selectedGrade) {
-      const grades = [NO_GRADE, ...Object.keys(gradeScale)];
-      return grades.map((grade) =>
+      return Object.keys(gradeScale).map((grade) =>
         `<option value="${grade}" ${grade === selectedGrade ? "selected" : ""}>${grade}</option>`
       ).join("");
     }
@@ -714,7 +784,7 @@
       courses.forEach((course) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td><input value="${course.name}" data-id="${course.id}" data-field="name" list="course-catalog-list" placeholder="Type to search ODU courses..." /></td>
+          <td><input value="${course.name}" data-id="${course.id}" data-field="name" /></td>
           <td><input type="number" min="0" step="0.5" value="${course.credits}" data-id="${course.id}" data-field="credits" /></td>
           <td>
             <select data-id="${course.id}" data-field="grade">
@@ -830,58 +900,29 @@
       });
     });
 
-    [NO_GRADE, ...Object.keys(gradeScale)].forEach((grade) => {
+    Object.keys(gradeScale).forEach((grade) => {
       const option = document.createElement("option");
       option.value = grade;
       option.textContent = grade;
       newGrade.appendChild(option);
     });
-    newGrade.value = NO_GRADE;
-
-    // Build the searchable course list (datalist) from the local ODU catalog, so
-    // users type to filter and pick a real course instead of free-typing a name.
-    const courseCatalogList = document.getElementById("course-catalog-list");
-    const catalogByLabel = new Map();
-    ODU_COURSE_CATALOG.forEach((course) => {
-      const label = `${course.code} - ${course.title}`;
-      catalogByLabel.set(label.toLowerCase(), { label, credits: course.credits });
-      const option = document.createElement("option");
-      option.value = label;
-      courseCatalogList.appendChild(option);
-    });
-
-    // Returns the matching catalog course for a typed value, or null if it is not
-    // a real catalog entry (used to block arbitrary course names).
-    function findCatalogCourse(value) {
-      return catalogByLabel.get(String(value).trim().toLowerCase()) || null;
-    }
-
-    // When a catalog course is chosen, auto-fill its known credit hours (still editable).
-    newName.addEventListener("input", () => {
-      const match = findCatalogCourse(newName.value);
-      if (match && match.credits != null) newCredits.value = match.credits;
-    });
+    newGrade.value = "A";
 
     addCourseBtn.addEventListener("click", () => {
-      const match = findCatalogCourse(newName.value);
+      const name = newName.value.trim();
       const credits = Math.max(0, toNumber(newCredits.value));
       const grade = newGrade.value;
       const semester = newSemester.value.trim();
       const notes = newNotes.value.trim();
 
-      if (!match) {
-        alert("Please choose a course from the ODU catalog list (type to search, then pick a match).");
-        return;
-      }
-
-      if (credits <= 0 || !semester) {
-        alert("Please enter credit hours and semester.");
+      if (!name || credits <= 0 || !semester) {
+        alert("Please enter course name, credit hours, and semester.");
         return;
       }
 
       courses.push({
         id: crypto.randomUUID(),
-        name: match.label,
+        name,
         credits,
         grade,
         semester,
@@ -892,8 +933,9 @@
       newCredits.value = "";
       newSemester.value = "Fall 2026";
       newNotes.value = "";
-      newGrade.value = NO_GRADE;
+      newGrade.value = "A";
       renderAll();
+      queuePersistAccountSnapshot();
     });
 
     coursesBody.addEventListener("input", (event) => {
@@ -909,22 +951,12 @@
         course[field] = Math.max(0, toNumber(target.value));
       } else {
         course[field] = target.value;
-
-        // If a catalog course was picked in the table, auto-fill its credit hours too.
-        if (field === "name") {
-          const match = findCatalogCourse(target.value);
-          if (match && match.credits != null) {
-            course.credits = match.credits;
-            const row = target.closest("tr");
-            const creditsInput = row ? row.querySelector('input[data-field="credits"]') : null;
-            if (creditsInput) creditsInput.value = match.credits;
-          }
-        }
       }
 
       renderSemesterSummary();
       renderCumulativeSummary();
       renderGoalPlanner();
+      queuePersistAccountSnapshot();
     });
 
     coursesBody.addEventListener("click", (event) => {
@@ -934,12 +966,14 @@
       const id = target.getAttribute("data-id");
       courses = courses.filter((course) => course.id !== id);
       renderAll();
+      queuePersistAccountSnapshot();
     });
 
     [previousGpaInput, completedCreditsInput, targetGpaInput].forEach((input) => {
       input.addEventListener("input", () => {
         renderCumulativeSummary();
         renderGoalPlanner();
+        queuePersistAccountSnapshot();
       });
     });
 
@@ -956,9 +990,15 @@
         ...course
       }));
       renderAll();
+      queuePersistAccountSnapshot();
     });
-
-    renderAll();
+    bootstrapAccountState()
+      .catch((error) => {
+        console.warn("GPA account bootstrap warning:", error);
+      })
+      .finally(() => {
+        renderAll();
+      });
   </script>
 </body>
 </html>
