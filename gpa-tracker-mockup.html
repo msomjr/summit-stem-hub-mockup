@@ -433,36 +433,14 @@
     <section class="tab-panel active" id="tab-semester-calculator">
       <div class="card">
         <div class="section-header">
-          <h2>Course Entry</h2>
-          <p>Add, edit, and remove semester courses. GPA updates live whenever values change.</p>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Course Name</th>
-                <th>Credit Hours</th>
-                <th>Grade</th>
-                <th>Semester</th>
-                <th>Notes</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="courses-body"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="section-header">
           <h2>Add Course</h2>
           <p>Use this form to add another class to the current semester calculation.</p>
         </div>
         <div class="grid grid-3">
           <div>
             <label for="new-course-name">Course Name</label>
-            <input id="new-course-name" placeholder="Intro to Programming" />
+            <input id="new-course-name" list="course-catalog-list" placeholder="Type to search ODU courses..." autocomplete="off" />
+            <datalist id="course-catalog-list"></datalist>
           </div>
           <div>
             <label for="new-course-credits">Credit Hours</label>
@@ -494,6 +472,29 @@
           <h2>Semester Summary</h2>
         </div>
         <div class="grid grid-4" id="semester-summary-cards"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <h2>Course Entry</h2>
+          <p>Add, edit, and remove semester courses. GPA updates live whenever values change.</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Course Name</th>
+                <th>Credit Hours</th>
+                <th>Grade</th>
+                <th>Semester</th>
+                <th>Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="courses-body"></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -562,7 +563,13 @@
     </section>
   </main>
 
+  <script src="./odu-course-catalog.js"></script>
   <script>
+    // "N/A" means no grade has been chosen yet. It is intentionally NOT part of
+    // gradeScale, so it is excluded from all GPA math (contributes 0 credits and
+    // 0 quality points) until the user picks a real letter grade.
+    const NO_GRADE = "N/A";
+
     const gradeScale = {
       "A": 4.0,
       "A-": 3.7,
@@ -579,9 +586,9 @@
     const semesterOptions = ["Fall 2026", "Spring 2027"];
 
     let courses = [
-      { id: crypto.randomUUID(), name: "Calculus I", credits: 4, grade: "B+", semester: "Fall 2026", notes: "Need stronger quiz prep" },
-      { id: crypto.randomUUID(), name: "Intro to Programming", credits: 3, grade: "A-", semester: "Fall 2026", notes: "Strong project score" },
-      { id: crypto.randomUUID(), name: "General Biology", credits: 3, grade: "B", semester: "Fall 2026", notes: "Improve lab report detail" }
+      { id: crypto.randomUUID(), name: "Calculus I", credits: 4, grade: NO_GRADE, semester: "Fall 2026", notes: "Need stronger quiz prep" },
+      { id: crypto.randomUUID(), name: "Intro to Programming", credits: 3, grade: NO_GRADE, semester: "Fall 2026", notes: "Strong project score" },
+      { id: crypto.randomUUID(), name: "General Biology", credits: 3, grade: NO_GRADE, semester: "Fall 2026", notes: "Improve lab report detail" }
     ];
 
     const savedSemesters = [
@@ -647,8 +654,11 @@
       let qualityPoints = 0;
 
       courses.forEach((course) => {
+        // Courses without a real letter grade (N/A) are excluded from GPA math
+        // entirely - no credits and no quality points, so they are not penalized.
+        if (!(course.grade in gradeScale)) return;
         const c = Math.max(0, toNumber(course.credits));
-        const gradePoints = gradeScale[course.grade] ?? 0;
+        const gradePoints = gradeScale[course.grade];
         credits += c;
         qualityPoints += c * gradePoints;
       });
@@ -686,7 +696,8 @@
     }
 
     function gradeOptionsHtml(selectedGrade) {
-      return Object.keys(gradeScale).map((grade) =>
+      const grades = [NO_GRADE, ...Object.keys(gradeScale)];
+      return grades.map((grade) =>
         `<option value="${grade}" ${grade === selectedGrade ? "selected" : ""}>${grade}</option>`
       ).join("");
     }
@@ -703,7 +714,7 @@
       courses.forEach((course) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td><input value="${course.name}" data-id="${course.id}" data-field="name" /></td>
+          <td><input value="${course.name}" data-id="${course.id}" data-field="name" list="course-catalog-list" placeholder="Type to search ODU courses..." /></td>
           <td><input type="number" min="0" step="0.5" value="${course.credits}" data-id="${course.id}" data-field="credits" /></td>
           <td>
             <select data-id="${course.id}" data-field="grade">
@@ -819,29 +830,58 @@
       });
     });
 
-    Object.keys(gradeScale).forEach((grade) => {
+    [NO_GRADE, ...Object.keys(gradeScale)].forEach((grade) => {
       const option = document.createElement("option");
       option.value = grade;
       option.textContent = grade;
       newGrade.appendChild(option);
     });
-    newGrade.value = "A";
+    newGrade.value = NO_GRADE;
+
+    // Build the searchable course list (datalist) from the local ODU catalog, so
+    // users type to filter and pick a real course instead of free-typing a name.
+    const courseCatalogList = document.getElementById("course-catalog-list");
+    const catalogByLabel = new Map();
+    ODU_COURSE_CATALOG.forEach((course) => {
+      const label = `${course.code} - ${course.title}`;
+      catalogByLabel.set(label.toLowerCase(), { label, credits: course.credits });
+      const option = document.createElement("option");
+      option.value = label;
+      courseCatalogList.appendChild(option);
+    });
+
+    // Returns the matching catalog course for a typed value, or null if it is not
+    // a real catalog entry (used to block arbitrary course names).
+    function findCatalogCourse(value) {
+      return catalogByLabel.get(String(value).trim().toLowerCase()) || null;
+    }
+
+    // When a catalog course is chosen, auto-fill its known credit hours (still editable).
+    newName.addEventListener("input", () => {
+      const match = findCatalogCourse(newName.value);
+      if (match && match.credits != null) newCredits.value = match.credits;
+    });
 
     addCourseBtn.addEventListener("click", () => {
-      const name = newName.value.trim();
+      const match = findCatalogCourse(newName.value);
       const credits = Math.max(0, toNumber(newCredits.value));
       const grade = newGrade.value;
       const semester = newSemester.value.trim();
       const notes = newNotes.value.trim();
 
-      if (!name || credits <= 0 || !semester) {
-        alert("Please enter course name, credit hours, and semester.");
+      if (!match) {
+        alert("Please choose a course from the ODU catalog list (type to search, then pick a match).");
+        return;
+      }
+
+      if (credits <= 0 || !semester) {
+        alert("Please enter credit hours and semester.");
         return;
       }
 
       courses.push({
         id: crypto.randomUUID(),
-        name,
+        name: match.label,
         credits,
         grade,
         semester,
@@ -852,7 +892,7 @@
       newCredits.value = "";
       newSemester.value = "Fall 2026";
       newNotes.value = "";
-      newGrade.value = "A";
+      newGrade.value = NO_GRADE;
       renderAll();
     });
 
@@ -869,6 +909,17 @@
         course[field] = Math.max(0, toNumber(target.value));
       } else {
         course[field] = target.value;
+
+        // If a catalog course was picked in the table, auto-fill its credit hours too.
+        if (field === "name") {
+          const match = findCatalogCourse(target.value);
+          if (match && match.credits != null) {
+            course.credits = match.credits;
+            const row = target.closest("tr");
+            const creditsInput = row ? row.querySelector('input[data-field="credits"]') : null;
+            if (creditsInput) creditsInput.value = match.credits;
+          }
+        }
       }
 
       renderSemesterSummary();
