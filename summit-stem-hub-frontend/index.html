@@ -266,6 +266,11 @@
     const loginForm = document.getElementById("login-form");
     const forgotPasswordLink = document.getElementById("forgot-password-link");
 
+    // Remembered admin session should resume on platform home, not leadership.
+    if (localStorage.getItem(ADMIN_BYPASS_KEY) === "true") {
+      window.location.href = "./home.html";
+    }
+
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const email = (document.getElementById("email").value || "").trim().toLowerCase();
