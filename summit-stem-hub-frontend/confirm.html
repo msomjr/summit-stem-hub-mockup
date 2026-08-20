@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirm Email - SUMMIT STEM Platform</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: linear-gradient(180deg, #edf2f8 0%, #d6dee8 70%, #cfd8e3 100%);
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(440px, 100%);
+      background: #ffffff;
+      border: 1px solid #bcc9d8;
+      border-radius: 20px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      padding: 32px;
+      text-align: center;
+    }
+    h1 { margin: 0 0 12px; font-size: 1.4rem; }
+    p { color: #475569; line-height: 1.5; }
+    .btn {
+      display: inline-block;
+      margin-top: 18px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 12px 24px;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2f5fa7, #67b7d7);
+      color: #ffffff;
+      text-decoration: none;
+    }
+    .icon { font-size: 2.5rem; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon" id="status-icon">⏳</div>
+    <h1 id="status-title">Confirming your email...</h1>
+    <p id="status-message">One moment while we verify your confirmation link.</p>
+    <a class="btn" href="./index.html" id="login-link" style="display: none;">Go to login</a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script>
+    // Supabase's client library automatically reads the confirmation
+    // tokens out of the URL (hash or query params) when it initializes,
+    // as long as detectSessionInUrl is left on (the default). We just need
+    // to check whether it found a valid session.
+    const iconEl = document.getElementById("status-icon");
+    const titleEl = document.getElementById("status-title");
+    const messageEl = document.getElementById("status-message");
+    const loginLink = document.getElementById("login-link");
+
+    function showResult(success, message) {
+      iconEl.textContent = success ? "✅" : "⚠️";
+      titleEl.textContent = success ? "Email confirmed" : "Confirmation link issue";
+      messageEl.textContent = message;
+      loginLink.style.display = "inline-block";
+    }
+
+    (async () => {
+      try {
+        const params = new URLSearchParams(window.location.hash.replace("#", "?"));
+        const errorDescription = params.get("error_description");
+        if (errorDescription) {
+          showResult(false, decodeURIComponent(errorDescription.replace(/\+/g, " ")));
+          return;
+        }
+
+        const supabase = window.getSummitSupabaseClient();
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+
+        if (data.session) {
+          showResult(true, "Your email is confirmed and you're signed in. You can log in from here on out.");
+        } else {
+          // Some Supabase configurations confirm the email without creating
+          // a session on this page. That's still a successful confirmation.
+          showResult(true, "Your email address has been confirmed. You can now log in.");
+        }
+      } catch (err) {
+        showResult(false, err.message || "We couldn't confirm this link. It may have expired - try signing up again or requesting a new confirmation email.");
+      }
+    })();
+  </script>
+</body>
+</html>

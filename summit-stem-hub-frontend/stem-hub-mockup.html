@@ -1213,8 +1213,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./supabase-config.js"></script>
+  <script src="./backend-config.js"></script>
+  <script src="./admin-session.js"></script>
   <script>
-    const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
     const platformProjects = [
       {
         title: "Hash Identifier",
@@ -1407,8 +1408,7 @@
 
     function bindLogoutAction(supabase) {
       logoutBtn.addEventListener("click", async () => {
-        localStorage.removeItem("summitAdminBypass");
-        localStorage.removeItem("summitAdminBypassUser");
+        window.SummitAdmin.clearAdminSession();
         if (supabase) {
           try {
             await supabase.auth.signOut();
@@ -1422,8 +1422,9 @@
 
     (async () => {
       try {
-        if (adminBypass) {
-          accountGreeting.textContent = "Hello, Admin";
+        const adminSession = await window.SummitAdmin.verifyAdminSession();
+        if (adminSession && adminSession.valid) {
+          accountGreeting.textContent = `Hello, ${adminSession.full_name}`;
           bindLogoutAction(null);
           renderFilters();
           renderProjects();

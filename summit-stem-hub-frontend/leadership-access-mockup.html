@@ -960,6 +960,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./supabase-config.js"></script>
+  <script src="./backend-config.js"></script>
+  <script src="./admin-session.js"></script>
   <script>
     const STORAGE_KEY = "summitLeadershipDashboardSavedMarkup";
     let supabaseClient = null;
@@ -1357,8 +1359,7 @@
     saveBtn.addEventListener("click", saveEdits);
     exitBtn.addEventListener("click", exitEditMode);
     exitAdminModeBtn.addEventListener("click", async () => {
-      localStorage.removeItem("summitAdminBypass");
-      localStorage.removeItem("summitAdminBypassUser");
+      window.SummitAdmin.clearAdminSession();
       try {
         if (supabaseClient) {
           await supabaseClient.auth.signOut();
@@ -1411,12 +1412,12 @@
     });
 
     async function bootstrapLeadershipAccess() {
-      const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
-      if (adminBypass) {
+      const adminSession = await window.SummitAdmin.verifyAdminSession();
+      if (adminSession && adminSession.valid) {
         supabaseClient = window.getSummitSupabaseClient();
         exitAdminModeBtn.classList.remove("hidden");
         isPrivateAuthorized = true;
-        currentProfile = { full_name: "Admin", role: "leader" };
+        currentProfile = { full_name: adminSession.full_name, role: "leader" };
         renderDefaultDataIfNeeded();
         markEditableText();
         updatePrivateAccess();

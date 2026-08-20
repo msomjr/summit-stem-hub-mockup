@@ -564,6 +564,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./supabase-config.js"></script>
+  <script src="./backend-config.js"></script>
+  <script src="./admin-session.js"></script>
   <script>
     const gradeScale = {
       "A": 4.0,
@@ -585,7 +587,6 @@
       { id: crypto.randomUUID(), name: "Intro to Programming", credits: 3, grade: "A-", semester: "Fall 2026", notes: "Strong project score" },
       { id: crypto.randomUUID(), name: "General Biology", credits: 3, grade: "B", semester: "Fall 2026", notes: "Improve lab report detail" }
     ];
-    const adminBypass = localStorage.getItem("summitAdminBypass") === "true";
     const GPA_STATE_TABLE = "user_gpa_profiles";
     let supabaseClient = null;
     let currentUserId = null;
@@ -688,7 +689,8 @@
     }
 
     async function bootstrapAccountState() {
-      if (adminBypass) return;
+      const adminSession = await window.SummitAdmin.verifyAdminSession();
+      if (adminSession && adminSession.valid) return;
       supabaseClient = window.getSummitSupabaseClient();
       const { data: authData } = await supabaseClient.auth.getUser();
       const user = authData?.user;

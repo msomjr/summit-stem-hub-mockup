@@ -253,28 +253,41 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./supabase-config.js"></script>
+  <script src="./backend-config.js"></script>
   <script>
     const signupForm = document.getElementById("signup-form");
 
     signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const fullName = (document.getElementById("full-name").value || "").trim();
-      const email = (document.getElementById("email").value || "").trim();
+      const email = (document.getElementById("email").value || "").trim().toLowerCase();
       const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirm-password").value;
+      const submitBtn = signupForm.querySelector("button[type=submit]");
 
       if (password !== confirmPassword) {
         alert("Passwords do not match.");
         return;
       }
+      if (password.length < 8) {
+        alert("Password must be at least 8 characters.");
+        return;
+      }
 
+      submitBtn.disabled = true;
       try {
         const supabase = window.getSummitSupabaseClient();
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            data: { full_name: fullName }
+            data: { full_name: fullName },
+            // This is the actual fix for "email confirmation doesn't work":
+            // without emailRedirectTo, Supabase sends people to whatever
+            // Site URL is set in the dashboard (often the wrong place, or
+            // nowhere useful). Now the confirmation link lands on our own
+            // confirm.html, which tells the person it worked.
+            emailRedirectTo: `${window.SUMMIT_SITE_URL}/confirm.html`
           }
         });
         if (error) throw error;
@@ -291,11 +304,12 @@
           }
         }
 
-        // If email confirmation is enabled, Supabase may not create an active session immediately.
-        alert("Account created. If email confirmation is enabled, confirm your email, then log in.");
+        alert("Account created. Check your email for a confirmation link, then log in.");
         window.location.href = "./index.html";
       } catch (err) {
         alert(err.message || "Sign up failed.");
+      } finally {
+        submitBtn.disabled = false;
       }
     });
   </script>
