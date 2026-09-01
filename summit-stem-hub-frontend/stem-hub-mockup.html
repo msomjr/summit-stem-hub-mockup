@@ -1449,7 +1449,7 @@
         accountGreeting.textContent = `Hello, ${displayName}`;
         bindLogoutAction(supabase);
 
-        const isLeader = profile?.role === "leader";
+        const isLeader = window.SummitAdmin.isStaffRole(profile?.role);
         if (!isLeader) {
           leadershipLinks.forEach((link) => { link.style.display = "none"; });
           if (leadershipNote) leadershipNote.style.display = "block";

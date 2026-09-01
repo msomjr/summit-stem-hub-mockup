@@ -1417,7 +1417,7 @@
         supabaseClient = window.getSummitSupabaseClient();
         exitAdminModeBtn.classList.remove("hidden");
         isPrivateAuthorized = true;
-        currentProfile = { full_name: adminSession.full_name, role: "leader" };
+        currentProfile = { full_name: adminSession.full_name, role: adminSession.role || "admin" };
         renderDefaultDataIfNeeded();
         markEditableText();
         updatePrivateAccess();
@@ -1440,8 +1440,8 @@
         .eq("id", user.id)
         .single();
 
-      if (error || !profile || profile.role !== "leader") {
-        alert("Access denied. Leadership dashboard is available only to admin accounts.");
+      if (error || !profile || !window.SummitAdmin.isStaffRole(profile.role)) {
+        alert("Access denied. Leadership dashboard is available only to leader/admin accounts.");
         window.location.href = "./home.html";
         return;
       }

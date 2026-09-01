@@ -258,17 +258,23 @@
   <script src="./backend-config.js"></script>
   <script src="./admin-session.js"></script>
   <script>
-    // The old hardcoded admin bypass ("1" / "1", checked entirely in this
-    // file's JavaScript) is gone. Admin credentials now live only in the
-    // Python backend's environment variables (backend/app.py) and are
-    // verified there. Everyone else still logs in with Supabase directly,
-    // same as before.
+    // Local demo bypass: email "admin" / password "admin" (localhost only).
+    // On the public site, use a Supabase account with role leader/admin.
+    // Optional Python backend admin auth still works if that server is running.
+    const ADMIN_BYPASS_KEY = "summitAdminBypass";
     const loginForm = document.getElementById("login-form");
     const forgotPasswordLink = document.getElementById("forgot-password-link");
 
-    // Remembered admin session should resume on platform home, not leadership.
-    if (localStorage.getItem(ADMIN_BYPASS_KEY) === "true") {
+    // Remembered local admin session resumes on platform home (localhost only).
+    const isLocalHost =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1" ||
+      window.location.hostname === "";
+    if (isLocalHost && localStorage.getItem(ADMIN_BYPASS_KEY) === "true") {
       window.location.href = "./home.html";
+    } else if (!isLocalHost) {
+      localStorage.removeItem(ADMIN_BYPASS_KEY);
+      localStorage.removeItem("summitAdminBypassUser");
     }
 
     loginForm.addEventListener("submit", async (event) => {
@@ -279,9 +285,7 @@
       submitBtn.disabled = true;
 
       try {
-        // 1) Ask the backend if these are the admin credentials.
-        //    If the backend is unreachable, we just fall through to the
-        //    normal Supabase login below instead of blocking everyone.
+        // 1) Admin login (local "1"/"1" bypass, or backend if configured).
         const adminResult = await window.SummitAdmin.tryAdminLogin(email, password);
         if (adminResult === "rate_limited") {
           return; // alert already shown by tryAdminLogin
@@ -291,7 +295,7 @@
           return;
         }
 
-        // 2) Normal student/leader login via Supabase (unchanged, already secure).
+        // 2) Normal student/leader login via Supabase.
         const supabase = window.getSummitSupabaseClient();
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -327,6 +331,10 @@
     forgotPasswordLink.addEventListener("click", async (event) => {
       event.preventDefault();
       const email = (document.getElementById("email").value || "").trim();
+      if (email.toLowerCase() === "admin") {
+        alert("Admin bypass login does not use password reset.");
+        return;
+      }
       if (!email) {
         alert("Enter your email first, then click Forgot password.");
         return;

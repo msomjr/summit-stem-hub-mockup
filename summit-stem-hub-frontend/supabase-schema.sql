@@ -5,8 +5,14 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text not null,
   email text not null,
-  role text not null default 'student' check (role in ('student', 'leader'))
+  role text not null default 'student' check (role in ('student', 'leader', 'admin'))
 );
+
+-- Existing projects: widen the role check to allow admin.
+alter table public.profiles drop constraint if exists profiles_role_check;
+alter table public.profiles
+  add constraint profiles_role_check
+  check (role in ('student', 'leader', 'admin'));
 
 create table if not exists public.project_applications (
   id bigint generated always as identity primary key,
@@ -76,7 +82,7 @@ stable
 security definer
 set search_path = public
 as $$
-  select coalesce(public.current_user_role() = 'leader', false)
+  select coalesce(public.current_user_role() in ('leader', 'admin'), false)
 $$;
 
 grant execute on function public.current_user_role() to authenticated;
@@ -220,5 +226,8 @@ for update
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
--- Optional: set approved leaders after they sign up.
--- update public.profiles set role = 'leader' where full_name in ('Manny', 'Ferranmi');
+-- Promote approved org leaders/admins after they sign up (run in Supabase SQL editor):
+-- update public.profiles set role = 'leader' where email = 'leader@odu.edu';
+-- update public.profiles set role = 'admin' where email = 'you@odu.edu';
+--
+-- New signups are always created as 'student'. Only promote trusted accounts.
